@@ -22,55 +22,42 @@ void loop() {
     inputBuffer[presentSize--] = NULL;
     
 
-    parsing(inputBuffer, presentSize);
+    if(checkCRC(inputBuffer, presentSize)){
+        parsing(inputBuffer, presentSize);
+    }
   }
 }
 
 
-
-void parsing(char* buf, int size) {
-
-  Serial.print("InputBuf[");
-  Serial.print(size);
-  Serial.print("]=");
-  Serial.println(buf);
-
+bool checkCRC(char* buf, int size){
+  //Serial.print("InputBuf[");Serial.print(size);Serial.print("]=");Serial.println(buf);
 
   char* commaPosDel = strchr(buf, DELIMITER1L);
-
   int delPos = commaPosDel-buf;
-
 
   *commaPosDel = '\0'; 
 
   
 
-  Serial.print("data[");
-  Serial.print(commaPosDel-buf);
-  Serial.print("] = ");
-  Serial.println(buf);
-
-  Serial.print("CRC[");
-  Serial.print(size-delPos);
-  Serial.print("] = ");
-  Serial.println(commaPosDel+1);
+  //Serial.print("data[");  Serial.print(commaPosDel-buf);  Serial.print("] = "); Serial.println(buf);
+  //Serial.print("CRC[");   Serial.print(size-delPos);      Serial.print("] = "); Serial.println(commaPosDel+1);
 
   String str = commaPosDel+1;
   
   unsigned long receivedCRC = str.toInt();
-
-  Serial.print("receivedCRC: ");
-  Serial.println(receivedCRC);
+  //Serial.print("receivedCRC: ");    Serial.println(receivedCRC);
 
   uint32_t const calculatedCRC = crc32.calc((uint8_t const *)buf,commaPosDel-buf);
+  //Serial.print("calculatedCRC: ");  Serial.println(calculatedCRC);
 
+  //Serial.print("equal?: ");   Serial.println(receivedCRC == calculatedCRC); Serial.println();
 
-  Serial.print("calculatedCRC: ");
-  Serial.println(calculatedCRC);
+  return receivedCRC == calculatedCRC;
+}
 
-  Serial.print("equal?: ");
-  Serial.println(receivedCRC == calculatedCRC);
-Serial.println();
+void parsing(char* buf, int size) {
+
+  Serial.print("InputBuf[");Serial.print(size);Serial.print("]=");Serial.println(buf);
 
 
   
