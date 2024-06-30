@@ -6,6 +6,8 @@ https://crc32.online/
 
 https://www.rapidtables.com/convert/number/hex-to-ascii.html
 
+R,1,1,R,4,0/1667261463
+R,1,1,R,4,1/342316161
 
 https://github.com/GyverLibs/GParser?tab=readme-ov-file
 
