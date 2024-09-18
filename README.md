@@ -1,5 +1,13 @@
 # GreenHose
 
+
+//to download OS ubuntu focal desktop linux 5.10.75
+https://etcher.balena.io/#download-etcher
+https://docs.viam.com/installation/prepare/orange-pi-3-lts/
+
+
+
+
 http://www.sunshine2k.de/coding/javascript/crc/crc_js.html
 
 https://crc32.online/
