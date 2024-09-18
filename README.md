@@ -27,6 +27,54 @@ sudo systemctl status ssh
 
 --------------------------------------------------------------------------------------------------------
 
+Advanced IP Scanner
+192.168.10.1-254
+PUTTY
+
+--------------------------------------------------------------------------------------------------------
+
+sudo apt-get update
+sudo apt-get upgrade
+
+
+sudo apt install python3-pip
+sudo apt-get install python3-dev
+
+sudo pip3 install Orangepi.GPIO
+
+-sudo apt-get install wiringpi
+-sudo apt-get remove wiringpi
+
+WiringPi-ն չի աշխատում OrangePI 3 LTS -ի համար պետք ա wiringOP
+--------------------------------------------------------------------------------------------------------
+https://github.com/orangepi-xunlong/wiringOP/blob/next/README.md
+
+# apt-get install -y git
+# git clone https://github.com/orangepi-xunlong/wiringOP.git
+
+# cd wiringOP
+# ./build clean
+# ./build 
+
+gpio readall
+
+--------------------------------------------------------------------------------------------------------
+
+sudo nano /boot/orangepiEnv.txt
+param_w1_pin=22
+
+sudo reboot
+
+sudo modprobe w1-gpio
+sudo modprobe w1-therm
+
+lsmod | grep w1
+
+ls /sys/bus/w1/devices/
+
+--------------------------------------------------------------------------------------------------------
+
+pip3 install --upgrade w1thermsensor
 
 
 
