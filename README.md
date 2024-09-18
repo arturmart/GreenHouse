@@ -2,8 +2,30 @@
 
 
 //to download OS ubuntu focal desktop linux 5.10.75
+
 https://etcher.balena.io/#download-etcher
 https://docs.viam.com/installation/prepare/orange-pi-3-lts/
+
+--------------------------------------------------------------------------------------------------------
+
+Включение SSH на Orange Pi 3 LTS
+Способ 1: Включение SSH через командную строку (если доступен монитор и клавиатура)
+Откройте терминал на Orange Pi.
+Введите следующую команду, чтобы убедиться, что SSH установлен:
+
+sudo apt update
+sudo apt install openssh-server
+
+После установки SSH-сервера убедитесь, что он запущен:
+
+sudo systemctl enable ssh
+sudo systemctl start ssh
+
+Проверьте статус SSH:
+
+sudo systemctl status ssh
+
+--------------------------------------------------------------------------------------------------------
 
 
 
