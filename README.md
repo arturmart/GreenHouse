@@ -48,20 +48,25 @@ sudo pip3 install Orangepi.GPIO
 WiringPi-ն չի աշխատում OrangePI 3 LTS -ի համար պետք ա wiringOP
 --------------------------------------------------------------------------------------------------------
 https://github.com/orangepi-xunlong/wiringOP/blob/next/README.md
+https://blog.regimov.net/orange-pi-lite2-1-wire/
+https://micro-pi.ru/%D1%81%D1%85%D0%B5%D0%BC%D0%B0-%D0%BF%D0%BE%D0%B4%D0%BA%D0%BB%D1%8E%D1%87%D0%B5%D0%BD%D0%B8%D1%8F-hc-sr04-%D0%BA-orange-pi-pc/#__HC-SR04_Orange_Pi_PCBanana_Pi_Raspberry_Pi_GPIO_40
 
-# apt-get install -y git
-# git clone https://github.com/orangepi-xunlong/wiringOP.git
+apt-get install -y git
+git clone https://github.com/orangepi-xunlong/wiringOP.git
 
-# cd wiringOP
-# ./build clean
-# ./build 
+cd wiringOP
+./build clean
+./build 
 
 gpio readall
 
 --------------------------------------------------------------------------------------------------------
+http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/orange-pi-3-LTS.html
+https://linux-sunxi.org/1-Wire
 
 sudo nano /boot/orangepiEnv.txt
-param_w1_pin=22
+overlays=w1-gpio
+param_w1_pin=PD22
 
 sudo reboot
 
