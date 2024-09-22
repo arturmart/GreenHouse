@@ -26,6 +26,19 @@ sudo systemctl start ssh
 sudo systemctl status ssh
 
 --------------------------------------------------------------------------------------------------------
+#for vscode 
+https://code.visualstudio.com/docs/remote/ssh
+https://www.youtube.com/watch?v=BkQ2hL0fkWM
+https://help.rc.ufl.edu/doc/SSH_Using_VS_Code
+https://code.visualstudio.com/docs/remote/ssh-tutorial
+
+https://www.ssh.com/academy/ssh/command
+
+vs code> Remote-SSH: Connect to Host
+
+ssh orangepi@<IP-адрес Orange Pi>
+
+--------------------------------------------------------------------------------------------------------
 
 Advanced IP Scanner
 192.168.10.1-254
