@@ -94,6 +94,49 @@ ls /sys/bus/w1/devices/
 
 pip3 install --upgrade w1thermsensor
 
+--------------------------------------------------------------------------------------------------------
+sudo apt-get update
+sudo apt-get install i2c-tools
+
+sudo nano /boot/orangepiEnv.txt
+overlays=i2c0 i2c1
+param_i2c1_baudrate=100000 
+
+
+sudo i2cdetect -y 0  # Для I2C-0
+sudo i2cdetect -y 1  # Для I2C-1
+
+cat <dir> //for visualisation
+--------------------------------------------------------------------------------------------------------
+
+OpenWeatherMap API
+https://openweathermap.org/price#weather        //main
+
+https://openweathermap.org/api                  //patetner
+https://openweathermap.org/api/one-call-3
+https://home.openweathermap.org/api_keys
+https://openweathermap.org/weather-conditions    //icons
+
+https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}&units=metric
+api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}&units=metric
+
+marmrashen lat{40.059456} lon{44.474210}
+my appid {fcb989e5668460983b3cb819569b8c1d}
+
+https://api.openweathermap.org/data/2.5/weather?lat=40.059456&lon=44.474210&appid=fcb989e5668460983b3cb819569b8c1d&units=metric
+https://api.openweathermap.org/data/2.5/forecast?lat=40.059456&lon=44.474210&appid=fcb989e5668460983b3cb819569b8c1d&units=metric
+
+https://openweathermap.org/bulk
+https://openweathermap.org/forecast5
+
+--------------------------------------------------------------------------------------------------------
+JSON for Modern C++ (Niels Lohmann)  :JSON-ի հետ աշխատելու համար
+   sudo apt-get install nlohmann-json3-dev
+
+libcurl                              :библиотеку для выполнения HTTP-запросов
+    sudo apt-get install libcurl4-openssl-dev
+
+--------------------------------------------------------------------------------------------------------
 
 
 http://www.sunshine2k.de/coding/javascript/crc/crc_js.html
