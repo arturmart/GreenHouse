@@ -137,7 +137,22 @@ libcurl                              :библиотеку для выполне
     sudo apt-get install libcurl4-openssl-dev
 
 --------------------------------------------------------------------------------------------------------
+https://www.youtube.com/watch?v=ZvSnwyKa2C4
 
+RS 485
+
+MAX485
+
+DI - Digital Transmiter Sensor - TX (D6)
+RO - Digital Reciver Sensor - RX (D7)
+DE - Work Resalution Transmiter - digital port (D13)
+RE - Work Resalution Reciver - digital port (D13)
+
+A - Liner Defferencial Data
+B - Invert Defferencial Data
+
+VCC - 5V
+Gnd - Gnd
 
 http://www.sunshine2k.de/coding/javascript/crc/crc_js.html
 
