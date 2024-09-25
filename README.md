@@ -153,7 +153,13 @@ B - Invert Defferencial Data
 
 VCC - 5V
 Gnd - Gnd
+--------------------------------------------------------------------------------------------------------
+https://www.youtube.com/watch?v=Ul03Vkg9A40&t=715s
+https://www.youtube.com/watch?v=1VgePUaF7R8&t=456s
+https://github.com/GyverLibs/StringUtils
 
+
+--------------------------------------------------------------------------------------------------------
 http://www.sunshine2k.de/coding/javascript/crc/crc_js.html
 
 https://crc32.online/
