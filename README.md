@@ -154,22 +154,27 @@ B - Invert Defferencial Data
 VCC - 5V
 Gnd - Gnd
 --------------------------------------------------------------------------------------------------------
-https://www.youtube.com/watch?v=Ul03Vkg9A40&t=715s
+https://www.youtube.com/watch?v=Ul03Vkg9A40
 https://www.youtube.com/watch?v=1VgePUaF7R8&t=456s
-https://github.com/GyverLibs/StringUtils
-
-
---------------------------------------------------------------------------------------------------------
-http://www.sunshine2k.de/coding/javascript/crc/crc_js.html
-
-https://crc32.online/
-
-https://www.rapidtables.com/convert/number/hex-to-ascii.html
-
-R,1,1,R,4,0/1667261463
-R,1,1,R,4,1/342316161
-
 https://github.com/GyverLibs/GParser?tab=readme-ov-file
 
+https://github.com/GyverLibs/StringUtils                     //parsing for Arduino by AlexGyver
 
-https://www.youtube.com/watch?v=Ul03Vkg9A40
+http://www.sunshine2k.de/coding/javascript/crc/crc_js.html
+https://crc32.online/
+https://www.rapidtables.com/convert/number/hex-to-ascii.html
+
+https://github.com/arduino-libraries/Arduino_CRC32             // CRC for Arduino by Alexander Entinger
+
+
+R,1,1;R,4,0/1667261463
+R,1,1;R,4,1/342316161
+
+--------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
