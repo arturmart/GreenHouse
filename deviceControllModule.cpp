@@ -101,17 +101,33 @@ class DataParseSplit{
 
       }
     }
-    int pars(int* delimiter, String &str, String* arr, int delimiterSize=1){
+    int pars(int* delimiter, String& str, String* arr, int delimiterSize=1){
+
+    
+
+      //Serial.print("delimiter[0]- ");
+      //Serial.println(delimiter[0]);
+      //Serial.print("str- ");
+      //Serial.println(str);
+      //Serial.print("Substring result: ");
+      //Serial.println(str.substring(0, 8));
 
       if(delimiter[0] == 0 ) arr[0] = str;
       else if(delimiter[0] > 0 ){
         arr[0] = str.substring(0, delimiter[1]);
+     
 
         for(int i =1;i<delimiter[0];i++){
+          
           arr[i] = str.substring(delimiter[i]+delimiterSize, delimiter[i+1]);
+      
         }
+        
+
+
 
         arr[delimiter[0]] = str.substring(delimiter[delimiter[0]]+delimiterSize, str.length());
+
       }
 
       return delimiter[0]+1;
@@ -120,7 +136,9 @@ class DataParseSplit{
     }
     int pars(int* delimiter, String &str, byte* arr, int delimiterSize=1){
 
+      
       if(delimiter[0] == 0 ) arr[0] = str.toInt();
+      
       else if(delimiter[0] > 0 ){
         //arr[0] = str.substring(0, delimiter[1])[0];         // to Send Int from first Char
         arr[0] = str.substring(0, delimiter[1]).toInt();  // to Send Int
@@ -242,11 +260,11 @@ class DataReadSned{
     _str = str;
   }
 
-  int parse(String &str, byte pars3L[dataSendRowsSize][3]){
+  int parse(String &str, byte (&pars3L)[dataSendRowsSize][3]){
     setStr(str);
     return parse(pars3L);
   }
-  int parse(byte pars3L[dataSendRowsSize][3]){
+  int parse(byte (&pars3L)[dataSendRowsSize][3]){
     //[parses is 2][crc check][One data row][more data row][wrrong Number][8 bitRow Count]
     int feedbeck = 0;
 
@@ -261,6 +279,7 @@ class DataReadSned{
     }
 
     String pars2L[dataSendRowsSize];
+    
     feedbeck+=(parse2L(pars2L,pars1L)<<8);//[][][One data row][more data row][wrrong Number][8bit]
 
 
@@ -275,7 +294,7 @@ class DataReadSned{
 
     
   }
-  int split(byte pars3L[dataSendRowsSize][3],byte size3L){ 
+  int split(byte (&pars3L)[dataSendRowsSize][3],byte size3L){ 
     splitDataAndCRC( pars3L,crcCalk, size3L);
   }
   private:
@@ -306,11 +325,14 @@ class DataReadSned{
     int* delPoint1L = dm.find(_str,delimiter1L);
     byte size1L = dm.pars(delPoint1L, _str, pars1L);
     feedbeck = ((size1L==2) << 1)+ _crcCheck(pars1L[0],pars1L[1]);  //0b000000[parses is 2][crc check]
-    return feedbeck;
 
-
+    Serial.println("Parse 1 level");
     dm.printStringArr(pars1L,2);
     Serial.println();
+
+    return feedbeck;
+
+    
 
   }
   byte parse2L( String* pars2L, String* pars1L){
@@ -321,14 +343,27 @@ class DataReadSned{
     int* delPoint2L = dm.find(pars1L[0],delimiter2L);
     byte size2L =dm.pars(delPoint2L, pars1L[0], pars2L);
     feedbeck = ((size2L==0) << 2)+ ((size2L>8) << 1)+(size2L <= 0);  //0b00000[One data row][more data row][wrrong Number]
+
+    for(int i = 0; i <size2L;i++){
+      Serial.print(delPoint2L[i]);
+      Serial.print('\t');
+    }
+    Serial.println();
+
+    Serial.print("Parse 2 level: size(");
+    Serial.print(size2L);
+    Serial.println(")");
+    dm.printStringArr(pars2L,size2L);
+    Serial.println();
+
     return feedbeck;
 
 
-    dm.printStringArr(pars2L,3);
-    //Serial.println();
+
+    
 
   }
-  byte parse3L(byte pars3L[dataSendRowsSize][3], String* pars2L){
+  byte parse3L(byte (&pars3L)[dataSendRowsSize][3], String* pars2L){
 
     //3L array
     
@@ -406,35 +441,44 @@ void erorrhandler(int& feedbeck){
          
 
 }
-int check(byte pars3L[dataSendRowsSize][3],String str){
+void relayCheck(const byte (&data)[dataSendRowsSize][3],int& rowSize){
+  for(int i = 0; i<rowSize; i++){
+
+      switch(data[i][0]) {
+        case 83:
+          //digitalWrite(RC.relayPin[pars3L[i][1]], pars3L[i][2]);
+          RC.relayWrite(data[i][1], data[i][2]);
+          
+          Serial.print("R ");
+          Serial.print(data[i][1]);
+          Serial.print(" ");
+          Serial.println(data[i][2]);
+          
+          break;
+      }
+    }
+
+}
+
+int check(byte (&pars3L)[dataSendRowsSize][3],String& str){
     
     //byte pars3L[dataSendRowsSize][3];
+    
+    
     int feedbeck = DS.parse(str,pars3L);
     Serial.print("feedbeck - ");
     Serial.println(feedbeck,BIN);
     int rowSize = feedbeck & 0b11111111;
 
-    for(int i = 0; i<rowSize; i++){
+    relayCheck(pars3L, rowSize);
 
-      switch(pars3L[i][0]) {
-        case 83:
-          //digitalWrite(RC.relayPin[pars3L[i][1]], pars3L[i][2]);
-          RC.relayWrite(pars3L[i][1], pars3L[i][2]);
-          
-          Serial.print("R ");
-          Serial.print(pars3L[i][1]);
-          Serial.print(" ");
-          Serial.println(pars3L[i][2]);
-          
-          break;
-      }
-
-
-    }
+    
     return feedbeck;
 }
 
-//byte data[dataSendRowsSize][3];
+
+byte data[dataSendRowsSize][3];
+String str;
 
 void setup() {
 
@@ -443,34 +487,11 @@ void setup() {
     Serial.println();
 
     RC =  RelayController(relayPin1,RELAY_COUNT1);
-    String str="83,0,0;83,1,0;83,2,0;83,3,0/745ec3dc";
+    str="83,0,0;83,1,0;83,2,0;83,3,0/745ec3dc";
 
-    //int feedbeck = check(data,str);
-    //erorrhandler(feedbeck);
-
-    byte pars3L[dataSendRowsSize][3];
-    int feedbeck = DS.parse(str,pars3L);
-    Serial.print("feedbeck - ");
-    Serial.println(feedbeck,BIN);
-    int rowSize = feedbeck & 0b11111111;
-
-    for(int i = 0; i<rowSize; i++){
-
-      switch(pars3L[i][0]) {
-        case 83:
-          //digitalWrite(RC.relayPin[pars3L[i][1]], pars3L[i][2]);
-          RC.relayWrite(pars3L[i][1], pars3L[i][2]);
-          
-          Serial.print("R ");
-          Serial.print(pars3L[i][1]);
-          Serial.print(" ");
-          Serial.println(pars3L[i][2]);
-          
-          break;
-      }
-
-
-    }
+    int feedbeck = check(data,str);
+    erorrhandler(feedbeck);
+    
 }
 
 
@@ -480,7 +501,9 @@ void loop() {
     int presentSize = Serial.readBytesUntil(TERMINATOR, inputBuffer, 64);
     inputBuffer[presentSize--] = NULL;
       Serial.println(inputBuffer);
-      //int feedbeck = check(data,inputBuffer);
+
+      str = inputBuffer;
+      //int feedbeck = check(data,str);
       //erorrhandler(feedbeck);
       Serial.println();
   }
