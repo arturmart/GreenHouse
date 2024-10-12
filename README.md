@@ -176,6 +176,8 @@ https://github.com/arduino-libraries/Arduino_AVRSTL/tree/main/src            //A
 https://www.youtube.com/watch?v=1VgePUaF7R8                                  //AlexGyver-ի վիդեո
 https://www.nongnu.org/avr-libc/user-manual/group__avr__string.html          //cString հրամաները
 https://alexgyver.ru/lessons/cstring/                                        //cString հրամաները AlexGyver
+https://www.youtube.com/playlist?list=PLBzxnGCN6T8f9oT4VAgCf341qIuD1LUGY
+https://www.youtube.com/playlist?list=PLBzxnGCN6T8cpuX54Uav5In5bODBmSwbs
 
 
 
