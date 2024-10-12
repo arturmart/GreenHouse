@@ -172,7 +172,10 @@ R,1,1;R,4,1/342316161
 
 --------------------------------------------------------------------------------------------------------
 
-https://github.com/arduino-libraries/Arduino_AVRSTL/tree/main/src
+https://github.com/arduino-libraries/Arduino_AVRSTL/tree/main/src            //Arduino-ի գրադարանը
+https://www.youtube.com/watch?v=1VgePUaF7R8                                  //AlexGyver-ի վիդեո
+https://www.nongnu.org/avr-libc/user-manual/group__avr__string.html          //cString հրամաները
+https://alexgyver.ru/lessons/cstring/                                        //cString հրամաները AlexGyver
 
 
 
