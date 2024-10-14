@@ -11,8 +11,15 @@ template <unsigned int strN>
 class Parser {
 public:
     // Конструктор класса Parser
+
+    Parser() = default;
+
     Parser(const StringLimited<strN>& str) {
         setStr(str); // Инициализация строки
+    }
+
+    StringLimited<strN> getStr() const{
+        return _str; 
     }
 
     // Установка строки
@@ -30,7 +37,7 @@ public:
     // Разделение строки по разделителю
     void parseCut(int* delimiter, char trg, int size = 8) {
         find(delimiter, trg, size); // Находим разделители
-        for (int i = 1; i <= delimiter[0]; i++) {
+        for (int i = 1; i <= delimiter[0] ; i++) {
             _str.setChar(delimiter[i], '\0'); // Завершаем строку нулем
         }
     }

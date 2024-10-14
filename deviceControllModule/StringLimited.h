@@ -58,8 +58,9 @@ StringLimited<strN>::StringLimited() : _size(0) {
 
 // Конструктор с C-строкой
 template <unsigned int strN>
-StringLimited<strN>::StringLimited(const char* str) : _size(0) {
+StringLimited<strN>::StringLimited(const char* str) {
     if (str) {
+        //_size = size();
         copy(str);
     } else {
         _str[0] = '\0'; // Устанавливаем пустую строку, если передан nullptr
@@ -79,7 +80,7 @@ void StringLimited<strN>::copy(const char* str) {
     strncpy(_str, str, _size);
     _str[_size] = '\0'; // Добавляем нулевой символ в конец
 }
-
+  
 // Копирование строки в указанный буфер
 template <unsigned int strN>
 void StringLimited<strN>::copyToBuffer(char* buffer, size_t bufferSize) const {
@@ -94,6 +95,7 @@ void StringLimited<strN>::copyToBuffer(char* buffer, size_t bufferSize) const {
 template <unsigned int strN>
 int StringLimited<strN>::size() const {
     return _size;
+    //return strlen(_size);
 }
 
 // Получение размера буфера
@@ -201,6 +203,8 @@ template <unsigned int strN>
 const char* StringLimited<strN>::c_str() const {
     return _str; // Предположим, что _data – это массив символов
 }
+
+
 
 // Преобразование в int
 template <unsigned int strN>
