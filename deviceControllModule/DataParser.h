@@ -20,7 +20,7 @@ public:
      const int ERROR_1L_TOO_MANY_DATA = 1 << 2;   
      const int ERROR_INVALID_CRC = 1 << 3; 
      const int ERROR_NULL_CRC = 1 << 4;   
-     const int ERROR_2L_NO_DATA_PACKETS = 1 << 5; 
+     const int WARR==2L_NO_DATA_PACKETS = 1 << 5; 
      const int ERROR_2L_TOO_MANY_PACKETS = 1 << 6; 
      const int ERROR_3L_WRONG_DATA_PACKETS = 1 << 7; 
      const int PACKETS_COUNT = 1111 << 8;
@@ -33,10 +33,12 @@ public:
 
     void setStr(StringLimited<BUFFER_SIZE>* inputStr) {
         parser.setStr(*inputStr);
+       
     }
 
     void setStr(StringLimited<BUFFER_SIZE>& inputStr) {
         parser.setStr(inputStr);
+   
     }
 
     
@@ -58,12 +60,14 @@ public:
 
 private:
     Parser<BUFFER_SIZE> parser; // Parser object
+   
     //StringLimited<32> crc; // Store CRC
 
     StringLimited<BUFFER_SIZE> (*crcClac)  (StringLimited<BUFFER_SIZE>&,int) = nullptr;
     int delimiters1L[2]; // Array for level 1 delimiters
     int delimiters2L[8]; // Array for level 2 delimiters
     int delimiters3L[3]; // Array for level 3 delimiters
+    StringLimited<8> part;
     byte data[MAX_DATA_ROWS][3]; // Array to store parsed byte data
 
     int parseLevel1() {
@@ -71,6 +75,7 @@ private:
         int feedback = ERROR_NONE;
 
         parser.parseCut(delimiters1L, DELIMITER1, 2); // Split string by first delimiter
+
         //Serial.println("Parts Count: ");  Serial.println(delimiters1L[0]); // Print number of parts
 
         // Print parts
@@ -126,24 +131,30 @@ private:
         for (int i = 0; i <= delimiters2L[0]; i++) {
             parser.parseCut(delimiters3L, DELIMITER3, 2); // Split by third delimiter
             //Serial.println(parser.getStr()[23]);
-            Serial.print("3L[");Serial.print(i);Serial.print("] - ");Serial.print(delimiters3L[0]);Serial.print(" - "); // Number of parts in current package
-            
-            for (int j = 0; j <= delimiters3L[0]; j++) {Serial.print(""); Serial.print(delimiters3L[i]);}
-            for (int j = 0; j <= delimiters3L[0]; j++) {
-                
-                StringLimited<8> part = parser.getSubstringFromPart<8>(delimiters3L, j, 8); // Get part as StringLimited
-                if(delimiters3L[0] != 2){
+            //Serial.print("3L[");Serial.print(i);Serial.print("] - ");Serial.print(delimiters3L[0]);Serial.print(" - "); // Number of parts in current package
+
+            if(delimiters3L[0] != 2){
                   feedback |= ERROR_3L_WRONG_DATA_PACKETS;
                   //return(Null)
                 }
+            
+            //Serial.print("DEL3 - (");
+            //for (int j = 0; j <= delimiters3L[0]; j++) { Serial.print(delimiters3L[j]); Serial.print(" ");}
+            //Serial.print(") ");
+            for (int j = 0; j <= delimiters3L[0]; j++) {
+                
+                part = parser.getSubstringFromPart<8>(delimiters3L, j, 8); // Get part as StringLimited
+                
+
+                //Serial.print("part - ");  Serial.print(part); 
 
                 int value = part.toInt(); // Convert to int
                 data[i][j] = static_cast<byte>(value); // Store value as byte
-                Serial.print(data[i][j]);  Serial.print(" ");   // Print value
+                //Serial.print(" ");Serial.print(data[i][j]);     // Print value
             }
 
 
-            Serial.println();
+            //Serial.println();
             
              
         }

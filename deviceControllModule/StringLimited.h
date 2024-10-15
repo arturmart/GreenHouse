@@ -228,7 +228,9 @@ char* StringLimited<strN>::substringToChar(int start, int length) const {
 template <unsigned int strN>
 StringLimited<strN> StringLimited<strN>::substringToStringLimited(int start, int length) const {
     StringLimited<strN> subStr;
-    if (start >= 0 && start + length <= _size) {
+    //Serial.print(" sstsl("); Serial.print(start + length); Serial.print(")");
+    //Serial.print(" sstsl - s("); Serial.print(start); Serial.print(") l("); Serial.print(length); Serial.print(") sz(");Serial.print(_size);Serial.print(")");
+    if (start >= 0 && start<=_size) {// if (start >= 0 && start + length <= _size)
         strncpy(subStr._str, _str + start, length);
         subStr._str[length] = '\0'; // Завершаем нулем
         subStr._size = length; // Устанавливаем новый размер
