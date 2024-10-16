@@ -45,3 +45,10 @@ https://www.youtube.com/playlist?list=PLBzxnGCN6T8f9oT4VAgCf341qIuD1LUGY
 https://www.youtube.com/playlist?list=PLBzxnGCN6T8cpuX54Uav5In5bODBmSwbs
 
 https://docs.arduino.cc/learn/contributions/arduino-creating-library-guide/
+
+
+
+--------------------------------------------------------------------------------------------------------
+arduino to Orange pi
+
+https://www.researchgate.net/figure/Pattern-selection-from-recorded-sample-intervals_fig2_350297410
