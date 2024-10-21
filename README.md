@@ -65,7 +65,19 @@ WiringPi-ն չի աշխատում OrangePI 3 LTS -ի համար պետք ա wiri
 --------------------------------------------------------------------------------------------------------
 https://github.com/orangepi-xunlong/wiringOP/blob/next/README.md
 https://blog.regimov.net/orange-pi-lite2-1-wire/
+https://micro-pi.ru/wiringop-wiringpi-%D0%BD%D0%B0-orange-pi-pc/
 https://micro-pi.ru/%D1%81%D1%85%D0%B5%D0%BC%D0%B0-%D0%BF%D0%BE%D0%B4%D0%BA%D0%BB%D1%8E%D1%87%D0%B5%D0%BD%D0%B8%D1%8F-hc-sr04-%D0%BA-orange-pi-pc/#__HC-SR04_Orange_Pi_PCBanana_Pi_Raspberry_Pi_GPIO_40
+https://orangepi.su/content.php?p=112&c=OrangePi%20PC%20rabotaem%20s%20GPIO,%20UART%20i%20i2c
+
+http://www.orangepi.org/orangepiwiki/index.php/Orange_Pi_3_LTS
+
+https://uelectronics.com/wp-content/uploads/2022/04/OrangePi-3-LTS-H6-User-manual-v1.0.pdf?srsltid=AfmBOooDsc42U6c_YOJfpQFX2p3PilGZzoPxofqVLSiIuqRE7INaIOAZ
+page 84(79)
+
+https://psenyukov.ru/%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%B0-%D1%81-gpio-%D1%80%D0%B0%D0%B7%D1%8A%D0%B5%D0%BC%D0%B0%D0%BC%D0%B8-%D0%B2-orange-pi/
+https://raspberrypi.ru/578-wiring-pi-biblioteka-raboty-s-gpio-chast-1
+
+
 
 apt-get install -y git
 git clone https://github.com/orangepi-xunlong/wiringOP.git
@@ -79,15 +91,32 @@ gpio readall
 --------------------------------------------------------------------------------------------------------
 http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/orange-pi-3-LTS.html
 https://linux-sunxi.org/1-Wire
+https://www.raspberrypi-spy.co.uk/2013/03/raspberry-pi-1-wire-digital-thermometer-sensor/
+http://mypractic.ru/ds18b20-datchik-temperatury-s-interfejsom-1-wire-opisanie-na-russkom-yazyke.html
+https://www.analog.com/media/en/technical-documentation/data-sheets/DS18B20.pdf
+https://orangepi.su/content.php?p=194&chpu=Stavim%20datchik%20temperatury%20k%20Orange%20Pi%20/%20Raspberry%20Pi
+https://github.com/leech001/Temp_control
+https://f1atb.fr/temperature-ds18b20-and-orange-pi-zero/
+
+
 
 sudo nano /boot/orangepiEnv.txt
-overlays=w1-gpio
+overlays=w1-gpio #if theree exist i2c then overlays=w1-gpio i2c0 i2c1 ...
 param_w1_pin=PD22
+param_w1_pin_int_pullup=1  
+
+or
+
+sudo orangepi-config > System > Bootenv
 
 sudo reboot
 
 sudo modprobe w1-gpio
 sudo modprobe w1-therm
+
+//gpio mode 2 out ?
+
+gpio readall
 
 lsmod | grep w1
 ```bash
@@ -97,7 +126,7 @@ wire                   36864  2 w1_gpio,w1_therm
 ```
 
 ls /sys/bus/w1/devices/
->28-XXXXXXXXXXXX
+>w1_bus_master1  28-XXXXXXXXXXXX
 
 
 
