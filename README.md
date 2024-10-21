@@ -97,6 +97,7 @@ wire                   36864  2 w1_gpio,w1_therm
 ```
 
 ls /sys/bus/w1/devices/
+>28-XXXXXXXXXXXX
 
 
 
