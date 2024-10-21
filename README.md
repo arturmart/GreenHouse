@@ -87,8 +87,14 @@ sudo modprobe w1-gpio
 sudo modprobe w1-therm
 
 lsmod | grep w1
+```bash
+w1_therm               28672  0
+w1_gpio                16384  0
+wire                   36864  2 w1_gpio,w1_therm
+```
 
 ls /sys/bus/w1/devices/
+
 
 
 ![Rectangle 741](https://github.com/user-attachments/assets/9c7eace9-507e-4ed3-bf48-2cedfa4ee452)
