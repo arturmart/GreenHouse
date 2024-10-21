@@ -90,6 +90,10 @@ lsmod | grep w1
 
 ls /sys/bus/w1/devices/
 
+
+![Rectangle 741](https://github.com/user-attachments/assets/9c7eace9-507e-4ed3-bf48-2cedfa4ee452)
+![Rectangle 741](https://github.com/user-attachments/assets/9022c55d-a769-40f4-890f-462ed39d795b)
+
 --------------------------------------------------------------------------------------------------------
 
 pip3 install --upgrade w1thermsensor
@@ -105,6 +109,10 @@ param_i2c1_baudrate=100000
 
 sudo i2cdetect -y 0  # Для I2C-0
 sudo i2cdetect -y 1  # Для I2C-1
+
+
+
+
 
 cat <dir> //for visualisation
 --------------------------------------------------------------------------------------------------------
