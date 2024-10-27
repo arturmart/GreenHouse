@@ -117,6 +117,7 @@ or
 >sudo reboot
 
 >sudo modprobe w1-gpio
+
 >sudo modprobe w1-therm
 
 //gpio mode 2 out ?
