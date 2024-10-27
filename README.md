@@ -237,6 +237,14 @@ overlays=uart3
 
 to exit >ctrl+A then K then Y
 
+for testing we have 
+>/test/serialCommunicationTest
+
+for Arduino
+>sct.ino
+for OrangePi
+>sct.cpp
+
 arduino to Orange pi
 
 *https://www.programmingelectronics.com/serial-read/
