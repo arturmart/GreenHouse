@@ -5,9 +5,10 @@ about github: [get-started](https://docs.github.com/en/get-started/writing-on-gi
 
 --------------------------------------------------------------------------------------------------------
 ### orangePI OS
-//to download OS ubuntu focal desktop linux 5.10.75
+to download OS ubuntu focal desktop linux 5.10.75
 
 [Etcher for IoT](https://etcher.balena.io/#download-etcher)
+
 [Orange PI OS](https://docs.viam.com/installation/prepare/orange-pi-3-lts/)
 
 --------------------------------------------------------------------------------------------------------
