@@ -1,46 +1,56 @@
 ### GreenHose
-
-about github: https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/quickstart-for-writing-on-github
-
-
-
-//to download OS ubuntu focal desktop linux 5.10.75
-
-https://etcher.balena.io/#download-etcher
-https://docs.viam.com/installation/prepare/orange-pi-3-lts/
+--------------------------------------------------------------------------------------------------------
+## github tutorial
+about github: [get-started](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/quickstart-for-writing-on-github)
 
 --------------------------------------------------------------------------------------------------------
+## orangePI OS
+//to download OS ubuntu focal desktop linux 5.10.75
+
+[Etcher for IoT](https://etcher.balena.io/#download-etcher)
+[Orange PI OS](https://docs.viam.com/installation/prepare/orange-pi-3-lts/)
+
+--------------------------------------------------------------------------------------------------------
+## connecting with SSH
 
 Включение SSH на Orange Pi 3 LTS
-Способ 1: Включение SSH через командную строку (если доступен монитор и клавиатура)
+Включение SSH через командную строку (если доступен монитор и клавиатура)
 Откройте терминал на Orange Pi.
 Введите следующую команду, чтобы убедиться, что SSH установлен:
 
-sudo apt update
-sudo apt install openssh-server
+>sudo apt update
+
+>sudo apt install openssh-server
+
 
 После установки SSH-сервера убедитесь, что он запущен:
 
-sudo systemctl enable ssh
-sudo systemctl start ssh
+>sudo systemctl enable ssh
+
+>sudo systemctl start ssh
+
 
 Проверьте статус SSH:
 
-sudo systemctl status ssh
+>sudo systemctl status ssh
 
 --------------------------------------------------------------------------------------------------------
-#for vscode 
+## connecting with SSH from vscode 
 https://code.visualstudio.com/docs/remote/ssh
+
 https://www.youtube.com/watch?v=BkQ2hL0fkWM
+
 https://help.rc.ufl.edu/doc/SSH_Using_VS_Code
+
 https://code.visualstudio.com/docs/remote/ssh-tutorial
 
 https://www.ssh.com/academy/ssh/command
 
-ctrl + shift + P
-vs code> Remote-SSH: Connect to Host
+>ctrl + shift + P
 
-Add Host> ssh orangepi@<IP-адрес Orange Pi>
+>vs code> Remote-SSH: Connect to Host
+
+>Add Host> ssh orangepi@<IP-адрес Orange Pi>
 
 --------------------------------------------------------------------------------------------------------
 
@@ -238,7 +248,7 @@ overlays=uart3
 to exit >ctrl+A then K then Y
 
 ### for testing we have 
->[serialCommunicationTest](https://github.com/arturmart/GreenHose/tree/master/test/serialCommunicationTest)
+[serialCommunicationTest](https://github.com/arturmart/GreenHose/tree/master/test/serialCommunicationTest)
 
 for Arduino
 >sct.ino
