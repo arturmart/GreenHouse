@@ -242,8 +242,11 @@ to exit >ctrl+A then K then Y
 
 for Arduino
 >sct.ino
+
 for OrangePi
 >sct.cpp
+
+- - - - - - - - - - - - - - - - - - - -
 
 arduino to Orange pi
 
