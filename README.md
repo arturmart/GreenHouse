@@ -215,19 +215,19 @@ libcurl                              :библиотеку для выполне
 
 --------------------------------------------------------------------------------------------------------
 
-## Screen is a tool to analys UART(Serial) communication
+##  UART(Serial) communication with OrangePi and Arduino
 
 https://uelectronics.com/wp-content/uploads/2022/04/OrangePi-3-LTS-H6-User-manual-v1.0.pdf?srsltid=AfmBOooDsc42U6c_YOJfpQFX2p3PilGZzoPxofqVLSiIuqRE7INaIOAZ
 page 89(84)
 
-1)activate uart 
+1) activate uart 
 >sudo nano /boot/orangepiEnv.txt
 ```bush
 overlays=uart3
 ```
 >sudo reboot
 
-2)testing uart with screen
+2) Screen is a tool to analys UART(Serial) communication, testing uart with screen
 
 >sudo apt-get install screen
 
