@@ -215,8 +215,16 @@ libcurl                              :библиотеку для выполне
 
 --------------------------------------------------------------------------------------------------------
 
-### Screen is a tool to analys Serial communication
+### Screen is a tool to analys UART(Serial) communication
 
+1)activate uart 
+>sudo nano /boot/orangepiEnv.txt
+```bush
+overlays=uart1
+```
+>sudo reboot
+
+2)testing uart with screen
 
 >sudo apt-get install screen
 
