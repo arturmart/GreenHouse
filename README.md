@@ -238,7 +238,7 @@ overlays=uart3
 to exit >ctrl+A then K then Y
 
 ### for testing we have 
->/test/serialCommunicationTest
+>[serialCommunicationTest](https://github.com/arturmart/GreenHose/tree/master/test/serialCommunicationTest)
 
 for Arduino
 >sct.ino
@@ -246,7 +246,7 @@ for Arduino
 for OrangePi
 >sct.cpp
 
-- - - - - - - - - - - - - - - - - - - -
+
 
 arduino to Orange pi
 
