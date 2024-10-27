@@ -215,6 +215,14 @@ libcurl                              :библиотеку для выполне
 
 --------------------------------------------------------------------------------------------------------
 
+>sudo apt-get install screen
+
+>sudo apt-get upgrade screen
+
+>screen /dev/ttyS1 9600
+
+to exit > ctrl+A then K then Y
+
 arduino to Orange pi
 
 https://www.researchgate.net/figure/Pattern-selection-from-recorded-sample-intervals_fig2_350297410
