@@ -224,7 +224,7 @@ libcurl                              :библиотеку для выполне
 
 >screen /dev/ttyS1 9600
 
-to exit > ctrl+A then K then Y
+to exit >ctrl+A then K then Y
 
 arduino to Orange pi
 
