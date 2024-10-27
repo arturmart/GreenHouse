@@ -37,9 +37,10 @@ https://code.visualstudio.com/docs/remote/ssh-tutorial
 
 https://www.ssh.com/academy/ssh/command
 
+ctrl + shift + P
 vs code> Remote-SSH: Connect to Host
 
-ssh orangepi@<IP-адрес Orange Pi>
+Add Host> ssh orangepi@<IP-адрес Orange Pi>
 
 --------------------------------------------------------------------------------------------------------
 
@@ -100,19 +101,23 @@ https://f1atb.fr/temperature-ds18b20-and-orange-pi-zero/
 
 
 
-sudo nano /boot/orangepiEnv.txt
-overlays=w1-gpio #if theree exist i2c then overlays=w1-gpio i2c0 i2c1 ...
+>sudo nano /boot/orangepiEnv.txt
+```bush
+overlays=w1-gpio uart1 i2c0 i2c1
+#if theree exist i2c then overlays=w1-gpio i2c0 i2c1 ...
+#if theree exist serial then overlays=uart1 ...
 param_w1_pin=PD22
-param_w1_pin_int_pullup=1  
+param_w1_pin_int_pullup=1
+```
 
 or
 
-sudo orangepi-config > System > Bootenv
+>sudo orangepi-config > System > Bootenv
 
-sudo reboot
+>sudo reboot
 
-sudo modprobe w1-gpio
-sudo modprobe w1-therm
+>sudo modprobe w1-gpio
+>sudo modprobe w1-therm
 
 //gpio mode 2 out ?
 
@@ -214,7 +219,7 @@ arduino to Orange pi
 https://www.researchgate.net/figure/Pattern-selection-from-recorded-sample-intervals_fig2_350297410
 https://www.arducoding.com/2018/05/serial-debug-pada-orange-pi-menggunakan.html
 https://micro-pi.ru/rpi-pi4j-%D1%83%D1%80%D0%BE%D0%BA-6-%D1%88%D0%B8%D0%BD%D0%B0-spi/
-https://psenyukov.ru/%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%B0-%D1%81-gpio-%D1%80%D0%B0%D0%B7%D1%8A%D0%B5%D0%BC%D0%B0%D0%BC%D0%B8-%D0%B2-orange-pi/
+*https://psenyukov.ru/%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%B0-%D1%81-gpio-%D1%80%D0%B0%D0%B7%D1%8A%D0%B5%D0%BC%D0%B0%D0%BC%D0%B8-%D0%B2-orange-pi/
 https://f1atb.fr/orange-pi-gpio/
 https://www.amazon.com/SparkFun-Logic-Level-Converter-Bi-Directional/dp/B01N30ZCW9/ref=sr_1_1?dib=eyJ2IjoiMSJ9.qrzfvZOtn4CIylDG2bI-VZHxiJZkcBVgtb9gS1lu7s5IKVMoyg7MFJySEeBTWM3xrZEpWQSxSit2T8eRnBpXxrzDk2qphxGCPGfOf3hfQvS0mw12tWJ_-tW6ddzlrbdLBeQL--T21PelzQUKha1IiBkPjfc97AHP_qNKGe4_6-LZjzHgBDLa3SmsSdNe_qgFBqMiTubgt201ywSuMsG8cgPVh2b1JjHY8XASEPGEf8k._UkYar4XbircUF7dRs_yiUslKo3eLcuC1Z4ykHcsUhA&dib_tag=se&keywords=logic+level+converter&qid=1729101691&sr=8-1
 
