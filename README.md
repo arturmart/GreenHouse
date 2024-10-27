@@ -1,17 +1,17 @@
 # GreenHose
 --------------------------------------------------------------------------------------------------------
-## github tutorial
+### github tutorial
 about github: [get-started](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/quickstart-for-writing-on-github)
 
 --------------------------------------------------------------------------------------------------------
-## orangePI OS
+### orangePI OS
 //to download OS ubuntu focal desktop linux 5.10.75
 
 [Etcher for IoT](https://etcher.balena.io/#download-etcher)
 [Orange PI OS](https://docs.viam.com/installation/prepare/orange-pi-3-lts/)
 
 --------------------------------------------------------------------------------------------------------
-## connecting with SSH
+### connecting with SSH
 
 Включение SSH на Orange Pi 3 LTS
 Включение SSH через командную строку (если доступен монитор и клавиатура)
