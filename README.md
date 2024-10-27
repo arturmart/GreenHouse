@@ -103,7 +103,7 @@ https://f1atb.fr/temperature-ds18b20-and-orange-pi-zero/
 
 >sudo nano /boot/orangepiEnv.txt
 ```bush
-overlays=w1-gpio uart1 i2c0 i2c1
+overlays=w1-gpio uart3 i2c0 i2c1
 #if theree exist i2c then overlays=w1-gpio i2c0 i2c1 ...
 #if theree exist serial then overlays=uart1 ...
 param_w1_pin=PD22
@@ -132,8 +132,8 @@ or
  |  121 |   1 |    SCL.0 |   ALT2 | 0 |  5 || 6  |   |        | GND      |     |      |
  |  118 |   2 |    PWM.0 |     IN | 1 |  7 || 8  | 0 | OFF    | PL02     | 3   | 354  |
  |      |     |      GND |        |   |  9 || 10 | 0 | OFF    | PL03     | 4   | 355  |
- |  120 |   5 |    RXD.3 |    OFF | 0 | 11 || 12 | 0 | OFF    | PD18     | 6   | 114  |
- |  119 |   7 |    TXD.3 |    OFF | 0 | 13 || 14 |   |        | GND      |     |      |
+ |  120 |   5 |    RXD.3 |   ALT4 | 0 | 11 || 12 | 0 | OFF    | PD18     | 6   | 114  |
+ |  119 |   7 |    TXD.3 |   ALT4 | 0 | 13 || 14 |   |        | GND      |     |      |
  |  362 |   8 |     PL10 |    OFF | 0 | 15 || 16 | 0 | OFF    | PD15     | 9   | 111  |
  |      |     |     3.3V |        |   | 17 || 18 | 0 | OFF    | PD16     | 10  | 112  |
  |  229 |  11 |   MOSI.1 |   ALT4 | 0 | 19 || 20 |   |        | GND      |     |      |
@@ -217,10 +217,13 @@ libcurl                              :библиотеку для выполне
 
 ### Screen is a tool to analys UART(Serial) communication
 
+https://uelectronics.com/wp-content/uploads/2022/04/OrangePi-3-LTS-H6-User-manual-v1.0.pdf?srsltid=AfmBOooDsc42U6c_YOJfpQFX2p3PilGZzoPxofqVLSiIuqRE7INaIOAZ
+page 89(84)
+
 1)activate uart 
 >sudo nano /boot/orangepiEnv.txt
 ```bush
-overlays=uart1
+overlays=uart3
 ```
 >sudo reboot
 
@@ -239,6 +242,7 @@ arduino to Orange pi
 https://www.researchgate.net/figure/Pattern-selection-from-recorded-sample-intervals_fig2_350297410
 https://www.arducoding.com/2018/05/serial-debug-pada-orange-pi-menggunakan.html
 https://micro-pi.ru/rpi-pi4j-%D1%83%D1%80%D0%BE%D0%BA-6-%D1%88%D0%B8%D0%BD%D0%B0-spi/
+*https://roboticsbackend.com/raspberry-pi-arduino-serial-communication/
 *https://psenyukov.ru/%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%B0-%D1%81-gpio-%D1%80%D0%B0%D0%B7%D1%8A%D0%B5%D0%BC%D0%B0%D0%BC%D0%B8-%D0%B2-orange-pi/
 https://f1atb.fr/orange-pi-gpio/
 https://www.amazon.com/SparkFun-Logic-Level-Converter-Bi-Directional/dp/B01N30ZCW9/ref=sr_1_1?dib=eyJ2IjoiMSJ9.qrzfvZOtn4CIylDG2bI-VZHxiJZkcBVgtb9gS1lu7s5IKVMoyg7MFJySEeBTWM3xrZEpWQSxSit2T8eRnBpXxrzDk2qphxGCPGfOf3hfQvS0mw12tWJ_-tW6ddzlrbdLBeQL--T21PelzQUKha1IiBkPjfc97AHP_qNKGe4_6-LZjzHgBDLa3SmsSdNe_qgFBqMiTubgt201ywSuMsG8cgPVh2b1JjHY8XASEPGEf8k._UkYar4XbircUF7dRs_yiUslKo3eLcuC1Z4ykHcsUhA&dib_tag=se&keywords=logic+level+converter&qid=1729101691&sr=8-1
