@@ -1,18 +1,18 @@
 Readme yani
 
-|Command                      | bit        | Description                  |
-| --------------------------- | ---------- | ---------------------------- |
-| const int ERROR_NONE        | 0          | None ERROR                   |
-| const int ERROR_SYNTAX      | 1 << 0     | ERROR Syntex                 |   
-| ERROR_1L_NO_DATA            | 1 << 1     | ERROR no data for 1 Level    |  
-| ERROR_1L_TOO_MANY_DATA      | 1 << 2     | ERROR data for 1 Level > 2   |  
-| ERROR_INVALID_CRC           | 1 << 3     | ERROR Wrong CRC              |
-| ERROR_NULL_CRC              | 1 << 4     | ERROR NULL CRC               |
-| ERROR_2L_NO_DATA_PACKETS    | 1 << 5     | ERROR no data for 2 Level    |
-| ERROR_2L_TOO_MANY_PACKETS   | 1 << 6     | ERROR data for 2 Level > 2   | 
-| ERROR_3L_WRONG_DATA_PACKETS | 1 << 7     | ERROR Wrong data for 3 Level |
-| PACKETS_COUNT               | 1111 << 8  | Packets Count on 4 bits      |
-| GET_KEYWORD                 | 1 << 12    | handle KeyWord               |
+|Command                        | bit        | Description                  | Implementation                              |
+| ----------------------------- | ---------- | ---------------------------- | ------------------------------------------- |
+| `const int ERROR_NONE`        | 0          | None ERROR                   | only for declaration 1,2,3 Level feedbeck   |
+| `const int ERROR_SYNTAX`      | 1 << 0     | ERROR Syntex                 | **NO**                                      |
+| `ERROR_1L_NO_DATA`            | 1 << 1     | ERROR no data for 1 Level    | **1L**  delimiters1L[0] == 0                |
+| `ERROR_1L_TOO_MANY_DATA`      | 1 << 2     | ERROR data for 1 Level > 2   | **1L**  delimiters1L[0] > 1                 |
+| `ERROR_INVALID_CRC`           | 1 << 3     | ERROR Wrong CRC              | Wrong **CRC**                               |
+| `ERROR_NULL_CRC`              | 1 << 4     | ERROR NULL CRC               | Null **CRC**                                |
+| `ERROR_2L_NO_DATA_PACKETS`    | 1 << 5     | ERROR no data for 2 Level    | **2L**  delimiters2L[0] == 0                |
+| `ERROR_2L_TOO_MANY_PACKETS`   | 1 << 6     | ERROR data for 2 Level > 2   | **2L**  delimiters2L[0] > 7                 |
+| `ERROR_3L_WRONG_DATA_PACKETS` | 1 << 7     | ERROR Wrong data for 3 Level | **3L**  delimiters3L[0] != 2 for ROW        |
+| `PACKETS_COUNT`               | 1111 << 8  | Packets Count on 4 bits      | return **Commands** Count                   |
+| `GET_KEYWORD`                 | 1 << 12    | handle KeyWord               | if 1L 1 part is **KeyWord**                 |
 
 
 
