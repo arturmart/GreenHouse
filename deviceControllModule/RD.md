@@ -2,7 +2,7 @@ Readme yani
 
 ### feedback bit - KXXXX87654321
 
-|ID|Command                        | bit        | Description                    | Implementation                              | devCtrModule instruction        | mainCntrl
+|ID|Command                        | bit        | Description                    | Implementation                              | devCtrModule instruction        | mainCntrl |
 |--| ----------------------------- | ---------- | ------------------------------ | ------------------------------------------- | ------------------------------- |
 |- | `ERROR_NONE`                  | 0          | None ERROR                     | only for declaration 1,2,3 Level feedbeck   | -                               |
 |1 | `ERROR_SYNTAX`                | 1 << 0     | ERROR Syntex                   | **NO**                                      | -                               |
