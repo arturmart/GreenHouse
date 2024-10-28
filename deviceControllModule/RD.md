@@ -2,8 +2,8 @@ Readme yani
 
 |Command                        | bit        | Description                  | Implementation                              |
 | ----------------------------- | ---------- | ---------------------------- | ------------------------------------------- |
-| `const int ERROR_NONE`        | 0          | None ERROR                   | only for declaration 1,2,3 Level feedbeck   |
-| `const int ERROR_SYNTAX`      | 1 << 0     | ERROR Syntex                 | **NO**                                      |
+| `ERROR_NONE`                  | 0          | None ERROR                   | only for declaration 1,2,3 Level feedbeck   |
+| `ERROR_SYNTAX`                | 1 << 0     | ERROR Syntex                 | **NO**                                      |
 | `ERROR_1L_NO_DATA`            | 1 << 1     | ERROR no data for 1 Level    | **1L**  delimiters1L[0] == 0                |
 | `ERROR_1L_TOO_MANY_DATA`      | 1 << 2     | ERROR data for 1 Level > 2   | **1L**  delimiters1L[0] > 1                 |
 | `ERROR_INVALID_CRC`           | 1 << 3     | ERROR Wrong CRC              | Wrong **CRC**                               |
