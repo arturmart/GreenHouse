@@ -1,6 +1,6 @@
 Readme yani
 
-##feedback bit - KXXXX87654321
+## feedback bit - KXXXX87654321
 
 |ID|Command                        | bit        | Description                    | Implementation                              | devCtrModule instruction        |
 |--| ----------------------------- | ---------- | ------------------------------ | ------------------------------------------- | ------------------------------- |
