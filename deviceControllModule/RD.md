@@ -1,5 +1,7 @@
 Readme yani
 
+##feedback bit - KXXXX87654321
+
 |Command                        | bit        | Description                    | Implementation                              | devCtrModule instruction        |
 | ----------------------------- | ---------- | ------------------------------ | ------------------------------------------- | ------------------------------- |
 | `ERROR_NONE`                  | 0          | None ERROR                     | only for declaration 1,2,3 Level feedbeck   | -                               |
@@ -13,6 +15,9 @@ Readme yani
 | `ERROR_3L_WRONG_DATA_PACKETS` | 1 << 7     | ERROR Wrong data for 3 Level   | **3L**  delimiters3L[0] != 2 for ROW        | Don't Processing, Send again    |
 | `PACKETS_COUNT`               | 1111 << 8  | Packets Count on 4 bits        | return **Commands** Count                   | size for loop                   |
 | `GET_KEYWORD`                 | 1 << 12    | handle KeyWord                 | if 1L 1 part is **KeyWord**                 | Don't Processing, do **KeyWord**|
+
+
+
 
 
 
