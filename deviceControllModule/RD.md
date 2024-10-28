@@ -1,18 +1,18 @@
 Readme yani
 
-|Command                      | bit        |
-| --------------------------- | ---------- |
-| const int ERROR_NONE        | 0          |
-| const int ERROR_SYNTAX      | 1 << 0     |       
-| ERROR_1L_NO_DATA            | 1 << 1     |   
-| ERROR_1L_TOO_MANY_DATA      | 1 << 2     |   
-| ERROR_INVALID_CRC           | 1 << 3     | 
-| ERROR_NULL_CRC              | 1 << 4     |   
-| ERROR_2L_NO_DATA_PACKETS    | 1 << 5     |
-| ERROR_2L_TOO_MANY_PACKETS   | 1 << 6     |
-| ERROR_3L_WRONG_DATA_PACKETS | 1 << 7     |
-| PACKETS_COUNT               | 1111 << 8  |
-| GET_KEYWORD                 | 1 << 12    |
+|Command                      | bit        | Description                  |
+| --------------------------- | ---------- | ---------------------------- |
+| const int ERROR_NONE        | 0          | None ERROR                   |
+| const int ERROR_SYNTAX      | 1 << 0     | ERROR Syntex                 |   
+| ERROR_1L_NO_DATA            | 1 << 1     | ERROR no data for 1 Level    |  
+| ERROR_1L_TOO_MANY_DATA      | 1 << 2     | ERROR data for 1 Level > 2   |  
+| ERROR_INVALID_CRC           | 1 << 3     | ERROR Wrong CRC              |
+| ERROR_NULL_CRC              | 1 << 4     | ERROR NULL CRC               |
+| ERROR_2L_NO_DATA_PACKETS    | 1 << 5     | ERROR no data for 2 Level    |
+| ERROR_2L_TOO_MANY_PACKETS   | 1 << 6     | ERROR data for 2 Level > 2   | 
+| ERROR_3L_WRONG_DATA_PACKETS | 1 << 7     | ERROR Wrong data for 3 Level |
+| PACKETS_COUNT               | 1111 << 8  | Packets Count on 4 bits      |
+| GET_KEYWORD                 | 1 << 12    | handle KeyWord               |
 
 
 
