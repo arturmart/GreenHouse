@@ -1,19 +1,18 @@
 Readme yani
 
-
-     |Command                     |bit        |
-     | --- | --- |
-     |const int ERROR_NONE        |0          |
-     |const int ERROR_SYNTAX      |1 << 0     |       
-     |ERROR_1L_NO_DATA            |1 << 1     |   
-     |ERROR_1L_TOO_MANY_DATA      |1 << 2     |   
-     |ERROR_INVALID_CRC           |1 << 3     | 
-     |ERROR_NULL_CRC              |1 << 4     |   
-     |ERROR_2L_NO_DATA_PACKETS    |1 << 5     |
-     |ERROR_2L_TOO_MANY_PACKETS   |1 << 6     |
-     |ERROR_3L_WRONG_DATA_PACKETS |1 << 7     |
-     |PACKETS_COUNT               |1111 << 8  |
-     |GET_KEYWORD                 | 1 << 12   |
+|Command                      | bit        |
+| --------------------------- | ---------- |
+| const int ERROR_NONE        | 0          |
+| const int ERROR_SYNTAX      | 1 << 0     |       
+| ERROR_1L_NO_DATA            | 1 << 1     |   
+| ERROR_1L_TOO_MANY_DATA      | 1 << 2     |   
+| ERROR_INVALID_CRC           | 1 << 3     | 
+| ERROR_NULL_CRC              | 1 << 4     |   
+| ERROR_2L_NO_DATA_PACKETS    | 1 << 5     |
+| ERROR_2L_TOO_MANY_PACKETS   | 1 << 6     |
+| ERROR_3L_WRONG_DATA_PACKETS | 1 << 7     |
+| PACKETS_COUNT               | 1111 << 8  |
+| GET_KEYWORD                 | 1 << 12    |
 
 
 
