@@ -2,8 +2,8 @@ Readme yani
 
 ### feedback bit - KXXXX87654321
 
-|ID|Command                        | bit        | Description                    | Implementation                              | devCtrModule instruction        | mainCntrl |
-|--| ----------------------------- | ---------- | ------------------------------ | ------------------------------------------- | ------------------------------- |
+|ID|Command                        | bit        | Description                    | Implementation                              | devCtrModule instruction        | MainCntrl |
+|--| ----------------------------- | ---------- | ------------------------------ | ------------------------------------------- | ------------------------------- |-----------|
 |- | `ERROR_NONE`                  | 0          | None ERROR                     | only for declaration 1,2,3 Level feedbeck   | -                               |
 |1 | `ERROR_SYNTAX`                | 1 << 0     | ERROR Syntex                   | **NO**                                      | -                               |
 |2 | `ERROR_1L_NO_DATA`            | 1 << 1     | ERROR only 1 data for 1 Level  | **1L**  delimiters1L[0] == 0                | Don't Processing, Send again    |
