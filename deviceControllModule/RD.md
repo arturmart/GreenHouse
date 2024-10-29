@@ -53,13 +53,22 @@ Readme yani
 
 --------------------------------------------------------------------------------------------------------
 
-##Parsing
+## Parsing
 
-1 Level - `Data` / `CRC`
+### Delimiters
+>1 Level - **`/`**
+>
+>2 Level - **`;`**
+>
+>3 Level - **`,`**
 
-2 Level (on Data) - `Packet1` ; `Packet2` ; `...` ; `Packet8` (Max is 8)
 
-3 Level (on Packet) - `Part1` , `Part2` , `Part3` (Equal 3)
+### Struct
+>1 Level - `Data` / `CRC`
+>
+>2 Level (on Data) - `Packet1` ; `Packet2` ; `...` ; `Packet8` (Max is 8)
+>
+>3 Level (on Packet) - `Part1` , `Part2` , `Part3` (Equal 3)
 
 
 
