@@ -18,7 +18,9 @@ Readme yani
 
 
 **Sucess** for devCtrModule - EXXXX00E0000 
+
     E - Eny
+
     XXXX is 0 < toInt() < 8
 
 
