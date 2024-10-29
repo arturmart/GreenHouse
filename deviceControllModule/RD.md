@@ -85,12 +85,25 @@ Readme yani
     - `[Part3]`
 - `[CRC]`
 
-  ### Parse Cut Princip
-
+## Parse Cut Princip
+### Parse Cut function
    ``` c++
    parser.parseCut(int* delimiter, const char& trg, int size);
-   
    ```
+### Arguments
+   1) `delimiter` is pointer of Array of parsed delimiter. Wich size 2 or 8 or 3
+  ``` c++
+    int delimiters1L[2]; // Array for level 1 delimiters
+    int delimiters2L[8]; // Array for level 2 delimiters
+    int delimiters3L[3]; // Array for level 3 delimiters
+  ```
+   2) `trg` is Delimiter
+  ``` c++
+  #define DELIMITER1 '/' // First delimiter
+  #define DELIMITER2 ';' // Second delimiter
+  #define DELIMITER3 ',' // Third delimiter
+  ```
+   3) size of delimiter
 
 
 
