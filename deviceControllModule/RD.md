@@ -90,7 +90,7 @@ Readme yani
    ``` c++
    void parseCut(int* delimiter, const char& trg, int size);
    ```
-function returns on delimiter[0] count of finded delimiters, on others Cells Indexes of finded delimiters
+function returns on delimiter[0] count of finded delimiters, on others Cells Indexes of finded delimiters, Change String delimters points to `\0`
 ### Arguments
    1) `delimiter` is pointer of Array of parsed delimiter. Wich size 2 or 8 or 3
   ``` c++
