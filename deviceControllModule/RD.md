@@ -69,6 +69,22 @@ Readme yani
 >2 Level (on Data) - `Packet1` ; `Packet2` ; `...` ; `Packet8` (Max is 8)
 >
 >3 Level (on Packet) - `Part1` , `Part2` , `Part3` (Equal 3)
+>
+`[Data]`
+-`[Packet1]`
+--`[Part1]`
+--`[Part2]`
+--`[Part3]`
+-`[Packet2]`
+--`[Part1]`
+--`[Part2]`
+--`[Part3]`
+-`[Packet3]`
+--`[Part1]`
+--`[Part2]`
+--`[Part3]`
+`[CRC]`
+
 
 
 
