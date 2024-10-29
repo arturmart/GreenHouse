@@ -71,18 +71,18 @@ Readme yani
 >3 Level (on Packet) - `Part1` , `Part2` , `Part3` (Equal 3)
 >
 `[Data]`
--`[Packet1]`
---`[Part1]`
---`[Part2]`
---`[Part3]`
--`[Packet2]`
---`[Part1]`
---`[Part2]`
---`[Part3]`
--`[Packet3]`
---`[Part1]`
---`[Part2]`
---`[Part3]`
+  -`[Packet1]`
+    -`[Part1]`
+    -`[Part2]`
+    -`[Part3]`
+  -`[Packet2]`
+    -`[Part1]`
+    -`[Part2]`
+    -`[Part3]`
+  -`[Packet3]`
+    -`[Part1]`
+    -`[Part2]`
+    -`[Part3]`
 `[CRC]`
 
 
