@@ -57,9 +57,9 @@ Readme yani
 
 1 Level - `Data` / `CRC`
 
-2 Level (on Data) - `Packet1` ; `Packet2` ; `...` ; `Packet8`
+2 Level (on Data) - `Packet1` ; `Packet2` ; `...` ; `Packet8` (Max is 8)
 
-    Maximum count of Packets is 8
+3 Level (on Packet) - `Part1` , `Part2` , `Part3` (Max is 3)
 
 
 
