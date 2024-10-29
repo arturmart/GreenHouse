@@ -18,16 +18,14 @@ Readme yani
 
 
 **Sucess** for devCtrModule - EXXXX00E0000 
-
 >E - Eny
-
+>
 >XXXX is 0 < toInt() < 8
 
 
 **Sucess** for MainCntrl - EXXXX00E0000 
-
 >E - Eny
-
+>
 >XXXX is 0 < toInt() < 8
 
 >showall/8d984889
