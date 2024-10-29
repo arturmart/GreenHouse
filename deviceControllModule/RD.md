@@ -45,11 +45,11 @@ Readme yani
 |3 |83,0,1;83,1,1;83,2,1;83,3,1/61204cfc/a| 0010000000**1**00 | `ERROR_1L_TOO_MANY_DATA`
 |4 |83,0,1;83,1,1;83,2,1;83,3,1/00000000  | 001000000**1**000 | `ERROR_INVALID_CRC`
 |5 |83,0,1;83,1,1;83,2,1;83,3,1/          | 00100000**1**1000 | `ERROR_NULL_CRC`
-|6 |83,3,1/1b4cc6ee                       | 0000100**1**00000 | `ERROR_2L_NO_DATA_PACKETS`
+|6 |83,3,1/1b4cc6ee                       | 0000100**1**00000 | `ERROR_2L_NO_DATA_PACKETS` (No ERROR)
 |7 |1;2;3;4;5;6;7;8;9;10/1b4cc6ee         | 000011**1**001000 | `ERROR_2L_TOO_MANY_PACKETS`
 |8 |1,2,3,4/1b4cc6ee                      | 0000**1**00101000 | `ERROR_3L_WRONG_DATA_PACKETS`
-|X |83,0,1;83,1,1;83,2,1;83,3,1/61204cfc  | 0**0100**00000000 | `PACKETS_COUNT`
-|K |1,2,3,4/1b4cc6ee                      | **1**000000000000 | `GET_KEYWORD`
+|X |83,0,1;83,1,1;83,2,1;83,3,1/61204cfc  | 0**0100**00000000 | `PACKETS_COUNT` (No ERROR)
+|K |1,2,3,4/1b4cc6ee                      | **1**000000000000 | `GET_KEYWORD` (No ERROR)
 
 
 
