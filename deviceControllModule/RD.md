@@ -108,7 +108,8 @@ function returns on delimiter[0] count of finded delimiters, on others Cells Ind
 
 ### Diagram
 
-![1 Level Parsing (1)](https://github.com/user-attachments/assets/578d073c-da9b-4718-a4de-683725044ad6)
+![1 Level Parsing (2)](https://github.com/user-attachments/assets/abaf9b37-ffdb-4a85-b3c7-142b4dbf60b5)
+
 
 
 
