@@ -70,7 +70,7 @@ Readme yani
 >
 >3 Level (on Packet) - `Part1` , `Part2` , `Part3` (Equal 3)
 >
-`[Data]`
+*`[Data]`
 -`[Packet1]`
   -`[Part1]`
   -`[Part2]`
@@ -83,7 +83,7 @@ Readme yani
   -`[Part1]`
   -`[Part2]`
   -`[Part3]`
-`[CRC]`
+*`[CRC]`
 
 
 
