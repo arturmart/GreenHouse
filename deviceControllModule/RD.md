@@ -58,7 +58,8 @@ Readme yani
 1 Level - `Data` / `CRC`
 
 2 Level (on Data) - `Packet1` ; `Packet2` ; `...` ; `Packet8`
-- Maximum count of Packets is 8
+> [!IMPORTANT]
+> Maximum count of Packets is 8
 
 
 
