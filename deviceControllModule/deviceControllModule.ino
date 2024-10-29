@@ -19,13 +19,14 @@ const int ERROR_2L_NO_DATA_PACKETS = 1 << 5; // error chi
 const int ERROR_2L_TOO_MANY_PACKETS = 1 << 6; 
 const int ERROR_3L_WRONG_DATA_PACKETS = 1 << 7; 
 const int PACKETS_COUNT = 1111 << 8;
+const int GET_KEYWORD = 1 << 12;
 
 const int RELAY_COUNT = 4;
 int relayPin[RELAY_COUNT] = {2,3,4,5};  
 RelayController relayController(relayPin, RELAY_COUNT); 
 
 StringLimited<BUFFER_SIZE> str;   //83,0,1;83,1,1;83,2,1;83,3,1/61204cfc //83,0,0;83,1,0;83,2,0;83,3,0/745ec3dc
-int feedback = 0;
+int feedback;
 byte data[8][3];
 DataParser parser;
 
@@ -41,11 +42,43 @@ StringLimited<BUFFER_SIZE> crcCalk(StringLimited<BUFFER_SIZE>& data,int base = H
     return (crc2);
 }
 
+void serialWriteFeedBack(int feedback){
+
+      //Serial.print("feedbeck ");
+      StringLimited<BUFFER_SIZE> write = "";
+      write.AddIntEnd(feedback,BIN);
+      
+
+
+      Serial.println(write+"/"+crcCalk(write));
+   
+      //if (feedback & ERROR_SYNTAX)                    Serial.println("[ER1-SY]");
+      //if (feedback & ERROR_1L_NO_DATA)                Serial.println("[ER2-1N]");
+      //if (feedback & ERROR_1L_TOO_MANY_DATA)          Serial.println("[ER3-1M]");
+      //if (feedback & ERROR_INVALID_CRC)               Serial.println("[ER4-IC]");
+      //if (feedback & ERROR_NULL_CRC)                  Serial.println("[ER5-NC]");
+      //if (feedback & ERROR_2L_NO_DATA_PACKETS)        Serial.println("[ER6-2N]");
+      //if (feedback & ERROR_2L_TOO_MANY_PACKETS)       Serial.println("[ER7-2M]");
+      //if (feedback & ERROR_3L_WRONG_DATA_PACKETS)     Serial.println("[ER8-3W]");
+}
+void doAction(int size){
+
+  Serial.println("Do Action");
+
+  for (int i = 0; i < size; i++) {
+          //Serial.print("Row "); Serial.print(i); Serial.print(": ");for (int j = 0; j < 3; j++) {Serial.print(data[i][j]);Serial.print(" ");}Serial.println();
+
+          if(data[i][0] == 83) relayController.relayWrite(data[i][1],data[i][2]);
+      }
+
+      
+}
 void setup() {
     Serial.begin(9600); // Инициализация последовательного порта
     Serial.println("___________");
     
     parser.setCRC(crcCalk);
+  
 
 
     /*
@@ -97,35 +130,28 @@ void loop() {
       int presentSize = Serial.readBytesUntil(TERMINATOR, inputBuffer, 64);
       inputBuffer[presentSize--] = NULL;
       str = inputBuffer;
-      Serial.println(str);
+      //Serial.println(str);
+      
 
       parser.setStr(str);
-      feedback = parser.parse( data);
-      Serial.print("feedbeck "); Serial.println(feedback,BIN);
+      //int newFeedback = parser.parse( data);
 
-      int size = (feedback & PACKETS_COUNT)>>8;
+      //if(parser.parse( data))
+      
+      feedback = parser.parse( data, doAction);
+      //Serial.print("feedbeck "); Serial.println(feedback,BIN);
+      serialWriteFeedBack(feedback);
+
+      
+      //showall/8d984889
       //83,0,1;83,1,1;83,2,1;83,3,1/61204cfc
       //83,0,0;83,1,0;83,2,0;83,3,0/745ec3dc
       //83,0,1;83,1,0;83,2,0;83,3,0/6376a71c
       //83,3,1/1b4cc6ee
 
-
-      for (int i = 0; i < size; i++) {
-          Serial.print("Row "); Serial.print(i); Serial.print(": ");for (int j = 0; j < 3; j++) {Serial.print(data[i][j]);Serial.print(" ");}Serial.println();
-
-          if(data[i][0] == 83) relayController.relayWrite(data[i][1],data[i][2]);
-      }
-
-      if (feedback & ERROR_SYNTAX)                    Serial.println("[ER1-SY]");
-      if (feedback & ERROR_1L_NO_DATA)                Serial.println("[ER2-1N]");
-      if (feedback & ERROR_1L_TOO_MANY_DATA)          Serial.println("[ER3-1M]");
-      if (feedback & ERROR_INVALID_CRC)               Serial.println("[ER4-IC]");
-      if (feedback & ERROR_NULL_CRC)                  Serial.println("[ER5-NC]");
-      if (feedback & ERROR_2L_NO_DATA_PACKETS)        Serial.println("[ER6-2N]");
-      if (feedback & ERROR_2L_TOO_MANY_PACKETS)       Serial.println("[ER7-2M]");
-      if (feedback & ERROR_3L_WRONG_DATA_PACKETS)     Serial.println("[ER8-3W]");
+    }
 
 
-      }
+      
 
 }
