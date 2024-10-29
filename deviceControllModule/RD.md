@@ -85,6 +85,13 @@ Readme yani
     - `[Part3]`
 - `[CRC]`
 
+  ### Parse Cut Princip
+
+   ``` c++
+   parser.parseCut(int* delimiter, const char& trg, int size);
+   
+   ```
+
 
 
 
