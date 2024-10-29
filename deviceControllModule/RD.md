@@ -59,7 +59,7 @@ Readme yani
 
 2 Level (on Data) - `Packet1` ; `Packet2` ; `...` ; `Packet8` (Max is 8)
 
-3 Level (on Packet) - `Part1` , `Part2` , `Part3` (Max is 3)
+3 Level (on Packet) - `Part1` , `Part2` , `Part3` (Equal 3)
 
 
 
