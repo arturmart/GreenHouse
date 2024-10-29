@@ -53,7 +53,7 @@ Readme yani
 
 --------------------------------------------------------------------------------------------------------
 
-## Parsing
+## Parsing devCtrModule
 
 ### Delimiters
 >1 Level - **`/`**
@@ -105,6 +105,10 @@ function returns on delimiter[0] count of finded delimiters, on others Cells Ind
   #define DELIMITER3 ',' // Third delimiter
   ```
    3) size of delimiter
+
+### Diagram
+![1 Level Parsing](https://github.com/user-attachments/assets/fc9996c9-ea41-47df-8c39-adfddf258a41)
+
 
 
 
