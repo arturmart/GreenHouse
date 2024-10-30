@@ -36,6 +36,7 @@ Readme yani
 |83,0,1;83,1,0;83,2,0;83,3,0/6376a71c| 0010000000000
 |83,3,1/1b4cc6ee                     | 0000100100000
 
+[https://crc32.online/]
 
 ## ERROR devCtrModule
 
