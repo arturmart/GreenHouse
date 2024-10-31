@@ -21,14 +21,20 @@ const int ERROR_3L_WRONG_DATA_PACKETS = 1 << 7;
 const int PACKETS_COUNT = 1111 << 8;
 const int GET_KEYWORD = 1 << 12;
 
+
+
 const int RELAY_COUNT = 4;
 int relayPin[RELAY_COUNT] = {2,3,4,5};  
+bool states[RELAY_COUNT];
 RelayController relayController(relayPin, RELAY_COUNT); 
 
 StringLimited<BUFFER_SIZE> str;   //83,0,1;83,1,1;83,2,1;83,3,1/61204cfc //83,0,0;83,1,0;83,2,0;83,3,0/745ec3dc
 int feedback;
 byte data[8][3];
 DataParser parser;
+
+
+ 
 
 
 StringLimited<BUFFER_SIZE> crcCalk(StringLimited<BUFFER_SIZE>& data,int base = HEX){
@@ -42,15 +48,46 @@ StringLimited<BUFFER_SIZE> crcCalk(StringLimited<BUFFER_SIZE>& data,int base = H
     return (crc2);
 }
 
-void serialWriteFeedBack(int feedback){
+void serialWriteKeyWord(int feedback, enum DataParser::KEYWORD key){
 
       //Serial.print("feedbeck ");
       StringLimited<BUFFER_SIZE> write = "";
+
+      switch (key){
+        case DataParser::KEYWORD::KEYWORD_INITED:
+            write = "dcmIsInited";
+            //write += "/";
+            //write.AddIntEnd(feedback,BIN);
+       
+            //Serial.println(write);
+            Serial1.println(write+"/"+crcCalk(write));
+          break;
+        case DataParser::KEYWORD::KEYWORD_SHOWALL:
+            write = "";
+            write.AddIntEnd(relayController.getStates(),BIN);
+            
+            //write.AddIntEnd(feedback,BIN);
+            //Serial.println(write);
+            Serial1.println(write+"/"+crcCalk(write));
+          break;
+      }
+      
+      
+   
+    
+}
+
+void serialWriteFeedBack(int feedback){
+
+      //Serial.print("feedbeck ");
+      
+      StringLimited<BUFFER_SIZE> write = "";
+      
       write.AddIntEnd(feedback,BIN);
       
 
 
-      Serial.println(write+"/"+crcCalk(write));
+      Serial1.println(write+"/"+crcCalk(write));
    
       //if (feedback & ERROR_SYNTAX)                    Serial.println("[ER1-SY]");
       //if (feedback & ERROR_1L_NO_DATA)                Serial.println("[ER2-1N]");
@@ -61,21 +98,27 @@ void serialWriteFeedBack(int feedback){
       //if (feedback & ERROR_2L_TOO_MANY_PACKETS)       Serial.println("[ER7-2M]");
       //if (feedback & ERROR_3L_WRONG_DATA_PACKETS)     Serial.println("[ER8-3W]");
 }
+
 void doAction(int size){
 
-  Serial.println("Do Action");
+  //Serial.println("Do Action");
 
   for (int i = 0; i < size; i++) {
           //Serial.print("Row "); Serial.print(i); Serial.print(": ");for (int j = 0; j < 3; j++) {Serial.print(data[i][j]);Serial.print(" ");}Serial.println();
 
-          if(data[i][0] == 83) relayController.relayWrite(data[i][1],data[i][2]);
+          if(data[i][0] == 83) {
+            relayController.relayWrite(data[i][1],data[i][2]);
+            //Serial.print("Servo "); Serial.print(data[i][1]); Serial.print(" is "); Serial.println(data[i][2]);
+            }
       }
 
       
 }
 void setup() {
-    Serial.begin(9600); // Инициализация последовательного порта
-    Serial.println("___________");
+    //Serial.begin(9600);
+    //Serial.println("___________");
+    Serial1.begin(9600); // Инициализация последовательного порта
+    
     
     parser.setCRC(crcCalk);
   
@@ -126,8 +169,8 @@ void setup() {
 }
 
 void loop() {
-    if (Serial.available() > 0) {
-      int presentSize = Serial.readBytesUntil(TERMINATOR, inputBuffer, 64);
+    if (Serial1.available() > 0) {
+      int presentSize = Serial1.readBytesUntil(TERMINATOR, inputBuffer, 64);
       inputBuffer[presentSize--] = NULL;
       str = inputBuffer;
       //Serial.println(str);
@@ -138,9 +181,9 @@ void loop() {
 
       //if(parser.parse( data))
       
-      feedback = parser.parse( data, doAction);
+      feedback = parser.parse( data, doAction, serialWriteKeyWord);
       //Serial.print("feedbeck "); Serial.println(feedback,BIN);
-      serialWriteFeedBack(feedback);
+      if(!(feedback & GET_KEYWORD))serialWriteFeedBack(feedback);
 
       
       //showall/8d984889

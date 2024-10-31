@@ -13,7 +13,13 @@
 class DataParser {
 public:
 
-    const char* KEYWORD_SHOWALL = "showall";
+    enum KEYWORD {
+      KEYWORD_SHOWALL,
+      KEYWORD_INITED
+    };
+
+    const char* KEYWORD_SHOWALL_STR = "showall";
+    const char* KEYWORD_INITED_STR = "inited";
 
 
      const int ERROR_NONE = 0;               
@@ -53,7 +59,7 @@ public:
     
  
 
-    int parse( byte data[8][3],void (*doAction) (int)) { // Return type: pointer to an array of 3 bytes
+    int parse( byte data[8][3],void (*doAction) (int), void (*serialWriteFeedBack) (int,enum KEYWORD)) { // Return type: pointer to an array of 3 bytes
         int feedbeck = ERROR_NONE;
 
         if(!parseLevel1(feedbeck)){
@@ -66,9 +72,18 @@ public:
         //Serial.println(parser.getPartCharPtr(delimiters1L, 0));
         //Serial.println(parser.getPartCharPtr(delimiters1L, 1));
 
-        if(strcmp(parser.getPartCharPtr(delimiters1L, 0),KEYWORD_SHOWALL)==0){      //get KEYWORD_SHOWALL
-          Serial.println("KEYWORD_SHOWALL");
+        if(strcmp(parser.getPartCharPtr(delimiters1L, 0),KEYWORD_SHOWALL_STR)==0){      //get KEYWORD_SHOWALL
+          //Serial.println("KEYWORD_SHOWALL");
           feedbeck |= GET_KEYWORD;
+          serialWriteFeedBack(feedbeck,KEYWORD::KEYWORD_SHOWALL);
+
+          return feedbeck;
+        }
+        else if(strcmp(parser.getPartCharPtr(delimiters1L, 0),KEYWORD_INITED_STR)==0){      //get KEYWORD_SHOWALL
+          //Serial.println("KEYWORD_INITED");
+          feedbeck |= GET_KEYWORD;
+          serialWriteFeedBack(feedbeck,KEYWORD::KEYWORD_INITED);
+
           return feedbeck;
         }
         

@@ -165,7 +165,7 @@ void StringLimited<strN>::AddEnd(const char* str) {
 // Добавление целого числа в конец
 template <unsigned int strN>
 void StringLimited<strN>::AddIntEnd(const int& val, int base) {
-    char buffer[12]; // Достаточно для целых чисел
+    char buffer[64]; // Достаточно для целых чисел
     itoa(val, buffer, base); // Преобразуем число в строку
     AddEnd(buffer);
 }
@@ -283,6 +283,14 @@ StringLimited<strN>& StringLimited<strN>::operator+=(const char* second) {
     AddEnd(second); // Используем метод добавления
     return *this;
 }
+
+/*
+
+template <unsigned int strN>
+StringLimited<strN>& StringLimited<strN>::operator+=(const int& second) {
+    AddIntEnd(second,DEC); // Используем метод добавления
+    return *this;
+}*/
 
 // Оператор + для конкатенации
 template <unsigned int strN>
