@@ -12,7 +12,7 @@ public:
     SerialComm() {}  // Конструктор инициализирует индекс
 
     void setup() {
-        Serial.begin(9600);  // Инициализация последовательного порта
+        Serial1.begin(9600);  // Инициализация последовательного порта
     }
 
     /*
@@ -36,8 +36,8 @@ public:
     }
     */
     void receiveCommand() {
-        while (Serial.available() > 0) {
-              int presentSize = Serial.readBytesUntil(TERMINATOR, inputBuffer, BUFFER_SIZE);
+        while (Serial1.available() > 0) {
+              int presentSize = Serial1.readBytesUntil(TERMINATOR, inputBuffer, BUFFER_SIZE);
               inputBuffer[presentSize--] = NULL;
 
               processCommand(inputBuffer);
@@ -58,12 +58,12 @@ public:
                 digitalWrite(LED_BUILTIN, LOW);
                 delay(250);
             
-            Serial.print("OK ");  // Отправка фидбека обратно
+            Serial1.print("OK ");  // Отправка фидбека обратно
         } 
         else {
-            Serial.print("WG ");  // Фидбек для неизвестной команды
+            Serial1.print("WG ");  // Фидбек для неизвестной команды
         }
-        Serial.println(command);
+        Serial1.println(command);
     }
 };
 
