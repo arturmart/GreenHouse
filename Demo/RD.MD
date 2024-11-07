@@ -43,3 +43,23 @@
    }
 
 ```
+
+
+```cpp
+std::cout<<"level1 count: "<< parser.levelsPartCounts[0]<< std::endl;
+   for(int i =0;i<parser.levelsPartCounts[0];i++){
+      std::cout<< parser.getParsedPartLayered(i,0)<< std::endl;
+
+   }
+   std::cout<<"level2 count: "<< parser.levelsPartCounts[1]<< std::endl;
+   for(int i =0;i<parser.levelsPartCounts[1];i++){
+      std::cout<< parser.getParsedPartLayered(i,1)<< std::endl;
+
+   }
+   std::cout<<"level3 count: "<< parser.levelsPartCounts[2]<< std::endl;
+   for(int i =0;i<parser.levelsPartCounts[2];i++){
+      std::cout<< parser.getParsedPartLayered(i,2)<< std::endl;
+
+   }
+   std::cout<< std::endl;
+```
