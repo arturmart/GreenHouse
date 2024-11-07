@@ -55,6 +55,13 @@ public:
             return getChild(index);
    }
 
+   void newCildren(std::string val){
+
+      Node* newNode = new Node(val,currsor);
+      currsor->children.push_back(newNode);
+
+   }
+
    void goToChildren(int index){
       currsor = &(currsor[index]);
    }
@@ -519,6 +526,8 @@ std::vector<int> levelsPartCounts;
 int main(){
    
 TreeParsing tp("main");
+tp.newCildren("level1(1)");
+tp.newCildren("level1(2)");
 tp.print();
 
 
