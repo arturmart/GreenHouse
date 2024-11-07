@@ -13,187 +13,125 @@
 
 
 
-class TreeParsing{
-   private:
-   class Node{
-      public:
+class TreeParsing {
+private:
+    class Node {
+    public:
+        Node(std::string val = "", Node* par = nullptr) : value(val), parent(par) {}
 
-      Node(std::string val = NULL , Node* par = nullptr) : value(val), parent(par){
-         
-      }
-      
-      ~Node() {
-         children.clear();
-      }
-      Node* operator[](int index)
-         {
-            return children[index];
-         }
-
-          // Conversion operator to std::string
-      operator std::string() const {
-            return value;
-         }
-
-
-      Node* parent;
-      std::string value;
-      std::vector<Node*> children;
-      
-   };
-public:
-   TreeParsing(std::string str) : root(new Node(str)){
-      currsor = root;
-
-   }
-
-   Node* getChild(int index){
-      return currsor->children[index];
-   }
-   Node* operator[](int index)
-   {
-            return getChild(index);
-   }
-
-   void newCildren(std::string val){
-
-      Node* newNode = new Node(val,currsor);
-      currsor->children.push_back(newNode);
-
-   }
-
-   void goToChildren(int index){
-      currsor = &(currsor[index]);
-   }
-   void goToParrent(int index){
-      currsor = currsor->parent;
-   }
-
-   void print(){
-      print(currsor,0);
-   }
-
-   void print(Node* node, int level = 0) const {
-
-            for(int i = 0; i<level;i++)std::cout << "- ";
-
-            std::cout << currsor->value << std::endl;
-
-            std::vector<Node*> vec = currsor->children;
-
-            if(vec.empty()) {
-       
-            }
-            else{
-               
-               for ( Node* child : vec) {
-                 
-                  print(child, level+1);
-               }
-
-            }
-
-            
-   }
-
-   
-
-   Node* root;
-   Node* currsor;
-
-
-
-};
-
-   class Node{
-      public:
-         //constructors
-         Node(std::string val, Node* par): value(val), parent(par){
-
-         }
-         Node(std::string val): value(val){
-
-         }
-         Node(){
-
-         }
-         ~Node() {
-            deleteAllChildren();
-         }
-
-         
-         Node& getChild(int index) const{
-            if (index >= 0 && index < children.size()) {
-               return *(children[index]);
-            }else {
-            throw std::out_of_range("Index out of range");
-         }
-            
-         }
-         void newChild(std::string val){
-             Node* newNode = new Node(val,this);
-             children.push_back(newNode);
-             
-         }
-
-         void  deleteChild(int index){
-            if (index >= 0 && index < children.size()) {
-               Node* temp = children[index];
-               children.erase(children.cbegin()+index);
-               delete temp;
-            }
-         }
-         void  deleteAllChildren(){
-            while (!children.empty()) {
-               deleteChild(0);
-            }
-            /*
+        ~Node() {
             for (Node* child : children) {
-            delete child;
+                delete child;
             }
             children.clear();
-            */
-            
-         }
+        }
 
-          Node&  operator=(const Node& second)
-         {
-            // Check for self-assignment
-            if (this != &second) {
-                  value = second.value;
-                  deleteAllChildren();
-                  children = second.children;
+        Node* operator[](int index) {
+            if (index < 0 || index >= children.size()) {
+                return nullptr;
             }
-            return *this;
-         }
-         Node&  operator=(const std::string str)
-         {
-            // Check for self-assignment
-           
-            value = str;
-            return *this;
-         }
-    
+            return children[index];
+        }
 
-         Node& operator[](int index)
-         {
-            return getChild(index);
-         }
+        // Перегрузка оператора * для Node
+        Node& operator*() {
+            return *this;  // Возвращаем ссылку на текущий объект
+        }
 
-          // Conversion operator to std::string
-         operator std::string() const {
+        operator std::string() const {
             return value;
-         }
+        }
 
-         
+        int size() const {
+            return children.size();
+        }
 
-      private:
+        Node* parent;
+        std::string value;
+        std::vector<Node*> children;
+    };
 
-      Node* parent;
+public:
+    TreeParsing(std::string str) : root(new Node(str)), cursor(root) {}
 
-      std::string value;
-      std::vector<Node*> children;
-   };
+    ~TreeParsing() {
+        delete root;
+    }
+
+    Node* getChild(int index) const {
+        if (index < 0 || index >= cursor->size()) {
+            return nullptr;
+        }
+        return cursor->children[index];
+    }
+
+    Node* operator[](int index) {
+        if (cursor == nullptr || index < 0 || index >= cursor->size()) {
+            return nullptr;
+        }
+        return cursor->children[index];
+    }
+
+    const Node* operator[](int index) const {
+        if (cursor == nullptr || index < 0 || index >= cursor->size()) {
+            return nullptr;
+        }
+        return cursor->children[index];
+    }
+
+    void addChild(std::string val) {
+        Node* newNode = new Node(val, cursor);
+        cursor->children.push_back(newNode);
+    }
+
+    void goToChildren(int index) {
+        if (!cursor) return;
+        Node* child = (*cursor)[index];
+        if (child) {
+            cursor = child;
+        }
+    }
+
+    void goToParent() {
+        if (cursor && cursor->parent) {
+            cursor = cursor->parent;
+        }
+    }
+
+    void goToRoot() {
+        cursor = root;
+    }
+
+    void print() const {
+        if (root) {
+            print(root, 0);  // Печать с корня
+        }
+    }
+
+    void print(Node* node, int level = 0) const {
+        if (!node) return;
+
+        for (int i = 0; i < level; i++) {
+            std::cout << "- ";
+        }
+        std::cout << node->value << std::endl;
+
+        for (Node* child : node->children) {
+            print(child, level + 1);
+        }
+    }
+
+    operator std::string() const {
+        return cursor ? cursor->value : "";
+    }
+
+private:
+    Node* root;
+    Node* cursor;
+};
+
+
+
 
 
 
@@ -525,10 +463,50 @@ std::vector<int> levelsPartCounts;
 
 int main(){
    
-TreeParsing tp("main");
-tp.newCildren("level1(1)");
-tp.newCildren("level1(2)");
+TreeParsing tp("83,0,1;83,1,1;83,2,1;83,3,1/61204cfc");
+tp.addChild("83,0,1;83,1,1;83,2,1;83,3,1");
+tp.addChild("61204cfc");
+
+tp.goToChildren(0);
+tp.addChild("83,0,1");
+tp.addChild("83,1,1");
+tp.addChild("83,2,1");
+tp.addChild("83,3,1");
+
+tp.goToChildren(0);
+tp.addChild("83");
+tp.addChild("0");
+tp.addChild("1");
+tp.goToParent();
+
+
+
+
+tp.goToChildren(1);
+tp.addChild("83");
+tp.addChild("1");
+tp.addChild("1");
+tp.goToParent();
+
+tp.goToChildren(2);
+tp.addChild("83");
+tp.addChild("2");
+tp.addChild("1");
+tp.goToParent();
+
+tp.goToChildren(3);
+tp.addChild("83");
+tp.addChild("3");
+tp.addChild("1");
+
+tp.goToRoot();
+
 tp.print();
+//tp.currsor->size();
+
+
+
+std::cout<<std::string( *tp[0][1] );
 
 
 }
