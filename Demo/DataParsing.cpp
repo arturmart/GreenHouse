@@ -13,6 +13,91 @@
 
 
 
+class TreeParsing{
+   private:
+   class Node{
+      public:
+
+      Node(std::string val = NULL , Node* par = nullptr) : value(val), parent(par){
+         
+      }
+      
+      ~Node() {
+         children.clear();
+      }
+      Node* operator[](int index)
+         {
+            return children[index];
+         }
+
+          // Conversion operator to std::string
+      operator std::string() const {
+            return value;
+         }
+
+
+      Node* parent;
+      std::string value;
+      std::vector<Node*> children;
+      
+   };
+public:
+   TreeParsing(std::string str) : root(new Node(str)){
+      currsor = root;
+
+   }
+
+   Node* getChild(int index){
+      return currsor->children[index];
+   }
+   Node* operator[](int index)
+   {
+            return getChild(index);
+   }
+
+   void goToChildren(int index){
+      currsor = &(currsor[index]);
+   }
+   void goToParrent(int index){
+      currsor = currsor->parent;
+   }
+
+   void print(){
+      print(currsor,0);
+   }
+
+   void print(Node* node, int level = 0) const {
+
+            for(int i = 0; i<level;i++)std::cout << "- ";
+
+            std::cout << currsor->value << std::endl;
+
+            std::vector<Node*> vec = currsor->children;
+
+            if(vec.empty()) {
+       
+            }
+            else{
+               
+               for ( Node* child : vec) {
+                 
+                  print(child, level+1);
+               }
+
+            }
+
+            
+   }
+
+   
+
+   Node* root;
+   Node* currsor;
+
+
+
+};
+
    class Node{
       public:
          //constructors
@@ -29,9 +114,7 @@
             deleteAllChildren();
          }
 
-         std::string getValue() const{
-            return value;
-         }
+         
          Node& getChild(int index) const{
             if (index >= 0 && index < children.size()) {
                return *(children[index]);
@@ -95,26 +178,7 @@
             return value;
          }
 
-         void print(int level = 0) const {
-
-            for(int i = 0; i<level;i++)std::cout << "- ";
-
-            std::cout << value << std::endl;
-
-            if(children.empty()) {
-       
-            }
-            else{
-               
-               for (const Node* child : children) {
-                 
-                  child->print(level+1);
-               }
-
-            }
-
-            
-         }
+         
 
       private:
 
@@ -453,89 +517,9 @@ std::vector<int> levelsPartCounts;
 };
 
 int main(){
-   DataParsing parser;
-
-   parser.setData("83,0,1;83,1,1;83,2,1;83,3,1/61204cfc");
-   //parser.setData("83CC0CC1BB83CC1CC1BB83CC2CC1BB83CC3CC1AA61204cfc");
-   //parser.setData("1,2,3,4;5,6,7,8;9,10,11,12;13,14,15,16/a,b,c,d;e,f,g,h;i,j,k,l;m,n,o,p/A,B,C,D;E,F,G,H;I,J,K,L;M,N,O,P");
    
-   parser.parseLevel(DELIMITER1);
-   parser.parseLevel(DELIMITER2);
-   parser.parseLevel(DELIMITER3);
-   parser.calculateLevelsPartCounts();
-
-   std::cout<<std::endl;
-   parser.printVectorPair();
-
-   std::cout<<parser.levelsPartCounts.size()<<std::endl;
-   for(int i = 0; i < parser.levelsPartCounts.size();i++){
-      
-            std::cout << " + " << parser.levelsPartCounts[i]<<std::endl;
-   }
-   std::cout<<std::endl;
-
-   
-
-
-   
-   /*
-   std::cout<< parser.getParsedPartByIterotor(parser.delimiterIndex2.cbegin()+11,parser.delimiterIndex2.cbegin()+58)<< std::endl;
-   std::cout<< parser.getParsedPart(12)<< std::endl;
-   std::cout<< std::endl;
-   */
-
-   
-
-
-   std::vector<std::string> strs2 (parser.getParsedList());
-   
-
-   for(std::string str : strs2){
-      std::cout<<str<<std::endl;
-   }
-
-   std::cout<<std::endl;
-
-   
-   std::vector<std::vector<std::string>> dt = parser.getParsedListLayared();
-   for(int i = 0; i<3;i++){
-      for(int j = 0; j < parser.levelsPartCounts[i];j++)
-            std::cout<<dt[i][j]<<std::endl;
-   }
-
-   
-   /*
-   std::cout<<"level1 count: "<< parser.levelsPartCounts[0]<< std::endl;
-   for(int i =0;i<parser.levelsPartCounts[0];i++){
-      std::cout<< parser.getParsedPartLayered(i,0)<< std::endl;
-
-   }
-   std::cout<<"level2 count: "<< parser.levelsPartCounts[1]<< std::endl;
-   for(int i =0;i<parser.levelsPartCounts[1];i++){
-      std::cout<< parser.getParsedPartLayered(i,1)<< std::endl;
-
-   }
-   std::cout<<"level3 count: "<< parser.levelsPartCounts[2]<< std::endl;
-   for(int i =0;i<parser.levelsPartCounts[2];i++){
-      std::cout<< parser.getParsedPartLayered(i,2)<< std::endl;
-
-   }
-   std::cout<< std::endl;
-   */
-
-   
-
-   //for(int i = 0; i< parser.getParsedPartCount()+1; i++){std::cout<< parser.getParsedPart(i)<< std::endl;}
-   //std::cout<< parser.getParsedPartLayered(3,1)<< std::endl;
-
-   //std::cout<< parser.getParsedPart(100)<< std::endl;
-
-   //parser.printVectorPair(parser.delimiterIndex2);
-
-
-
-
+TreeParsing tp("main");
+tp.print();
 
 
 }
-
