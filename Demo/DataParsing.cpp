@@ -3,6 +3,8 @@
 #include <vector>
 #include <stack>
 
+#include <memory>
+
 
 #define BUFFER_SIZE 64
 #define DELIMITER1 '/' // First delimiter
@@ -26,17 +28,25 @@ private:
             children.clear();
         }
 
-        Node* operator[](int index) {
+        Node* getChild(int index) {
+            /*
             if (index < 0 || index >= children.size()) {
                 return nullptr;
-            }
+            }*/
             return children[index];
         }
 
+        Node* operator[](int index) {
+            return getChild(index);
+        }
+
         // Перегрузка оператора * для Node
+        
         Node& operator*() {
             return *this;  // Возвращаем ссылку на текущий объект
         }
+        
+
 
         operator std::string() const {
             return value;
@@ -58,6 +68,7 @@ public:
         delete root;
     }
 
+   /*
     Node* getChild(int index) const {
         if (index < 0 || index >= cursor->size()) {
             return nullptr;
@@ -65,6 +76,7 @@ public:
         return cursor->children[index];
     }
 
+   
     Node* operator[](int index) {
         if (cursor == nullptr || index < 0 || index >= cursor->size()) {
             return nullptr;
@@ -72,12 +84,14 @@ public:
         return cursor->children[index];
     }
 
+    
+
     const Node* operator[](int index) const {
         if (cursor == nullptr || index < 0 || index >= cursor->size()) {
             return nullptr;
         }
         return cursor->children[index];
-    }
+    }*/
 
     void addChild(std::string val) {
         Node* newNode = new Node(val, cursor);
@@ -111,21 +125,22 @@ public:
     void print(Node* node, int level = 0) const {
         if (!node) return;
 
+        std::cout << std::addressof(node) << "\t";
         for (int i = 0; i < level; i++) {
             std::cout << "- ";
         }
-        std::cout << node->value << std::endl;
+        std::cout << node->value  << std::endl;
 
         for (Node* child : node->children) {
             print(child, level + 1);
         }
     }
 
-    operator std::string() const {
-        return cursor ? cursor->value : "";
+    operator Node*() const {
+        return cursor;
     }
 
-private:
+//private:
     Node* root;
     Node* cursor;
 };
@@ -505,8 +520,30 @@ tp.print();
 //tp.currsor->size();
 
 
+std::cout<<std::endl;
+std::cout<<"root "<< std::addressof (tp.root) <<" "<< tp.root <<std::endl;
 
-std::cout<<std::string( *tp[0][1] );
+std::cout<<"cur  "<< std::addressof (tp.cursor) <<" "<< tp.cursor <<std::endl;
+tp.goToChildren(0);
 
+std::cout<<"curC "<< std::addressof (tp.cursor) <<" "<< tp.cursor <<std::endl;
+
+
+std::cout<<std::endl;
+
+std::cout<<std::addressof(*tp)            <<" "<<std::string( *tp )<<std::endl;
+std::cout<<std::addressof(*tp[0])         <<" "<<std::string( *tp[0] ) <<std::endl;
+std::cout<<std::addressof(*tp[0][0])      <<" "<<std::string( *tp[0][0] )<<std::endl;
+std::cout<<std::addressof(*tp[0][0][0])   <<" "<<std::string( *tp[0][0][0] )<<std::endl;
+std::cout<<std::addressof(*tp[0][0][0][0])<<" "<<std::string( *tp[0][0][0][0] )<<std::endl;
+
+std::cout<<std::endl;
+
+
+/*
+std::cout<<std::string( *tp )<<std::endl;
+std::cout<<std::string( *tp.getChild(0) )<<std::endl;
+std::cout<<std::string( *(tp.getChild(0))[0] )<<std::endl;
+*/
 
 }
