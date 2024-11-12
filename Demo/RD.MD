@@ -105,7 +105,28 @@ tp.goToRoot();
 
 tp.print();
 ```
+```cpp
+0xaaaac7d8af10  83,0,1;83,1,1;83,2,1;83,3,1/61204cfc
+0xaaaac7d8af90  - 83,0,1;83,1,1;83,2,1;83,3,1
+0xaaaac7d8b0a0  - - 83,0,1
+0xaaaac7d8b200  - - - 83
+0xaaaac7d8b250  - - - 0
+0xaaaac7d8b2a0  - - - 1
+0xaaaac7d8b0f0  - - 83,1,1
+0xaaaac7d8b2f0  - - - 83
+0xaaaac7d8b340  - - - 1
+0xaaaac7d8b390  - - - 1
+0xaaaac7d8b160  - - 83,2,1
+0xaaaac7d8b410  - - - 83
+0xaaaac7d8b460  - - - 2
+0xaaaac7d8b4b0  - - - 1
+0xaaaac7d8b1b0  - - 83,3,1
+0xaaaac7d8b530  - - - 83
+0xaaaac7d8b580  - - - 3
+0xaaaac7d8b5d0  - - - 1
+0xaaaac7d8b030  - 61204cfc
 
+```
 ```cpp
 tp.getLeafPtr({1})->setValue("qaq");
 ```
@@ -116,5 +137,15 @@ std::cout<< tp.getLeafPtr({0})       <<" "<<tp.getLeaf({0})<<std::endl;
 std::cout<< tp.getLeafPtr({1})       <<" "<<tp.getLeaf({1})<<std::endl;
 std::cout<< tp.getLeafPtr({0,0})       <<" "<<tp.getLeaf({0,0})<<std::endl;
 std::cout<< tp.getLeafPtr({0,0,0})       <<" "<<tp.getLeaf({0,0,0})<<std::endl;
+```
+
+```cpp
+
+//TreeParsing local data has  been public
+std::cout<<"root "<< tp.root <<" "<< tp.root <<std::endl;
+std::cout<<"cur  "<< tp.cursor <<" "<< tp.cursor <<std::endl;
+tp.goToChildren(0);
+std::cout<<"curC "<< tp.cursor <<" "<< tp.cursor <<std::endl;
+
 ```
 
