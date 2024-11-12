@@ -1,4 +1,6 @@
-
+![a1](https://github.com/user-attachments/assets/84ef1484-870c-4aa5-b08d-51eba9875b16)
+![a2](https://github.com/user-attachments/assets/907340d8-3d34-496b-908d-426da02b4d07)
+![a3](https://github.com/user-attachments/assets/4616ceee-0492-42f3-92c7-af153ed2d1dc)
 
 ```cpp
   DataParsing parser;
