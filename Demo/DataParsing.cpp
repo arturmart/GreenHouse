@@ -3,7 +3,6 @@
 #include <vector>
 #include <stack>
 
-#include <memory>
 
 
 #define BUFFER_SIZE 64
@@ -16,10 +15,11 @@
 
 
 class TreeParsing {
-private:
+public:
     class Node {
     public:
         Node(std::string val = "", Node* par = nullptr) : value(val), parent(par) {}
+
 
         ~Node() {
             for (Node* child : children) {
@@ -42,13 +42,15 @@ private:
 
         // Перегрузка оператора * для Node
         
-        Node& operator*() {
-            return *this;  // Возвращаем ссылку на текущий объект
-        }
+      //   Node& operator*() {
+      //       return *this;  // Возвращаем ссылку на текущий объект
+      //   }
         
+        void setValue(std::string str){
+         value = str;
+      }
 
-
-        operator std::string() const {
+        std::string getValue() const {
             return value;
         }
 
@@ -56,13 +58,19 @@ private:
             return children.size();
         }
 
+
         Node* parent;
         std::string value;
         std::vector<Node*> children;
     };
 
-public:
+
     TreeParsing(std::string str) : root(new Node(str)), cursor(root) {}
+
+    TreeParsing(const TreeParsing& other){
+      root = other.root;
+      cursor = other.cursor;
+    }
 
     ~TreeParsing() {
         delete root;
@@ -93,6 +101,33 @@ public:
         return cursor->children[index];
     }*/
 
+    Node* getThis(){
+      return cursor;
+      }
+
+    Node* goToLeaf(std::vector<int> path){
+      goToRoot();
+      for(int it: path) goToChildren(it); 
+      return cursor;
+    }
+
+   
+
+    Node* getLeafPtrStay(std::vector<int> path){
+      return goToLeaf(path);
+    }
+
+    Node* getLeafPtr(std::vector<int> path){
+      Node* trg = getLeafPtrStay(path);
+      goToRoot();
+      return trg;
+
+    }
+
+    std::string getLeaf(std::vector<int> path){
+      return getLeafPtrStay(path)->value;
+    }
+
     void addChild(std::string val) {
         Node* newNode = new Node(val, cursor);
         cursor->children.push_back(newNode);
@@ -100,10 +135,14 @@ public:
 
     void goToChildren(int index) {
         if (!cursor) return;
-        Node* child = (*cursor)[index];
+        Node* child = cursor->getChild(index);
         if (child) {
             cursor = child;
-        }
+        }   
+    }
+
+    void gpToLastChildren(){
+      goToChildren(cursor->size()-1);
     }
 
     void goToParent() {
@@ -125,7 +164,7 @@ public:
     void print(Node* node, int level = 0) const {
         if (!node) return;
 
-        std::cout << std::addressof(node) << "\t";
+        std::cout << node << "\t";
         for (int i = 0; i < level; i++) {
             std::cout << "- ";
         }
@@ -136,11 +175,13 @@ public:
         }
     }
 
+    
+
     operator Node*() const {
         return cursor;
     }
 
-//private:
+private:
     Node* root;
     Node* cursor;
 };
@@ -271,68 +312,74 @@ public:
       }
 
    }
-/*
-   Node& getParsedListHierarchical() {
+
+   TreeParsing getParsedListHierarchical() {
+
       int levelStack = -1;
       levelsPartCounts.clear(); //level counter
 
-      Node tree(data);
+      TreeParsing tree(data);
 
-      std::vector<   delimiterPairVector::const_iterator > itPre;    //create each Level Pre Iterator
-      std::vector< int> lastIndexes;
+      std::vector<   delimiterPairVector::const_iterator > itPre;    //create each Level Pre Iterator   
+
       
 
       for(levelStack = 0 ; levelStack<levelSize+1;levelStack++){         //Start Down    
-
-         
-
-        
          itPre.push_back(delimiterIndex2.cbegin()-1);                              //create each element of Level Pre Iterator
          levelsPartCounts.push_back(0);//level counter
 
-         lastIndexes.push_back(0);
-      }
+         tree.addChild("");
+         tree.gpToLastChildren(); //tree.goToChildren(0); 
+         //levelsPartCounts[levelStack]++;
 
-      
+         //tree.print(); //print 2
+         //std::cout<<"D"<<levelStack<<"["<<levelsPartCounts[levelStack]<<"] ";//print
+      }  //std::cout<<"\n";//print
 
       auto it = delimiterIndex2.cbegin();
 
-      for(int levelStack =0;levelStack<it->second+1;levelStack++){
-         if(levelStack) tree.newChild(" ");
-         else
-
-      }
-
       levelStack = it->second;
-
       while(it != delimiterIndex2.cend()){
-         
-         for( ; levelStack > it->second-1   ; levelStack--)//Up
+         //std::cout<<levelStack<<">"<<it->second-1<<" ";//print
+         for( ; levelStack > it->second-1   ; levelStack--)                                  //Up
          {
             
+            tree.getThis()->setValue(getParsedPartByIterotor(itPre[levelStack],it));
+            tree.goToParent();
+
             levelsPartCounts[levelStack]++;//level counter
-            packets[levelStack].push_back(getParsedPartByIterotor(itPre[levelStack],it));
 
-             
-         }
+            //tree.print();  //print 2
+            //std::cout<<"{"<<getParsedPartByIterotor(itPre[levelStack],it)<<"} ";//print
+            //std::cout<<"U"<<levelStack<<"["<<levelsPartCounts[levelStack]<<"] ";//print
+         }  //std::cout<<"\n"<<levelStack<<"<"<<std::max((it)->second,(it+1)->second)<<" ";//print
 
-         for( ; levelStack < (std::max((it)->second ,(it+1)->second)) ; levelStack++)//Down
+         for( ; levelStack < (std::max((it)->second ,(it+1)->second)) ; levelStack++)        //Down
          {
+           tree.addChild("");
+           tree.gpToLastChildren(); //tree.gpToChildren(lastNode[levelStack]);
            itPre[levelStack+1] = it;
-   
-         }
 
+           //tree.print(); //print 2
+           //std::cout<<"D"<<levelStack<<"["<<levelsPartCounts[levelStack]<<"]"<<"["<<lastNode[levelStack]<<"] "; //print
+         } //std::cout << "(" << it->first << "," << it->second << ")" << std::endl;//print
          it++;
       }
       for(; levelStack >=0; levelStack--)                      // End Up
          {
-            levelsPartCounts[levelStack]++;//level counter
-            packets[levelStack].push_back(getParsedPartByIterotor(itPre[levelStack],it));
             
-         }
-      return packets;
+            tree.getThis()->setValue(getParsedPartByIterotor(itPre[levelStack],it));
+            tree.goToParent();
+
+            levelsPartCounts[levelStack]++;//level counter
+
+            //tree.print(); //print 2
+            //std::cout<<"{"<<getParsedPartByIterotor(itPre[levelStack],it)<<"} ";//print
+            //std::cout<<"U"<<levelStack<<"["<<levelsPartCounts[levelStack]<<"]"<<"["<<lastNode[levelStack]<<"] ";//print
+         }  //std::cout<<"\n";//print
+      return tree;
    }
-*/
+
 
    std::vector<std::vector<std::string>> getParsedListLayared() {
       int levelStack = -1;
@@ -477,73 +524,22 @@ std::vector<int> levelsPartCounts;
 };
 
 int main(){
+
+   DataParsing parser;
+   parser.setData("83,0,1;83,1,1;83,2,1;83,3,1/61204cfc");
+   parser.parseLevel(DELIMITER1);
+   parser.parseLevel(DELIMITER2);
+   parser.parseLevel(DELIMITER3);
+
+   TreeParsing tp = parser.getParsedListHierarchical();
+
+   tp.print();
+
+
+
    
-TreeParsing tp("83,0,1;83,1,1;83,2,1;83,3,1/61204cfc");
-tp.addChild("83,0,1;83,1,1;83,2,1;83,3,1");
-tp.addChild("61204cfc");
-
-tp.goToChildren(0);
-tp.addChild("83,0,1");
-tp.addChild("83,1,1");
-tp.addChild("83,2,1");
-tp.addChild("83,3,1");
-
-tp.goToChildren(0);
-tp.addChild("83");
-tp.addChild("0");
-tp.addChild("1");
-tp.goToParent();
 
 
 
-
-tp.goToChildren(1);
-tp.addChild("83");
-tp.addChild("1");
-tp.addChild("1");
-tp.goToParent();
-
-tp.goToChildren(2);
-tp.addChild("83");
-tp.addChild("2");
-tp.addChild("1");
-tp.goToParent();
-
-tp.goToChildren(3);
-tp.addChild("83");
-tp.addChild("3");
-tp.addChild("1");
-
-tp.goToRoot();
-
-tp.print();
-//tp.currsor->size();
-
-
-std::cout<<std::endl;
-std::cout<<"root "<< std::addressof (tp.root) <<" "<< tp.root <<std::endl;
-
-std::cout<<"cur  "<< std::addressof (tp.cursor) <<" "<< tp.cursor <<std::endl;
-tp.goToChildren(0);
-
-std::cout<<"curC "<< std::addressof (tp.cursor) <<" "<< tp.cursor <<std::endl;
-
-
-std::cout<<std::endl;
-
-std::cout<<std::addressof(*tp)            <<" "<<std::string( *tp )<<std::endl;
-std::cout<<std::addressof(*tp[0])         <<" "<<std::string( *tp[0] ) <<std::endl;
-std::cout<<std::addressof(*tp[0][0])      <<" "<<std::string( *tp[0][0] )<<std::endl;
-std::cout<<std::addressof(*tp[0][0][0])   <<" "<<std::string( *tp[0][0][0] )<<std::endl;
-std::cout<<std::addressof(*tp[0][0][0][0])<<" "<<std::string( *tp[0][0][0][0] )<<std::endl;
-
-std::cout<<std::endl;
-
-
-/*
-std::cout<<std::string( *tp )<<std::endl;
-std::cout<<std::string( *tp.getChild(0) )<<std::endl;
-std::cout<<std::string( *(tp.getChild(0))[0] )<<std::endl;
-*/
 
 }
