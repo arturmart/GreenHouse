@@ -63,3 +63,58 @@ std::cout<<"level1 count: "<< parser.levelsPartCounts[0]<< std::endl;
    }
    std::cout<< std::endl;
 ```
+
+```cpp
+TreeParsing tp("83,0,1;83,1,1;83,2,1;83,3,1/61204cfc");
+tp.addChild("83,0,1;83,1,1;83,2,1;83,3,1");
+tp.addChild("61204cfc");
+
+tp.goToChildren(0);
+tp.addChild("83,0,1");
+tp.addChild("83,1,1");
+tp.addChild("83,2,1");
+tp.addChild("83,3,1");
+
+tp.goToChildren(0);
+tp.addChild("83");
+tp.addChild("0");
+tp.addChild("1");
+tp.goToParent();
+
+
+
+
+tp.goToChildren(1);
+tp.addChild("83");
+tp.addChild("1");
+tp.addChild("1");
+tp.goToParent();
+
+tp.goToChildren(2);
+tp.addChild("83");
+tp.addChild("2");
+tp.addChild("1");
+tp.goToParent();
+
+tp.goToChildren(3);
+tp.addChild("83");
+tp.addChild("3");
+tp.addChild("1");
+
+tp.goToRoot();
+
+tp.print();
+```
+
+```cpp
+tp.getLeafPtr({1})->setValue("qaq");
+```
+
+```cpp
+std::cout<< tp.getLeafPtr({})       <<" "<<tp.getLeaf({})<<std::endl;
+std::cout<< tp.getLeafPtr({0})       <<" "<<tp.getLeaf({0})<<std::endl;
+std::cout<< tp.getLeafPtr({1})       <<" "<<tp.getLeaf({1})<<std::endl;
+std::cout<< tp.getLeafPtr({0,0})       <<" "<<tp.getLeaf({0,0})<<std::endl;
+std::cout<< tp.getLeafPtr({0,0,0})       <<" "<<tp.getLeaf({0,0,0})<<std::endl;
+```
+
