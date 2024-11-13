@@ -9,13 +9,33 @@
 
 
 
-   TreeParsing::Node::Node(std::string val = "", Node* par = nullptr) : value(val), parent(par) {}
+   TreeParsing::Node::Node(std::string val = "", Node* par = nullptr) : value(val), parent(par) {
+      //std::cout<<this<<" Node("<<value<<")"<<std::endl;
+   }
 
    TreeParsing::Node::~Node() {
-      for (Node* child : children) {
-            delete child;
+      //std::cout<<this<<" ~Node"<<std::endl;
+
+      // for (Node* child : children) {
+      //       delete child;
+      // }
+      // children.clear();
+
+      clearNode();
+   }
+   void TreeParsing::Node::clearNode(){
+      
+      
+      for(int i = 0; i < size();i++){
+         
+         getChild(i)->clearNode();
       }
+
       children.clear();
+      //delete this;
+ 
+
+
    }
 
    TreeParsing::Node* TreeParsing::Node::getChild(int index) {
@@ -30,6 +50,7 @@
       return getChild(index);
    }
 
+ 
    /*
    // Перегрузка оператора * для Node
    Node& operator*() {
@@ -53,13 +74,62 @@
    TreeParsing::TreeParsing(std::string str) : root(new Node(str)), cursor(root) {}
 
    TreeParsing::TreeParsing(const TreeParsing& other){
+   delete root;
+   //root = other.root;
+   //cursor = other.cursor;
+   }
+
+   TreeParsing::TreeParsing(const TreeParsing&& other){
    root = other.root;
    cursor = other.cursor;
+
+   delete(other.root);
+   delete(other.cursor);
    }
 
    TreeParsing::~TreeParsing() {
-      delete root;
+      clearTree();
+      //delete root;
    }
+
+   /*TreeParsing& TreeParsing::operator=(const TreeParsing& other) {
+        if (this == &other) return *this;
+
+        clearTree();
+
+        root = other.root;
+        cursor = root;
+
+        return *this;
+
+   }*/
+
+   TreeParsing& TreeParsing::operator=( TreeParsing&& other) {
+        if (this == &other) return *this;
+
+        //clearTree();
+
+        root = other.root;
+        cursor = root;
+
+        other.root = nullptr;
+        other.cursor = nullptr;
+
+        return *this;
+
+   }
+
+   
+   void TreeParsing::clearTree(){
+      root->clearNode();
+
+      delete(root);
+      root = nullptr;
+      cursor = nullptr;
+   }
+   
+   
+
 
 /*
    Node* getChild(int index) const {
@@ -163,6 +233,7 @@
     }
 
 
+/*
 int main(){
    TreeParsing tp("83,0,1;83,1,1;83,2,1;83,3,1/61204cfc");
    tp.addChild("83,0,1;83,1,1;83,2,1;83,3,1");
@@ -211,4 +282,4 @@ int main(){
    std::cout<< tp.getLeafPtr({0,0,0})       <<" "<<tp.getLeaf({0,0,0})<<std::endl;
 
 }
-
+*/
