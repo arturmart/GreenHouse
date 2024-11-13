@@ -1,195 +1,21 @@
+#include "TreeParsing.h"
+
 #include <iostream>
 #include <string>
 #include <vector>
-#include <stack>
 
 
 
-#define BUFFER_SIZE 64
-#define DELIMITER1 '/' // First delimiter
-#define DELIMITER2 ';' // Second delimiter
-#define DELIMITER3 ',' // Third delimiter
+
+
+
+const char delimiters[] = {'/',';',','};
+
+// #define DELIMITER1 '/' // First delimiter
+// #define DELIMITER2 ';' // Second delimiter
+// #define DELIMITER3 ',' // Third delimiter
 
 #define delimiterPairVector std::vector<std::pair<int,int>>
-
-
-
-class TreeParsing {
-public:
-    class Node {
-    public:
-        Node(std::string val = "", Node* par = nullptr) : value(val), parent(par) {}
-
-
-        ~Node() {
-            for (Node* child : children) {
-                delete child;
-            }
-            children.clear();
-        }
-
-        Node* getChild(int index) {
-            /*
-            if (index < 0 || index >= children.size()) {
-                return nullptr;
-            }*/
-            return children[index];
-        }
-
-        Node* operator[](int index) {
-            return getChild(index);
-        }
-
-        // Перегрузка оператора * для Node
-        
-      //   Node& operator*() {
-      //       return *this;  // Возвращаем ссылку на текущий объект
-      //   }
-        
-        void setValue(std::string str){
-         value = str;
-      }
-
-        std::string getValue() const {
-            return value;
-        }
-
-        int size() const {
-            return children.size();
-        }
-
-
-        Node* parent;
-        std::string value;
-        std::vector<Node*> children;
-    };
-
-
-    TreeParsing(std::string str) : root(new Node(str)), cursor(root) {}
-
-    TreeParsing(const TreeParsing& other){
-      root = other.root;
-      cursor = other.cursor;
-    }
-
-    ~TreeParsing() {
-        delete root;
-    }
-
-   /*
-    Node* getChild(int index) const {
-        if (index < 0 || index >= cursor->size()) {
-            return nullptr;
-        }
-        return cursor->children[index];
-    }
-
-   
-    Node* operator[](int index) {
-        if (cursor == nullptr || index < 0 || index >= cursor->size()) {
-            return nullptr;
-        }
-        return cursor->children[index];
-    }
-
-    
-
-    const Node* operator[](int index) const {
-        if (cursor == nullptr || index < 0 || index >= cursor->size()) {
-            return nullptr;
-        }
-        return cursor->children[index];
-    }*/
-
-    Node* getThis(){
-      return cursor;
-      }
-
-    Node* goToLeaf(std::vector<int> path){
-      goToRoot();
-      for(int it: path) goToChildren(it); 
-      return cursor;
-    }
-
-   
-
-    Node* getLeafPtrStay(std::vector<int> path){
-      return goToLeaf(path);
-    }
-
-    Node* getLeafPtr(std::vector<int> path){
-      Node* trg = getLeafPtrStay(path);
-      goToRoot();
-      return trg;
-
-    }
-
-    std::string getLeaf(std::vector<int> path){
-      return getLeafPtrStay(path)->value;
-    }
-
-    void addChild(std::string val) {
-        Node* newNode = new Node(val, cursor);
-        cursor->children.push_back(newNode);
-    }
-
-    void goToChildren(int index) {
-        if (!cursor) return;
-        Node* child = cursor->getChild(index);
-        if (child) {
-            cursor = child;
-        }   
-    }
-
-    void gpToLastChildren(){
-      goToChildren(cursor->size()-1);
-    }
-
-    void goToParent() {
-        if (cursor && cursor->parent) {
-            cursor = cursor->parent;
-        }
-    }
-
-    void goToRoot() {
-        cursor = root;
-    }
-
-    void print() const {
-        if (root) {
-            print(root, 0);  // Печать с корня
-        }
-    }
-
-    void print(Node* node, int level = 0) const {
-        if (!node) return;
-
-        std::cout << node << "\t";
-        for (int i = 0; i < level; i++) {
-            std::cout << "- ";
-        }
-        std::cout << node->value  << std::endl;
-
-        for (Node* child : node->children) {
-            print(child, level + 1);
-        }
-    }
-
-    
-
-    operator Node*() const {
-        return cursor;
-    }
-
-private:
-    Node* root;
-    Node* cursor;
-};
-
-
-
-
-
 
 class DataParsing{
 public:
@@ -200,8 +26,16 @@ public:
       levelSize = -1;
    }
 
-   void parse(){
-     
+   TreeParsing parse(std::string data, const char* delimiters, int level){
+      setData(data);
+
+      for(int i =0; i< level;i++){
+         parseLevel(delimiters[i]);
+      }
+
+      TreeParsing tree(data);
+
+      return getParsedListHierarchical();
 
    }
 
@@ -322,21 +156,24 @@ public:
 
       std::vector<   delimiterPairVector::const_iterator > itPre;    //create each Level Pre Iterator   
 
-      
+      auto it = delimiterIndex2.cbegin();
 
       for(levelStack = 0 ; levelStack<levelSize+1;levelStack++){         //Start Down    
          itPre.push_back(delimiterIndex2.cbegin()-1);                              //create each element of Level Pre Iterator
          levelsPartCounts.push_back(0);//level counter
 
-         tree.addChild("");
-         tree.gpToLastChildren(); //tree.goToChildren(0); 
+
+         if(levelStack <= it->second){
+            tree.addChild("");
+            tree.gpToLastChildren(); //tree.goToChildren(0); 
+         }
          //levelsPartCounts[levelStack]++;
 
          //tree.print(); //print 2
          //std::cout<<"D"<<levelStack<<"["<<levelsPartCounts[levelStack]<<"] ";//print
       }  //std::cout<<"\n";//print
 
-      auto it = delimiterIndex2.cbegin();
+      
 
       levelStack = it->second;
       while(it != delimiterIndex2.cend()){
@@ -526,14 +363,16 @@ std::vector<int> levelsPartCounts;
 int main(){
 
    DataParsing parser;
-   parser.setData("83,0,1;83,1,1;83,2,1;83,3,1/61204cfc");
-   parser.parseLevel(DELIMITER1);
-   parser.parseLevel(DELIMITER2);
-   parser.parseLevel(DELIMITER3);
+   
 
-   TreeParsing tp = parser.getParsedListHierarchical();
+   TreeParsing tp = parser.parse("83,0,1;83,1,1;83,2,1;83,3,1/61204cfc", delimiters,3);
 
    tp.print();
+   std::cout<<std::endl;
+
+   //tp = parser.parse("12,0,1;12,1,1;12,2,1;12,3,1/61204cfc", delimiters,3);
+
+   //tp.print();
 
 
 
