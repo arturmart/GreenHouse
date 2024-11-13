@@ -13,11 +13,14 @@ public:
         Node(std::string val, Node* par);
         ~Node();
 
+        void clearNode();
         Node* getChild(int index);
         Node* operator[](int index);
         void setValue(std::string str);
         std::string getValue() const;
         int size() const;
+        
+
 
         Node* parent;
         std::string value;
@@ -27,7 +30,13 @@ public:
 
     TreeParsing(std::string str);
     TreeParsing(const TreeParsing& other);
+    TreeParsing(const TreeParsing&& other);
     ~TreeParsing();
+
+    void clearTree();
+
+    //TreeParsing& operator=(const TreeParsing& other);
+    TreeParsing& operator=(TreeParsing&& other);
 
     Node* getThis();
     Node* getLeafPtrStay(std::vector<int> path);
