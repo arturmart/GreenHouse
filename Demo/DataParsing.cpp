@@ -1,32 +1,23 @@
-#include "TreeParsing.h"
 
+#include "TreeParsing.h"
+#include "DataParsing.h"
 #include <iostream>
 #include <string>
 #include <vector>
 
 
 
-
-
-
-const char delimiters[] = {'/',';',','};
-
-// #define DELIMITER1 '/' // First delimiter
-// #define DELIMITER2 ';' // Second delimiter
-// #define DELIMITER3 ',' // Third delimiter
-
 #define delimiterPairVector std::vector<std::pair<int,int>>
 
-class DataParsing{
-public:
 
-   void setData(std::string data){
+
+   void DataParsing::setData(std::string data){
       this->data = data;
       delimiterIndex2.clear();
       levelSize = -1;
    }
 
-   TreeParsing parse(std::string data, const char* delimiters, int level){
+   TreeParsing DataParsing::parse(std::string data, const char* delimiters, int level){
       setData(data);
 
       for(int i =0; i< level;i++){
@@ -35,15 +26,15 @@ public:
 
       TreeParsing tree(data);
 
-      return getParsedListHierarchical();
+      return DataParsing::getParsedListHierarchical();
 
    }
 
-   int getParsedPartCount(){
+   int DataParsing::getParsedPartCount(){
       return delimiterIndex2.size();
    }
 
-   void calculateLevelsPartCounts(){
+   void DataParsing::calculateLevelsPartCounts(){
       int levelStack = -1;
       levelsPartCounts.clear();
       
@@ -81,7 +72,7 @@ public:
      
    }
 
-   int parseLevel(const char delimiter,int level = -1){
+   int DataParsing::parseLevel(const char delimiter,int level){
       
      
 
@@ -135,7 +126,7 @@ public:
       return(count);
    }
 
-   void printVectorPair() const{
+   void DataParsing::printVectorPair() const{
       auto it = delimiterIndex2.cbegin();
 
       while(it != delimiterIndex2.cend()){
@@ -147,7 +138,7 @@ public:
 
    }
 
-   TreeParsing getParsedListHierarchical() {
+   TreeParsing DataParsing::getParsedListHierarchical() {
 
       int levelStack = -1;
       levelsPartCounts.clear(); //level counter
@@ -218,7 +209,7 @@ public:
    }
 
 
-   std::vector<std::vector<std::string>> getParsedListLayared() {
+   std::vector<std::vector<std::string>> DataParsing::getParsedListLayared() {
       int levelStack = -1;
       levelsPartCounts.clear(); //level counter
 
@@ -274,7 +265,7 @@ public:
       return packets;
    }
 
-   std::string getParsedPartLayered(int index, int Layer = 0) const{
+   std::string DataParsing::getParsedPartLayered(int index, int Layer) const{
     
 
       auto it = delimiterIndex2.cbegin();
@@ -300,7 +291,7 @@ public:
    }
 
 
-   std::vector<std::string> getParsedList() const{
+   std::vector<std::string> DataParsing::getParsedList() const{
 
       std::vector<std::string> strs;
       delimiterPairVector::const_iterator it = delimiterIndex2.cbegin();
@@ -318,7 +309,7 @@ public:
 
    }
    
-   std::string getParsedPart(int index) const{
+   std::string DataParsing::getParsedPart(int index) const{
 
       auto it = delimiterIndex2.cbegin()+index;
 
@@ -330,7 +321,7 @@ public:
    }
 
    
-   std::string getParsedPartByIterotor(delimiterPairVector::const_iterator from, delimiterPairVector::const_iterator to) const{
+   std::string DataParsing::getParsedPartByIterotor(delimiterPairVector::const_iterator from, delimiterPairVector::const_iterator to) const{
       const int delSize = 1;
 
       int indexBegin = 0;
@@ -349,36 +340,5 @@ public:
    }
 
    
-   
-
-   
-int levelSize = -1;
-std::string data;
-delimiterPairVector delimiterIndex2;
-std::vector<int> levelsPartCounts;
 
 
-};
-
-int main(){
-
-   DataParsing parser;
-   
-
-   TreeParsing tp = parser.parse("83,0,1;83,1,1;83,2,1;83,3,1/61204cfc", delimiters,3);
-
-   tp.print();
-   std::cout<<std::endl;
-
-   //tp = parser.parse("12,0,1;12,1,1;12,2,1;12,3,1/61204cfc", delimiters,3);
-
-   //tp.print();
-
-
-
-   
-
-
-
-
-}
