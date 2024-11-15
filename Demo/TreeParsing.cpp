@@ -27,8 +27,8 @@
       
       
       for(int i = 0; i < size();i++){
-         
-         getChild(i)->clearNode();
+         // getChild(i)->clearNode();
+         delete children[i];
       }
 
       children.clear();
@@ -74,17 +74,15 @@
    TreeParsing::TreeParsing(std::string str) : root(new Node(str)), cursor(root) {}
 
    TreeParsing::TreeParsing(const TreeParsing& other){
-   delete root;
    //root = other.root;
    //cursor = other.cursor;
    }
 
-   TreeParsing::TreeParsing(const TreeParsing&& other){
-   root = other.root;
-   cursor = other.cursor;
-
-   delete(other.root);
-   delete(other.cursor);
+   TreeParsing::TreeParsing(TreeParsing&& other){
+      root = other.root;
+      cursor = other.cursor;
+      other.root = nullptr;
+      other.cursor = nullptr;
    }
 
    TreeParsing::~TreeParsing() {
@@ -92,22 +90,21 @@
       //delete root;
    }
 
-   /*TreeParsing& TreeParsing::operator=(const TreeParsing& other) {
-        if (this == &other) return *this;
+   // TreeParsing& TreeParsing::operator=(const TreeParsing& other) {
+   //      if (this == &other) return *this;
 
+   //      clearTree();
+
+   //      root = other.root;
+   //      cursor = root;
+
+   //      return *this;
+
+   // }
+
+   TreeParsing& TreeParsing::operator=(TreeParsing&& other) {
+        if (this == &other) return *this;
         clearTree();
-
-        root = other.root;
-        cursor = root;
-
-        return *this;
-
-   }*/
-
-   TreeParsing& TreeParsing::operator=( TreeParsing&& other) {
-        if (this == &other) return *this;
-
-        //clearTree();
 
         root = other.root;
         cursor = root;
@@ -116,12 +113,12 @@
         other.cursor = nullptr;
 
         return *this;
-
    }
 
    
    void TreeParsing::clearTree(){
-      root->clearNode();
+      if (root)
+         root->clearNode();
 
       delete(root);
       root = nullptr;
@@ -197,6 +194,7 @@
    void TreeParsing::gpToLastChildren(){
    goToChildren(cursor->size()-1);
    }
+
 
    void TreeParsing::goToParent() {
       if (cursor && cursor->parent) {
