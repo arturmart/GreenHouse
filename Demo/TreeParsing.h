@@ -30,12 +30,12 @@ public:
 
     TreeParsing(std::string str);
     TreeParsing(const TreeParsing& other);
-    TreeParsing(const TreeParsing&& other);
+    TreeParsing(TreeParsing&& other);
     ~TreeParsing();
 
     void clearTree();
 
-    //TreeParsing& operator=(const TreeParsing& other);
+    // TreeParsing& operator=(const TreeParsing& other);
     TreeParsing& operator=(TreeParsing&& other);
 
     Node* getThis();
