@@ -14,6 +14,7 @@
    void DataParsing::setData(std::string data){
       this->data = data;
       delimiterIndex2.clear();
+      //levelsPartCounts.clear();
       levelSize = -1;
    }
 
@@ -23,8 +24,8 @@
       for(int i =0; i< level;i++){
          parseLevel(delimiters[i]);
       }
-
-      TreeParsing tree(data);
+      //DataParsing::printVectorPair();
+      //TreeParsing tree(data);
 
       return DataParsing::getParsedListHierarchical();
 
@@ -161,14 +162,16 @@
          //levelsPartCounts[levelStack]++;
 
          //tree.print(); //print 2
-         //std::cout<<"D"<<levelStack<<"["<<levelsPartCounts[levelStack]<<"] ";//print
-      }  //std::cout<<"\n";//print
+         std::cout<<"D"<<levelStack<<"["<<levelsPartCounts[levelStack]<<"] ";//print
+      }  std::cout<<"\n";//print
 
       
 
       levelStack = it->second;
+      //levelStack = std::min( it->second, levelSize);
+
       while(it != delimiterIndex2.cend()){
-         //std::cout<<levelStack<<">"<<it->second-1<<" ";//print
+         std::cout<<levelStack<<">"<<it->second-1<<" ";//print
          for( ; levelStack > it->second-1   ; levelStack--)                                  //Up
          {
             
@@ -178,9 +181,9 @@
             levelsPartCounts[levelStack]++;//level counter
 
             //tree.print();  //print 2
-            //std::cout<<"{"<<getParsedPartByIterotor(itPre[levelStack],it)<<"} ";//print
-            //std::cout<<"U"<<levelStack<<"["<<levelsPartCounts[levelStack]<<"] ";//print
-         }  //std::cout<<"\n"<<levelStack<<"<"<<std::max((it)->second,(it+1)->second)<<" ";//print
+            std::cout<<"{"<<getParsedPartByIterotor(itPre[levelStack],it)<<"} ";//print
+            std::cout<<"U"<<levelStack<<"["<<levelsPartCounts[levelStack]<<"] ";//print
+         }  std::cout<<"\n"<<levelStack<<"<"<<std::max((it)->second,(it+1)->second)<<" ";//print
 
          for( ; levelStack < (std::max((it)->second ,(it+1)->second)) ; levelStack++)        //Down
          {
@@ -189,8 +192,8 @@
            itPre[levelStack+1] = it;
 
            //tree.print(); //print 2
-           //std::cout<<"D"<<levelStack<<"["<<levelsPartCounts[levelStack]<<"]"<<"["<<lastNode[levelStack]<<"] "; //print
-         } //std::cout << "(" << it->first << "," << it->second << ")" << std::endl;//print
+           std::cout<<"D"<<levelStack<<"["<<((levelStack > 0) ? levelsPartCounts[levelStack] : '-' )<<"]"; //print
+         } std::cout << "(" << it->first << "," << it->second << ")" << std::endl;//print
          it++;
       }
       for(; levelStack >=0; levelStack--)                      // End Up
@@ -202,9 +205,9 @@
             levelsPartCounts[levelStack]++;//level counter
 
             //tree.print(); //print 2
-            //std::cout<<"{"<<getParsedPartByIterotor(itPre[levelStack],it)<<"} ";//print
-            //std::cout<<"U"<<levelStack<<"["<<levelsPartCounts[levelStack]<<"]"<<"["<<lastNode[levelStack]<<"] ";//print
-         }  //std::cout<<"\n";//print
+            std::cout<<"{"<<getParsedPartByIterotor(itPre[levelStack],it)<<"} ";//print
+            std::cout<<"U"<<levelStack<<"["<<levelsPartCounts[levelStack]<<"]";//print
+         }  std::cout<<"\n";//print
       return tree;
    }
 
