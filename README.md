@@ -288,5 +288,17 @@ https://www.amazon.com/SparkFun-Logic-Level-Converter-Bi-Directional/dp/B01N30ZC
 ## Telegram
 [TGBot](https://github.com/reo7sp/tgbot-cpp )
 
+### for install
+>sudo apt install g++ make binutils cmake libboost-system-dev libssl-dev zlib1g-dev libcurl4-openssl-dev
+
+>sudo apt install libboost-test-dev doxygen
+
+
+>git clone https://github.com/reo7sp/tgbot-cpp
+>cd tgbot-cpp
+>cmake .
+>make -j4
+>sudo make install
+
 
 
