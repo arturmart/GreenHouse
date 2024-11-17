@@ -156,3 +156,22 @@ std::cout<<"curC "<< tp.cursor <<" "<< tp.cursor <<std::endl;
 
 ```
 
+
+```cpp
+const char delimiters[] = {'/',';',','};
+
+int main(){
+
+   DataParsing parser;
+
+   std::string str = "83,0,1;83,1,1;83,2,1;83,3,1/61204cfc";
+   
+
+   TreeParsing tp = parser.parse(str, delimiters ,3);
+   tp.print();
+   std::cout<<std::endl;
+
+
+}
+```
+
