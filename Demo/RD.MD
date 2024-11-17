@@ -175,3 +175,11 @@ int main(){
 }
 ```
 
+```cpp
+   std::cout<<DC.combinePair(DC.combineListOfLists(strs,',',';'), "crc",'/') << std::endl;
+   std::cout<<DC.combinePair(DC.combineListOfLists({strs1,strs2,strs3,strs4},',',';'), "crc",'/') << std::endl;
+   std::cout<<DC.combinePair(DC.combineList({DC.combineList({"a","b","c"},','),
+                                             DC.combineList({"a","b","c"},','),
+                                             DC.combineList({"a","b","c"},','),
+                                             DC.combineList({"a","b","c"},',')},';'), "crc",'/') << std::endl;
+```
