@@ -16,6 +16,19 @@ Readme yani
 |X | `PACKETS_COUNT`               | 1111 << 8  | Packets Count on 4 bits        | return **Commands** Count                   | size for loop                   | -
 |K | `GET_KEYWORD`                 | 1 << 12    | handle KeyWord                 | if 1L 1 part is **KeyWord**                 | Don't Processing, do **KeyWord**| -
 
+```cpp
+const int ERROR_NONE = 0;               
+const int ERROR_SYNTAX = 1 << 0;       
+const int ERROR_1L_NO_DATA = 1 << 1;   
+const int ERROR_1L_TOO_MANY_DATA = 1 << 2;   
+const int ERROR_INVALID_CRC = 1 << 3; 
+const int ERROR_NULL_CRC = 1 << 4;   
+const int ERROR_2L_NO_DATA_PACKETS = 1 << 5; // error chi
+const int ERROR_2L_TOO_MANY_PACKETS = 1 << 6; 
+const int ERROR_3L_WRONG_DATA_PACKETS = 1 << 7; 
+const int PACKETS_COUNT = 1111 << 8;
+const int GET_KEYWORD = 1 << 12;
+```
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 **Sucess** for devCtrModule - EXXXX00E0000 
 >E - Eny
