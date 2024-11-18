@@ -291,6 +291,9 @@ https://www.amazon.com/SparkFun-Logic-Level-Converter-Bi-Directional/dp/B01N30ZC
 [for True Build](https://hub.docker.com/r/reo7sp/tgbot-cpp/)
 
 
+
+
+
 ### for install
 >sudo apt install g++ make binutils cmake libboost-system-dev libssl-dev zlib1g-dev libcurl4-openssl-dev
 
@@ -307,6 +310,9 @@ https://www.amazon.com/SparkFun-Logic-Level-Converter-Bi-Directional/dp/B01N30ZC
 >make -j4
 
 >sudo make install
+
+
+sudo dpkg-reconfigure tzdata // to change Time
 
 
 [JSON to chart](https://jsontochart.com/)
