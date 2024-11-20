@@ -9,7 +9,7 @@ Executor EXE;
 
 int main() {
     // Замените "YOUR_BOT_TOKEN" на ваш реальный токен бота
-    std::string token = "---";
+    std::string token = "7804127004:AAEQkzTISnsoBpESYJQdVERP6gX10d6rA1c";
     TgBot::Bot bot(token);
 
     
