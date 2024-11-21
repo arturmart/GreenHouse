@@ -21,7 +21,7 @@ connection test
    DS18B20::DS18B20(std::string sensorID):sensorID(sensorID){
    }
 
-   float DS18B20::readTemperature() {
+   float DS18B20::readTemperature() const{
 
    std::string sensorPath = basePath + sensorID;
 

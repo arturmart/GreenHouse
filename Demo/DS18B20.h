@@ -12,7 +12,7 @@ const std::string basePath = "/sys/bus/w1/devices/";
 class DS18B20{
    public:
    DS18B20(std::string sensorID);
-   float readTemperature();
+   float readTemperature() const;
 
    private:
    std::string sensorID;

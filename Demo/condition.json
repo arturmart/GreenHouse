@@ -1,0 +1,40 @@
+{
+
+   "process" :{
+      "title" : "main",
+      "condition":[
+         {"time": ["onOut",  "20:00:00","08:00:00"]},
+         {"time": ["on",  "10:00:00","14:30:00"]},
+         {"time": ["on",  "12:30:00","18:00:00"]}
+      ],
+      "executing" : [
+         {"process" : {
+            "title" : "heating",
+            "condition" : {
+               "temp": ["<",  "15"],
+               "outTemp":["<", "5"]},
+            "executing" : {
+               "command": {"Bake":"true"}},
+            "executingElse" : {
+               "command": {"Bake":"false"}}
+         }},
+         {"process" : {
+            "title" : "watering",
+   
+            "condition" : {
+               "temp": ["<",  "15"],
+               "outTemp":["<", "5"]},
+            "executing" : {
+               "Bake": ["true"]},
+            "executingElse" : {
+               "Bake": ["false"]}
+         }}
+      ]
+
+   }
+
+
+   
+
+
+}

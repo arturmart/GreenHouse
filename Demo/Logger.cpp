@@ -4,8 +4,7 @@
 
 #include "DS18B20.h"
 //DS18B20.cpp
-
-
+//g++ -o logger Logger.cpp jsonManager.cpp -I/usr/include/cairo -lcairo TimeManager.cpp DS18B20.cpp
 
 class Logger{
    public:
@@ -67,7 +66,7 @@ class Logger{
 
 
 
-
+//g++ -o logger Logger.cpp jsonManager.cpp -I/usr/include/cairo -lcairo TimeManager.cpp DS18B20.cpp
 int main(){
    Logger LOG("Log1",{"data","temp"});
 
