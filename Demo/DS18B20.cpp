@@ -54,6 +54,11 @@ connection test
     return temperature;
 }
 
+   bool DS18B20::isInited() const {
+        std::string sensorPath = basePath + sensorID;
+        struct stat buffer;
+        return (stat((sensorPath + "/w1_slave").c_str(), &buffer) == 0); // Проверка, существует ли файл
+    }
 
 /*
 int main() {

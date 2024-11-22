@@ -10,9 +10,9 @@
       "executing" : [
          {"process" : {
             "title" : "heating",
-            "condition" : {
-               "temp": ["<",  "15"],
-               "outTemp":["<", "5"]},
+            "condition" : [
+                ["<", "temp",  "15"],
+                ["<", "outTemp",  "5"]],
             "executing" : {
                "command": {"Bake":"true"}},
             "executingElse" : {

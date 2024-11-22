@@ -10,119 +10,90 @@ WeatherAPI::WeatherAPI(const std::string& apiKey, double lat, double lon)
     : apiKey(apiKey), latitude(lat), longitude(lon) {}
 
 // Function to get current weather data
-std::vector<std::string> WeatherAPI::getWeather(const std::vector<std::string>& requestedData) const{
+//std::vector<std::string> WeatherAPI::getWeather(const std::vector<std::string>& requestedData) const{
+void WeatherAPI::updateWeather()  {
     std::string url = "https://api.openweathermap.org/data/2.5/weather?lat=" + std::to_string(latitude) +
                       "&lon=" + std::to_string(longitude) +
                       "&appid=" + apiKey + "&units=metric";
     std::string response = makeRequest(url);
 
-    std::vector<std::string> weatherData;
+    std::unordered_map<std::string, std::string> weatherData;
 
     if (!response.empty()) {
         try {
             json jsonData = json::parse(response);
 
-            for (const auto& data : requestedData) {
-                if (data == "temperature" && jsonData.contains("main") && jsonData["main"].contains("temp")) {
-                    double temperature = jsonData["main"]["temp"];
-                    weatherData.push_back(std::to_string(temperature) + "°C");
-                }
-                else if (data == "humidity" && jsonData["main"].contains("humidity")) {
-                    int humidity = jsonData["main"]["humidity"];
-                    weatherData.push_back(std::to_string(humidity) + "%");
-                }
-                else if (data == "weather" && !jsonData["weather"].empty()) {
-                    std::string weatherDescription = jsonData["weather"][0]["description"];
-                    weatherData.push_back(weatherDescription);
-                }
-                else if (data == "pressure" && jsonData["main"].contains("pressure")) {
-                    int pressure = jsonData["main"]["pressure"];
-                    weatherData.push_back(std::to_string(pressure) + "hPa");
-                }
-                else if (data == "windspeed" && jsonData["wind"].contains("speed")) {
-                    double windSpeed = jsonData["wind"]["speed"];
-                    weatherData.push_back(std::to_string(windSpeed) + "m/s");
-                }
-                else {
-                    weatherData.push_back("Error: " + data + " not found.");
-                }
-            }
+            // Извлечение данных из JSON
+            weatherData["temp"] = std::to_string(jsonData["main"]["temp"].get<double>()) ;//+ "°C"
+            weatherData["humidity"] = std::to_string(jsonData["main"]["humidity"].get<int>()) ;//+ "%"
+            weatherData["weather"] = jsonData["weather"][0]["description"];
+            weatherData["pressure"] = std::to_string(jsonData["main"]["pressure"].get<int>()) ;//+ "hPa"
+            weatherData["windspeed"] = std::to_string(jsonData["wind"]["speed"].get<double>()) ;//+ "m/s"
         } catch (json::exception& e) {
-            weatherData.push_back("Error parsing JSON: " + std::string(e.what()));
+            weatherData["error"] = "Error parsing JSON: " + std::string(e.what());
         }
     } else {
-        weatherData.push_back("Error: Empty response.");
+        weatherData["error"] = "Empty response.";
     }
 
-    return weatherData;
+    weather = weatherData;
+
 }
 
 // Function to get weather forecast data
-std::vector<std::vector<std::string>> WeatherAPI::getForecast(const std::vector<std::string>& requestedData) const{
+//std::vector<std::vector<std::string>> WeatherAPI::getForecast(const std::vector<std::string>& requestedData) const{
+void WeatherAPI::updateForecast()  {
     std::string url = "https://api.openweathermap.org/data/2.5/forecast?lat=" + std::to_string(latitude) +
                       "&lon=" + std::to_string(longitude) +
                       "&appid=" + apiKey + "&units=metric";
     std::string response = makeRequest(url);
 
-    std::vector<std::vector<std::string>> forecastData;  // Vector of vector of strings
+    std::vector<std::unordered_map<std::string, std::string>> forecastData;
 
     if (!response.empty()) {
         try {
             json jsonData = json::parse(response);
+
             if (jsonData.contains("list") && !jsonData["list"].empty()) {
                 for (const auto& forecast : jsonData["list"]) {
-                    std::string time = forecast["dt_txt"];
-                    std::vector<std::string> forecastEntry;  // Entry for one forecast
+                    std::unordered_map<std::string, std::string> forecastEntry;
 
-                    for (const auto& data : requestedData) {
-                        if (data == "data" && forecast["main"].contains("temp")) {
-                            forecastEntry.push_back(time);
-                        }
-                        else if (data == "dataUnix" && forecast["main"].contains("temp")) {
-                            long long timeUnix = forecast["dt"];
-                            forecastEntry.push_back(std::to_string(timeUnix));
-                        }
-                        else if (data == "temperature" && forecast["main"].contains("temp")) {
-                            double temperature = forecast["main"]["temp"];
-                            forecastEntry.push_back(std::to_string(temperature) + "°C");
-                        }
-                        else if (data == "humidity" && forecast["main"].contains("humidity")) {
-                            int humidity = forecast["main"]["humidity"];
-                            forecastEntry.push_back(std::to_string(humidity) + "%");
-                        }
-                        else if (data == "weather" && !forecast["weather"].empty()) {
-                            std::string weatherDescription = forecast["weather"][0]["description"];
-                            forecastEntry.push_back(weatherDescription);
-                        }
-                        else if (data == "pressure" && forecast["main"].contains("pressure")) {
-                            int pressure = forecast["main"]["pressure"];
-                            forecastEntry.push_back(std::to_string(pressure) + "hPa");
-                        }
-                        else if (data == "windspeed" && forecast["wind"].contains("speed")) {
-                            double windSpeed = forecast["wind"]["speed"];
-                            forecastEntry.push_back(std::to_string(windSpeed) + "m/s");
-                        }
-                        else {
-                            forecastEntry.push_back(data + " not found for " + time);
-                        }
-                    }
+                    // Добавляем дату в формате строки
+                    forecastEntry["date"] = forecast["dt_txt"].get<std::string>();
 
+                    // Добавляем временную метку в формате UNIX
+                    forecastEntry["dateUnix"] = std::to_string(forecast["dt"].get<int>());
+
+                    // Добавляем другие параметры прогноза
+                    forecastEntry["temp"] = std::to_string(forecast["main"]["temp"].get<double>()) ;//+ "°C"
+                    forecastEntry["humidity"] = std::to_string(forecast["main"]["humidity"].get<int>()) ;//+ "%"
+                    forecastEntry["weather"] = forecast["weather"][0]["description"];
+                    forecastEntry["pressure"] = std::to_string(forecast["main"]["pressure"].get<int>()) ;//+ "hPa"
+                    forecastEntry["windspeed"] = std::to_string(forecast["wind"]["speed"].get<double>()) ;//+ "m/s"
+
+                    // Добавляем запись прогноза в итоговый массив
                     forecastData.push_back(forecastEntry);
                 }
             } else {
-                std::vector<std::string> errorEntry = {"Error: Forecast data not found."};
-                forecastData.push_back(errorEntry);
+                forecastData.push_back({{"error", "Forecast data not found."}});
             }
         } catch (json::exception& e) {
-            std::vector<std::string> errorEntry = {"Error parsing JSON: " + std::string(e.what())};
-            forecastData.push_back(errorEntry);
+            forecastData.push_back({{"error", "Error parsing JSON: " + std::string(e.what())}});
         }
     } else {
-        std::vector<std::string> errorEntry = {"Error: Empty response."};
-        forecastData.push_back(errorEntry);
+        forecastData.push_back({{"error", "Empty response."}});
     }
 
-    return forecastData;
+    forecast = forecastData;
+
+}
+
+std::unordered_map<std::string, std::string> WeatherAPI::getWeather() const{
+    return weather;
+}
+
+std::vector<std::unordered_map<std::string, std::string>> WeatherAPI::getForecast() const{
+    return forecast;
 }
 
 // Function to make HTTP requests using libcurl
@@ -152,4 +123,55 @@ size_t WeatherAPI::WriteCallback(void* contents, size_t size, size_t nmemb, std:
     size_t totalSize = size * nmemb;
     buffer->append((char*)contents, totalSize);
     return totalSize;
+}
+
+bool WeatherAPI::isInited() const {
+    std::string url = "https://api.openweathermap.org/data/2.5/weather?lat=" + std::to_string(latitude) +
+                      "&lon=" + std::to_string(longitude) +
+                      "&appid=" + apiKey + "&units=metric";
+    std::string response = makeRequest(url);
+
+    if (!response.empty()) {
+        try {
+            json jsonData = json::parse(response);
+            // Проверка, если API возвращает код состояния "cod" со значением 200
+            if (jsonData.contains("cod") && jsonData["cod"] == 200) {
+                return true;  // API инициализирован и отвечает успешно
+            }
+        } catch (json::exception& e) {
+            // Если произошла ошибка при разборе ответа, возвращаем false
+            std::cerr << "Ошибка при разборе JSON в isInited: " << e.what() << std::endl;
+        }
+    }
+    return false;  // Если ответ пустой или неправильный, возвращаем false
+}
+
+
+bool WeatherAPI::isInternetAvailable() const {
+    // Попробуем выполнить запрос к публичному DNS-серверу (например, 8.8.8.8 от Google)
+    CURL* curl;
+    CURLcode res;
+    std::string readBuffer;
+    
+    curl = curl_easy_init();
+    if (curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, "http://8.8.8.8"); // Публичный DNS Google
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5L); // Таймаут в 5 секунд
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        
+        res = curl_easy_perform(curl); // Выполняем запрос
+        
+        // Если запрос прошел успешно, интернет доступен
+        if (res == CURLE_OK) {
+            curl_easy_cleanup(curl);
+            return true;
+        } else {
+            // Ошибка при подключении, интернет недоступен
+            std::cerr << "Ошибка при проверке интернета: " << curl_easy_strerror(res) << std::endl;
+            curl_easy_cleanup(curl);
+            return false;
+        }
+    }
+    return false;  // Не удалось инициализировать curl, интернет недоступен
 }

@@ -1,56 +1,83 @@
-#include <iostream>
-#include "DS18B20.h"
-#include "WeatherAPI.h"
+#include "DataGeter.h"
 
 
-//g++ -o datageter DataGeter.cpp DS18B20.cpp WeatherAPI.cpp -lcurl -std=c++17
-// sudo modprobe w1-gpio
-// sudo modprobe w1-therm
+//g++ -o datageter DataGeter.cpp DS18B20.cpp WeatherAPI.cpp -lcurl 
 
-class DataGeter{
-   public:
-   virtual double getData() const = 0;
+// Temp class implementation
+TempStrategy::TempStrategy(const std::string& address) : temp(address) {}
 
-};
+double TempStrategy::getData() const {
+    return tempData;
+}
+bool TempStrategy::isInited() const{
+    return temp.isInited();
+}
+void TempStrategy::update() {
+    tempData = temp.readTemperature();
+}
+double TempStrategy::getNewData(){
+   update();
+   return getData();
+}
 
-class Temp: public DataGeter{
-   
 
-   public:
-   Temp(const std::string& addres):temp(addres){//"28-0303979433f8"
+
+// OutTemp class implementation
+OutTempStrategy::OutTempStrategy(WeatherAPI& weather):weather(weather){}
+
+double OutTempStrategy::getData() const {
+    return std::stod(((weather.getWeather()) ["temp"]));
+}
+bool OutTempStrategy::isInited() const{
+    return weather.isInited()&&weather.isInternetAvailable();
+}
+void OutTempStrategy::update() {
+    weather.updateWeather();
+}
+double OutTempStrategy::getNewData(){
+   update();
+   return getData();
+}
+
+
+DataGetter::DataGetter(): weather("fcb989e5668460983b3cb819569b8c1d", 40.059456, 44.474210){
+
+      strategy["temp"] = new TempStrategy("28-0303979433f8");
+      
+      strategy["outTemp"] = new OutTempStrategy(weather); 
 
    }
-   double getData() const override {
-        return temp.readTemperature();
+
+DataGetter::~DataGetter() {
+        strategy.clear();
     }
-
-   private:
-   DS18B20 temp;
-};
-
-class OutTemp: public DataGeter{
+double DataGetter::getData(const std::string& strategyStr) {//const
+   return ((strategy[strategyStr])->getData());
    
+}
+bool DataGetter::isInited(const std::string& strategyStr) {//const
+   return ((strategy[strategyStr])->isInited());
+}
+void DataGetter::update(const std::string& strategyStr){
+   (strategy[strategyStr])->update();
+}
+double DataGetter::getNewData(const std::string& strategyStr){
+   return ((strategy[strategyStr])->getNewData());
+   
+}
 
-   public:
-   OutTemp(const std::string& apiKey, double lat, double lon): weather(apiKey,lat,lon){//"28-0303979433f8"
 
+
+int main() {
+   DataGetter dataGetter;
+
+   for(int i = 0; i<1000;i++){
+
+      std::cout<<dataGetter.getNewData("temp")<<" ";
+      //std::cout<<dataGetter.getNewData("outTemp")<<" ";
+      std::cout<<std::endl;
+
+
+      //std::cout<<dataGetter.getNewData("temp")<<" "<<dataGetter.getNewData("outTemp")<<std::endl;
    }
-   double getData() const override {
-        return std::stod(weather.getWeather({"temperature"})[0]);
-    }
-
-   private:
-    WeatherAPI weather;
-};
-
-int main(){
-   Temp temp("28-0303979433f8");
-   OutTemp outTemp("fcb989e5668460983b3cb819569b8c1d", 40.059456, 44.474210);
-
-   //DataGeter temp = (new Temp("28-0303979433f8"));
-   //DataGeter outTemp = new OutTemp("fcb989e5668460983b3cb819569b8c1d", 40.059456, 44.474210);
-
-   std::cout<<temp.getData()<<std::endl;
-   std::cout<<outTemp.getData()<<std::endl;
-
 }
