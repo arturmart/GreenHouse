@@ -42,7 +42,7 @@
       return data;
 
    }
-   std::string DataCombine::combinePair(std::string str1,std::string str2, const char& delimiter){
+   std::string DataCombine::combinePair(const std::string& str1,const std::string& str2, const char& delimiter){
       std::string data;
 
 

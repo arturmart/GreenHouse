@@ -16,7 +16,7 @@ public:
     virtual double getNewData() = 0;
 };
 
-class TempStrategy : public IDataGetter {
+class TempStrategy : public IDataGetter {//Temp Module
 public:
     TempStrategy(const std::string& address);
     double getData() const override;
@@ -29,7 +29,7 @@ private:
     double tempData;
 };
 
-class OutTempStrategy : public IDataGetter {
+class OutTempStrategy : public IDataGetter {//API Temp
 public:
     OutTempStrategy(WeatherAPI& weather);
     double getData() const override;
@@ -38,9 +38,12 @@ public:
     double getNewData() override;
 
 private:
+    
     WeatherAPI& weather;
     std::unordered_map<std::string, std::string> dataMap;
 };
+
+
 
 class DataGetter{
    public:
@@ -56,6 +59,7 @@ class DataGetter{
 
    private:
 
+  
    WeatherAPI weather;
    std::unordered_map<std::string, IDataGetter*> strategy;
 };

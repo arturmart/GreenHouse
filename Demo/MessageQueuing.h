@@ -4,6 +4,7 @@
 #include <iostream>
 #include <queue>
 #include <string>
+#include <utility>
 
 
 
@@ -11,13 +12,11 @@ class MessageQueuing{
    public:
    MessageQueuing();
 
-   void push(std::string str);
-
-   std::string getFront();
-
+   void push(const std::string& str);
+   std::string  getFront();
    void removeFront();
-
    bool empty();
+   void printAll();
    
 
    private:

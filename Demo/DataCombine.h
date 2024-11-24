@@ -9,7 +9,7 @@ class DataCombine{
 
    std::string combineListOfLists(const std::vector<std::vector<std::string>>& strsList, const char& delimiter1, const char& delimiter2);
    std::string combineList(std::vector<std::string> strs, const char& delimiter);
-   std::string combinePair(std::string str1,std::string str2, const char& delimiter);
+   std::string combinePair(const std::string&  str1,const std::string& str2, const char& delimiter);
    std::string combinePair(std::pair<std::string,std::string> pair, const char& delimiter);
 
 };

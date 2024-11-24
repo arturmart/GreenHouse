@@ -8,15 +8,16 @@
 
    }
 
-   void MessageQueuing::push(std::string str){
+   void MessageQueuing::push(const std::string& str){
       CommandList.push(str);
    }
 
-   std::string MessageQueuing::getFront(){
+   std::string  MessageQueuing::getFront(){
       if(!CommandList.empty())
          return CommandList.front();
       else return NULL;
    }
+
 
    void MessageQueuing::removeFront(){
       if(!CommandList.empty())
@@ -25,6 +26,17 @@
 
    bool MessageQueuing::empty(){
       return CommandList.empty();
+   }
+
+   void MessageQueuing::printAll(){
+      std::cout<<"Q[";
+      for (size_t i = 0; i < CommandList.size(); i++)
+      {
+         std::cout << CommandList.front() << " ";
+         CommandList.push(CommandList.front());
+         CommandList.pop();
+      }
+      std::cout<<"]"<<std::endl;
    }
    
 

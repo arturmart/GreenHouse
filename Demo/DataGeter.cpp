@@ -4,7 +4,7 @@
 //g++ -o datageter DataGeter.cpp DS18B20.cpp WeatherAPI.cpp -lcurl 
 
 // Temp class implementation
-TempStrategy::TempStrategy(const std::string& address) : temp(address) {}
+TempStrategy::TempStrategy(const std::string& address) : temp(address), tempData(-255) {}
 
 double TempStrategy::getData() const {
     return tempData;

@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <thread>
 
-#define WAIT_UNTIL_SEC 5
+#define WAIT_UNTIL_SEC 7
 
 SerialComm::SerialComm(){
     
@@ -44,10 +44,15 @@ std::string SerialComm::readLine() {
         }
         read += incomingByte;  // Сохранение байта
     }
-    return read;
+    return read.empty() ? "" : read;
 }
 
 std::string SerialComm::executeCommand(const std::string& str) {
+    if (str.empty()) {
+        std::cerr << "Ошибка: Пустая строка команды!" << std::endl;
+        return "";
+    }
+
     auto start = std::chrono::system_clock::now();
     writeLine(str);
 
@@ -56,14 +61,26 @@ std::string SerialComm::executeCommand(const std::string& str) {
         auto now = std::chrono::system_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - start).count();
 
-        std::this_thread::sleep_for(std::chrono::microseconds(50000));  // Задержка на 500 мс
         read = readLine();
 
-        if (elapsed >= WAIT_UNTIL_SEC || !read.empty()) {
+        if (elapsed >= WAIT_UNTIL_SEC) {
+            std::cerr << "Время ожидания ответа истекло. Ответ не получен." << std::endl;
             break;
         }
+
+        if (!read.empty()) {
+            break;
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));  // Задержка между попытками
     }
-    return read;
+
+    // Если строка пуста, не передаем в дальнейшую обработку
+    if (read.empty()) {
+        std::cerr << "Ошибка: Пустой ответ от устройства!" << std::endl;
+    }
+
+    return read.empty() ? "" : read;
 }
 
 
