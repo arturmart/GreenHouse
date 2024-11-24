@@ -2,19 +2,19 @@ Readme yani
 
 ### feedback bit - KXXXX87654321
 
-|ID|Command                        | bit        | Description                    | Implementation                              | devCtrModule instruction        | MainCntrl |
-|--| ----------------------------- | ---------- | ------------------------------ | ------------------------------------------- | ------------------------------- |-----------|
-|- | `ERROR_NONE`                  | 0          | None ERROR                     | only for declaration 1,2,3 Level feedbeck   | -                               | -
-|1 | `ERROR_SYNTAX`                | 1 << 0     | ERROR Syntex                   | **NO**                                      | -                               | -
-|2 | `ERROR_1L_NO_DATA`            | 1 << 1     | ERROR only 1 data for 1 Level  | **1L**  delimiters1L[0] == 0                | Don't Processing, Send again    | Send again
-|3 | `ERROR_1L_TOO_MANY_DATA`      | 1 << 2     | ERROR data for 1 Level > 2     | **1L**  delimiters1L[0] > 1                 | Don't Processing, Send again    | Send again
-|4 | `ERROR_INVALID_CRC`           | 1 << 3     | ERROR Wrong CRC                | Wrong **CRC**                               | Don't Processing, Send again    | Send again
-|5 | `ERROR_NULL_CRC`              | 1 << 4     | ERROR NULL CRC                 | Null **CRC**                                | Don't Processing, Send again    | Send again
-|6 | `ERROR_2L_NO_DATA_PACKETS`    | 1 << 5     | **Warning** only 1 data 2 Level| **2L**  delimiters2L[0] == 0                | Do                              | OK
-|7 | `ERROR_2L_TOO_MANY_PACKETS`   | 1 << 6     | ERROR data for 2 Level > 8     | **2L**  delimiters2L[0] > 7                 | **Do size=8, Send next?**       | Send next?
-|8 | `ERROR_3L_WRONG_DATA_PACKETS` | 1 << 7     | ERROR Wrong data for 3 Level   | **3L**  delimiters3L[0] != 2 for ROW        | Don't Processing, Send again    | Send again
-|X | `PACKETS_COUNT`               | 1111 << 8  | Packets Count on 4 bits        | return **Commands** Count                   | size for loop                   | -
-|K | `GET_KEYWORD`                 | 1 << 12    | handle KeyWord                 | if 1L 1 part is **KeyWord**                 | Don't Processing, do **KeyWord**| -
+|ID|Command                        | bit        |Code      | Description                    | Implementation                              | devCtrModule instruction        | MainCntrl |
+|--| ----------------------------- | ---------- |----------| ------------------------------ | ------------------------------------------- | ------------------------------- |-----------|
+|- | `ERROR_NONE`                  | 0          |'-'| None ERROR                     | only for declaration 1,2,3 Level feedbeck   | -                            | -
+|1 | `ERROR_SYNTAX`                | 1 << 0     |'[ER1-SY]'| ERROR Syntex                   | **NO**                                      | -                            | -
+|2 | `ERROR_1L_NO_DATA`            | 1 << 1     |'[ER2-1N]'|  ERROR only 1 data for 1 Level | **1L**  delimiters1L[0] == 0                | Don't Processing, Send again |Send again
+|3 | `ERROR_1L_TOO_MANY_DATA`      | 1 << 2     |'[ER3-1M]'|  ERROR data for 1 Level > 2     | **1L**  delimiters1L[0] > 1                 | Don't Processing, Send again    | Send again
+|4 | `ERROR_INVALID_CRC`           | 1 << 3     |'[ER4-IC]'|  ERROR Wrong CRC                | Wrong **CRC**                               | Don't Processing, Send again    | Send again
+|5 | `ERROR_NULL_CRC`              | 1 << 4     |'[ER5-NC]'|  ERROR NULL CRC                 | Null **CRC**                                | Don't Processing, Send again    | Send again
+|6 | `ERROR_2L_NO_DATA_PACKETS`    | 1 << 5     |'[W6-2N]'|  **Warning** only 1 data 2 Level| **2L**  delimiters2L[0] == 0                | Do                              | OK
+|7 | `ERROR_2L_TOO_MANY_PACKETS`   | 1 << 6     |'[ER7-2M]'|  ERROR data for 2 Level > 8     | **2L**  delimiters2L[0] > 7                 | **Do size=8, Send next?**       | Send next?
+|8 | `ERROR_3L_WRONG_DATA_PACKETS` | 1 << 7     |'[ER8-3W]'|  ERROR Wrong data for 3 Level   | **3L**  delimiters3L[0] != 2 for ROW        | Don't Processing, Send again    | Send again
+|X | `PACKETS_COUNT`               | 1111 << 8  |'[WPC]'| Packets Count on 4 bits        | return **Commands** Count                   | size for loop                   | -
+|K | `GET_KEYWORD`                 | 1 << 12    |'[WK-KW]'|  handle KeyWord                 | if 1L 1 part is **KeyWord**                 | Don't Processing, do **KeyWord**| -
 
 ```cpp
 const int ERROR_NONE = 0;               
