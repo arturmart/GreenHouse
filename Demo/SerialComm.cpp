@@ -32,7 +32,10 @@ SerialComm::~SerialComm() {
 }
 
 void SerialComm::writeLine(const std::string& str) {
-    serialPrintf(serialPort, str.c_str());  // Отправка команды
+    if(!str.empty() && str!="")
+        serialPrintf(serialPort, str.c_str());  // Отправка команды
+    else std::cout << "\033[31m[SerialComm::writeLine]\033[0m Null Data write!" << std::endl;
+    
 }
 
 std::string SerialComm::readLine() {
@@ -48,8 +51,8 @@ std::string SerialComm::readLine() {
 }
 
 std::string SerialComm::executeCommand(const std::string& str) {
-    if (str.empty()) {
-        std::cerr << "Ошибка: Пустая строка команды!" << std::endl;
+    if (str.empty() || str=="") {
+        std::cout << "\033[31m[SerialComm::executeCommand]\033[0m Ошибка: Пустая строка команды!" << std::endl;
         return "";
     }
 
@@ -64,7 +67,7 @@ std::string SerialComm::executeCommand(const std::string& str) {
         read = readLine();
 
         if (elapsed >= WAIT_UNTIL_SEC) {
-            std::cerr << "Время ожидания ответа истекло. Ответ не получен." << std::endl;
+            std::cout << "\033[31m[SerialComm::executeCommand]\033[0m Время ожидания ответа истекло. Ответ не получен." << std::endl;
             break;
         }
 
@@ -77,7 +80,7 @@ std::string SerialComm::executeCommand(const std::string& str) {
 
     // Если строка пуста, не передаем в дальнейшую обработку
     if (read.empty()) {
-        std::cerr << "Ошибка: Пустой ответ от устройства!" << std::endl;
+        std::cout << "\033[31m[SerialComm::executeCommand]\033[0m Пустой ответ от устройства!" << std::endl;
     }
 
     return read.empty() ? "" : read;

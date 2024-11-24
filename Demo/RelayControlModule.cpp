@@ -85,7 +85,7 @@
         messageQueue.printAll();
         feedback = serialComm.executeCommand(messageQueue.getFront());
         
-        if (!feedback.empty()) {
+        if (!feedback.empty() && feedback != "") {
             if (chackCRC(feedback)) {  
                 if (checkFeedBack(feedback)) {
                     std::cout << "rp(" << i << ") " << messageQueue.getFront() << " feedback: " << feedback << std::endl;
@@ -98,18 +98,13 @@
                 }
             } else {
                 std::cerr << "\033[31m[CRC Error]\033[0m Invalid CRC for feedback: " << feedback << std::endl;
-                continue;  // Прерывание при ошибке CRC
             }
         } else {
             std::cerr << "\033[31m[Empty Feedback]\033[0m No feedback received!" << std::endl;
-            continue;  // Прерывание, если нет ответа
         }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));  // Задержка между попытками
     }
-
-    // Если не удалось получить правильный ответ после 5 попыток
     std::cerr << "\033[31m(DCM don't get Data)\033[0m Failed to get valid feedback after 5 attempts." << std::endl;
-    // Можно добавить дополнительные действия, например, убрать команду из очереди, если необходимо:
-    // messageQueue.removeFront();
    }
 
     bool RelayControlModule::sandInited() {

@@ -56,6 +56,7 @@ private:
     I2CLCD& lcd;
 };
 
+std::mutex rcmMutex;
 
 class RCM_Strategy: public IExecutor{
    public:
@@ -65,11 +66,17 @@ class RCM_Strategy: public IExecutor{
     //   }
    }
    void execute(const std::string& arg="") override {
-      std::lock_guard<std::mutex> lock(rcmMutex);
+   
+      
+      rcmMutex.lock();
+      std::cout<<"Lock"<<std::endl;
       RCM.queuePush(command);
       RCM.update();
-
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      
+      rcmMutex.unlock();
+      std::cout<<"UnLock"<<std::endl;
+    
+      
    }
    bool isInited() override {
         return RCM.sandInited();
@@ -79,11 +86,11 @@ class RCM_Strategy: public IExecutor{
 
    std::string command;
    RelayControlModule& RCM;
-   static std::mutex rcmMutex;
+   
 
 };
 
-std::mutex RCM_Strategy::rcmMutex;
+
 
 class RCM_Delay_Strategy: public IExecutor{
    public:
@@ -107,17 +114,21 @@ class RCM_Delay_Strategy: public IExecutor{
    private:
 
    void executeCommands() {
+
+        
        
-
-        
         std::this_thread::sleep_for(std::chrono::seconds(delay)); // Задержка
-        
-        std::lock_guard<std::mutex> lock(rcmMutex);
-        RCM.queuePush(command); // Вторая команда
-        RCM.update();
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        //usleep(100);
+    
+        rcmMutex.lock();
+        std::cout<<"Lock"<<std::endl;
+        RCM.queuePush(command);
+        RCM.update();
+        rcmMutex.unlock();
+        std::cout<<"UnLock"<<std::endl;
+        //std::this_thread::sleep_for(std::chrono::milliseconds(100));//usleep(100);
+        
+        
     }
 
    int delay;
@@ -125,9 +136,9 @@ class RCM_Delay_Strategy: public IExecutor{
 
    RelayControlModule& RCM;
 
-   static std::mutex rcmMutex;
+
 };
-std::mutex RCM_Delay_Strategy::rcmMutex;
+
 
 // Класс-исполнитель для управления различными стратегиями
 class Executor {
@@ -147,7 +158,7 @@ public:
         executeMap["R1_OFF_5s"] = new RCM_Delay_Strategy(RCM,"83,0,0",5);
         executeMap["R2_OFF_5s"] = new RCM_Delay_Strategy(RCM,"83,1,0",5);
         executeMap["R3_OFF_5s"] = new RCM_Delay_Strategy(RCM,"83,2,0",5);
-        executeMap["R4_OFF_5s"] = new RCM_Delay_Strategy(RCM,"83,2,0",5);
+        executeMap["R4_OFF_5s"] = new RCM_Delay_Strategy(RCM,"83,3,0",5);
         
     }
 
@@ -178,7 +189,7 @@ private:
 int main() {
     Executor exe;
 
-    for(int i = 0;i<10;i++){
+    for(int i = 0;i<4;i++){
 
         exe.execute("R1_ON");
         exe.execute("R1_OFF_5s");
