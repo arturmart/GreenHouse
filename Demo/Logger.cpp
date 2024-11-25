@@ -6,7 +6,8 @@
 
 //#include "DS18B20.h"
 //DS18B20.cpp
-//g++ -o logger Logger.cpp jsonManager.cpp -I/usr/include/cairo -lcairo TimeManager.cpp DS18B20.cpp
+
+//g++ -o logger Logger.cpp jsonManager.cpp -I /path/to/nlohmann/json ChartDrawing.cpp -I/usr/include/cairo -lcairo TimeManager.cpp 
 
 class Logger{
    public:
@@ -53,13 +54,20 @@ class Logger{
       //LogJson.write_json_to_file(j);
    }
 
+   void setAndLog(const std::unordered_map<std::string,std::string>& table){
+      for(auto line : table){
+         setData(line.first, line.second);
+      }
+      log();
+
+   }
+
 
    void drawChart(){
-      std::vector<std::unordered_map<std::string,std::string>> dt = getLogElements();
-      //printLogElements(dt);
-      ChartDrawing chartDrawing(dt);
+      ChartDrawing chartDrawing(getLogElements());
+      //printLogElements(getLogElements());
+      chartDrawing.createImageFromJSON("chart","data",{});
       
-      chartDrawing.createImageFromJSON("chart");
    }
 
    void printLogElements(const std::vector<std::unordered_map<std::string, std::string>>& dataMap){
@@ -74,14 +82,19 @@ class Logger{
     json root = LogJson.read_json_from_file();
     std::vector<std::unordered_map<std::string, std::string>> dataMap;
 
-    int counter = 0;
+  
     for (auto point : root) {
         std::unordered_map<std::string, std::string> dataLine;
         for (auto tp : logType) {
-            dataLine[tp] = point[tp].get<std::string>();
+            if (point.contains(tp)) {
+                dataLine[tp] = point[tp].get<std::string>();
+            } else {
+                // Если ключ отсутствует, добавляем пустую строку или любое значение по умолчанию
+                //dataLine[tp] = "";  // Можно заменить на "N/A" или любое другое значение
+            }
         }
         dataMap.push_back(dataLine);
-        counter++;
+
     }
 
     return dataMap;  // Возвращаем по значению
@@ -106,7 +119,7 @@ class Logger{
 
 //g++ -o logger Logger.cpp jsonManager.cpp -I/usr/include/cairo -lcairo TimeManager.cpp DS18B20.cpp
 int main(){
-   Logger LOG("Log2",{"data","temp","tempOut"});
+   Logger LOG("Log2",{"data","temp","tempOut","R1","R2"});
    LOG.drawChart();
 
    /*
