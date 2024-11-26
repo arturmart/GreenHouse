@@ -58,6 +58,7 @@ class Comparison{
 
 
 
+
 class ConditionNode{
    public:
    ConditionNode(std::string title):title(title){

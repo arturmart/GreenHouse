@@ -4,7 +4,12 @@
 #include <thread>
 #include <mutex>
 
+//g++ -o executor Executor.cpp -pthread I2CLCD.cpp -lwiringPi  RelayControlModule.cpp  DataParsing.cpp TreeParsing.cpp MessageQueuing.cpp SerialComm.cpp -lwiringPi DataCombine.cpp crcCalc.cpp -lz
 // Стратегия для работы с LCD
+
+std::mutex rcmMutex;
+
+
 I2C_LCD_Strategy::I2C_LCD_Strategy(I2CLCD& lcd) : lcd(lcd) {
     if (!isInited()) {
         std::cerr << "Ошибка инициализации LCD!" << std::endl;
@@ -102,3 +107,25 @@ void Executor::execute(const std::string& strategyStr, const std::string& arg) {
         std::cerr << "Стратегия \"" << strategyStr << "\" не найдена." << std::endl;
     }
 }
+
+/*
+int main() {
+    // Создание объекта Executor
+    Executor executor;
+
+    // Проверяем выполнение стратегий
+    std::cout << "Тест стратегии LCD" << std::endl;
+    executor.execute("lcd", "Привет, мир!\nArduino");
+
+    std::cout << "\nТест включения реле R1" << std::endl;
+    executor.execute("R1_ON");
+
+    std::cout << "\nТест выключения реле R1 с задержкой 5 секунд" << std::endl;
+    executor.execute("R1_OFF_5s");
+
+    // Пауза для завершения потока с задержкой
+    std::this_thread::sleep_for(std::chrono::seconds(6));
+
+    std::cout << "Завершение программы" << std::endl;
+    return 0;
+}*/

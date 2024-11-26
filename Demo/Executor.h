@@ -9,6 +9,8 @@
 #include "I2CLCD.h"
 #include "RelayControlModule.h"
 
+extern std::mutex rcmMutex; 
+
 // Интерфейс для выполнения команд
 class IExecutor {
 public:
@@ -29,7 +31,6 @@ private:
 };
 
 
-std::mutex rcmMutex;
 // Стратегия для работы с Relay Control Module
 class RCM_Strategy : public IExecutor {
 public:

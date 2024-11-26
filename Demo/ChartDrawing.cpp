@@ -5,7 +5,24 @@
 #include <algorithm>
 
 
-
+rgb_color colorsCario[16] = {
+        {1.0, 0.0, 0.0},  // Red
+        {0.0, 1.0, 0.0},  // Green
+        {0.0, 0.0, 1.0},  // Blue
+        {1.0, 1.0, 0.0},  // Yellow
+        {0.0, 1.0, 1.0},  // Cyan
+        {1.0, 0.0, 1.0},  // Magenta
+        {0.5, 0.5, 0.5},  // Gray
+        {1.0, 0.5, 0.0},  // Orange
+        {0.5, 0.0, 0.5},  // Purple
+        {0.0, 0.5, 0.5},  // Teal
+        {0.8, 0.2, 0.2},  // Dark red
+        {0.2, 0.8, 0.2},  // Dark green
+        {0.2, 0.2, 0.8},  // Dark blue
+        {0.7, 0.7, 0.7},  // Light gray
+        {0.0, 0.0, 0.0},  // Black
+        {1.0, 1.0, 1.0}   // White
+    };
 
 ChartDrawing::ChartDrawing(const std::vector<std::unordered_map<std::string, std::string>>& dataMapIn):dataMap(dataMapIn){
 
@@ -93,7 +110,7 @@ std::pair<T, T> ChartDrawing::getSmallAndLarge(const std::vector<T>& vec) {
 
 
 
-bool ChartDrawing::createImageFromJSON(const std::string& title, const std::string& time, const std::vector<std::string> charts){
+bool ChartDrawing::createImageFromJSON(const std::string& title, const std::string& time, const std::vector<std::string>& charts, const std::vector<std::string>& bools){
 
    std::vector<long long> timeVector = getVectorLongLong(time);
     if (timeVector.empty()) {
@@ -105,21 +122,28 @@ bool ChartDrawing::createImageFromJSON(const std::string& title, const std::stri
     long long minX = X.first;
     long long maxX = X.second;
 
-     std::vector<double> dataVector = getVectorDouble("temp");
-    if (dataVector.empty()) {
-        std::cerr << "Error: Data vector is empty!" << std::endl;
-        return false; // Return false if there's no data to plot
-    }
-    std::vector<double> dataVector2 = getVectorDouble("tempOut");
-    if (dataVector.empty()) {
-        std::cerr << "Error: Data vector is empty!" << std::endl;
-        return false; // Return false if there's no data to plot
+    std::vector<std::vector<double>> chartArrVectors;
+    std::vector<double> minYVec;
+    std::vector<double> maxYVec;
+
+    for(auto chart : charts){
+        std::vector<double> dataVector = getVectorDouble(chart);
+        if (dataVector.empty()) {
+            std::cerr << "Error: Data vector is empty!" << std::endl;
+            return false; // Return false if there's no data to plot
+        }
+        chartArrVectors.push_back(dataVector);
+        std::pair<double,double> Y= getSmallAndLarge(dataVector);
+        minYVec.push_back(Y.first);
+        maxYVec.push_back(Y.second);
+        
+
     }
 
-    std::pair<double,double> Y= getSmallAndLarge(dataVector);
-    std::pair<double,double> Y2= getSmallAndLarge(dataVector2);
-    double minY = std::min(Y.first,Y2.first);
-    double maxY = std::max(Y.second,Y2.second);
+
+    
+    double minY = *std::min_element(minYVec.begin(), minYVec.end());
+    double maxY = *std::max_element(maxYVec.begin(), maxYVec.end());
  
  
     // Размер изображения
@@ -136,22 +160,23 @@ bool ChartDrawing::createImageFromJSON(const std::string& title, const std::stri
     cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);  // Белый цвет
     cairo_paint(cr);
 
+  
+   
+   for( int i = 0; i<bools.size();i++){
+   cairo_set_source_rgb(cr, colorsCario[i].r, colorsCario[i].g, colorsCario[i].b);
+   DraWBoolChart(cr, getVectorPairBool(time, bools[i]),minX,maxX,bools.size(),i,width,height,40, (height-marginChartTop-marginChartBottom)+marginChartBottom+10, marginChartLeft);
+   }
+   cairo_set_source_rgb(cr, 0.7, 0.7, 0.7);
+   DrawGrid(cr,width,height,40, (height-marginChartTop-marginChartBottom)+marginChartBottom+10, marginChartLeft,marginChartRight,XlinesChart,bools.size());
+
    cairo_set_source_rgb(cr, 0.7, 0.7, 0.7);
    DrawGrid(cr,width,height,marginChartTop, marginChartBottom, marginChartLeft,marginChartRight,XlinesChart,YlinesChart);
-   
-   cairo_set_source_rgb(cr, 0, 0.7, 0);
-   DraWBoolChart(cr, getVectorPairBool(time, "R1"),minX,maxX,8,0,width,height,40, (height-marginChartTop-marginChartBottom)+marginChartBottom+10, marginChartLeft);
-   cairo_set_source_rgb(cr, 0.1, 0.3, 0.8);
-   DraWBoolChart(cr, getVectorPairBool(time, "R2"),minX,maxX,8,1,width,height,40, (height-marginChartTop-marginChartBottom)+marginChartBottom+10, marginChartLeft);
-   
-   cairo_set_source_rgb(cr, 0.7, 0.7, 0.7);
-   DrawGrid(cr,width,height,40, (height-marginChartTop-marginChartBottom)+marginChartBottom+10, marginChartLeft,marginChartRight,XlinesChart,8);
 
-   cairo_set_source_rgb(cr, 1.0, 0.0, 0.0);  
-   DraWChart(cr,getVectorPairDouble(time, "temp"),minX, maxX,minY, maxY,width,height,marginChartTop, marginChartBottom, marginChartLeft,marginChartRight);
-   
-   cairo_set_source_rgb(cr, 0.0, 0.0, 1.0);  
-   DraWChart(cr,getVectorPairDouble(time, "tempOut"),minX, maxX,minY, maxY,width,height,marginChartTop, marginChartBottom, marginChartLeft,marginChartRight);
+   for( int i = 0; i<charts.size();i++){
+        cairo_set_source_rgb(cr, colorsCario[i].r, colorsCario[i].g, colorsCario[i].b);
+        DraWChart(cr,getVectorPairDouble(time, charts[i]),minX, maxX,minY, maxY,width,height,marginChartTop, marginChartBottom, marginChartLeft,marginChartRight);
+   }
+
 
    cairo_set_source_rgb(cr, 0.0, 0.0, 0.0); 
 
@@ -161,7 +186,7 @@ bool ChartDrawing::createImageFromJSON(const std::string& title, const std::stri
    cairo_set_font_size(cr, 16);
    DrawChartXLabels(cr,minX, maxX, minY, maxY,XlinesChart, width ,height, marginChartBottom, marginChartLeft,marginChartRight);
    DrawChartYLabels(cr,minY, maxY,YlinesChart, width,height,marginChartTop, marginChartBottom, marginChartLeft);
-   DrawYLabels(cr,{"R1","R2","R3","R4","R5","R6","R7","R8"},8, width,height,40, (height-marginChartTop-marginChartBottom)+marginChartBottom+10, marginChartLeft);
+   DrawYLabels(cr,bools,bools.size(), width,height,40, (height-marginChartTop-marginChartBottom)+marginChartBottom+10, marginChartLeft);
    
     cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
     cairo_set_font_size(cr, 20);

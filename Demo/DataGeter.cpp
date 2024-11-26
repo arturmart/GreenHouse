@@ -44,7 +44,7 @@ DataGetter::DataGetter(): weather("fcb989e5668460983b3cb819569b8c1d", 40.059456,
 
       strategy["temp"] = new TempStrategy("28-0303979433f8");
       
-      strategy["outTemp"] = new OutTempStrategy(weather); 
+      strategy["tempOut"] = new OutTempStrategy(weather); 
 
    }
 
@@ -67,7 +67,7 @@ double DataGetter::getNewData(const std::string& strategyStr){
 }
 
 
-
+/*
 int main() {
    DataGetter dataGetter;
 
@@ -81,3 +81,4 @@ int main() {
       //std::cout<<dataGetter.getNewData("temp")<<" "<<dataGetter.getNewData("outTemp")<<std::endl;
    }
 }
+*/

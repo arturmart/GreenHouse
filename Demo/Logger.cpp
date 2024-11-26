@@ -1,128 +1,101 @@
-#include "jsonManager.h"
-#include "ChartDrawing.h"
+#include "Logger.h"
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#include <chrono>
+#include <thread>
 
-//#include "DS18B20.h"
-//DS18B20.cpp
+//g++ -o logger Logger.cpp jsonManager.cpp ChartDrawing.cpp TimeManager.cpp -I/path/to/headers -lcairo
 
-//g++ -o logger Logger.cpp jsonManager.cpp -I /path/to/nlohmann/json ChartDrawing.cpp -I/usr/include/cairo -lcairo TimeManager.cpp 
+Logger::Logger(const std::string& filename, const std::vector<std::string>& table)
+    : filename(filename), LogJson(filename + ".json"), logType(table) {
+    setTable(table);  // Initialize the table with the provided column names
+}
 
-class Logger{
-   public:
+void Logger::addTable(const std::string& str) {
+    dataTable[str] = "";  // Add new table column with an empty value
+}
 
-   Logger(const std::string& filename,const std::vector<std::string>& table= {}):filename(filename),LogJson(filename+".json"),logType(table){
-      setTable(table);
-   }
+void Logger::setTable(const std::vector<std::string>& table) {
+    dataTable.clear();  // Clear existing data
+    for (const std::string& str : table) {
+        dataTable[str] = "";  // Initialize each column with an empty value
+    }
+}
 
-   void addTable(const std::string& str){
-      dataTable[str] = "";
-   }
-   void setTable(const std::vector<std::string>& table){
-      dataTable.clear();
-      for(std::string str : table){
-         dataTable[str] = "";
-      }
-   }
+void Logger::setData(const std::string& key, const std::string& data) {
+    dataTable[key] = data;  // Set the value for a specific column
+}
 
-   void setData(const std::string& key, const std::string& data){
-      dataTable[key] = data;
-   }
+void Logger::log() {
+    json newDict = json::object();
 
-   void log(){
-      //json j = LogJson.read_json_from_file();
-
-      json newDict = json::object();
-
-      for(const auto& pair : dataTable){
-         if(pair.second != ""){
-            //json localDict = {pair.first,pair.second};
+    // Iterate through the data table and add the key-value pairs to newDict
+    for (const auto& pair : dataTable) {
+        if (!pair.second.empty()) {  // Only add non-empty values
             newDict[pair.first] = pair.second;
-            dataTable[pair.first] = "";
-         }
-      }
-
-      if (LogJson.appendToJsonArray(newDict)) {
-        //std::cout << "Элемент успешно добавлен в JSON!" << std::endl;
-      } else {
-         std::cerr << "Не удалось добавить элемент." << std::endl;
-      }
-
-
-      //j.push_back(newDict);
-      //LogJson.write_json_to_file(j);
-   }
-
-   void setAndLog(const std::unordered_map<std::string,std::string>& table){
-      for(auto line : table){
-         setData(line.first, line.second);
-      }
-      log();
-
-   }
-
-
-   void drawChart(){
-      ChartDrawing chartDrawing(getLogElements());
-      //printLogElements(getLogElements());
-      chartDrawing.createImageFromJSON("chart","data",{});
-      
-   }
-
-   void printLogElements(const std::vector<std::unordered_map<std::string, std::string>>& dataMap){
-      for(auto dataLine:dataMap){
-         for (auto tp : dataLine) {
-            std::cout<<tp.first<<":"<<tp.second<<" ";
+            dataTable[pair.first] = "";  // Clear the data after logging
         }
-        std::cout<<std::endl;
-      }
-   }
-   std::vector<std::unordered_map<std::string, std::string>> getLogElements() {
+    }
+
+    // Try appending the new data to the JSON file
+    if (LogJson.appendToJsonArray(newDict)) {
+        // std::cout << "Элемент успешно добавлен в JSON!" << std::endl;
+    } else {
+        std::cerr << "Не удалось добавить элемент." << std::endl;
+    }
+}
+
+void Logger::setAndLog(const std::unordered_map<std::string, std::string>& table) {
+    for (const auto& line : table) {
+        setData(line.first, line.second);  // Set multiple data points
+    }
+    log();  // Log the data
+}
+
+void Logger::drawChart(const std::string& title, const std::string& x, const std::vector<std::string>& y, const std::vector<std::string>& bools) {
+    // Create and draw a chart using data from the log
+    ChartDrawing chartDrawing(getLogElements());
+    chartDrawing.createImageFromJSON(title, x, y, bools);
+}
+
+void Logger::printLogElements(const std::vector<std::unordered_map<std::string, std::string>>& dataMap) {
+    for (const auto& dataLine : dataMap) {
+        for (const auto& tp : dataLine) {
+            std::cout << tp.first << ":" << tp.second << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
+std::vector<std::unordered_map<std::string, std::string>> Logger::getLogElements() {
     json root = LogJson.read_json_from_file();
     std::vector<std::unordered_map<std::string, std::string>> dataMap;
 
-  
-    for (auto point : root) {
+    // Iterate through the JSON data and map it to the log columns
+    for (auto& point : root) {
         std::unordered_map<std::string, std::string> dataLine;
-        for (auto tp : logType) {
+        for (const auto& tp : logType) {
             if (point.contains(tp)) {
-                dataLine[tp] = point[tp].get<std::string>();
-            } else {
-                // Если ключ отсутствует, добавляем пустую строку или любое значение по умолчанию
-                //dataLine[tp] = "";  // Можно заменить на "N/A" или любое другое значение
+                dataLine[tp] = point[tp].get<std::string>();  // Add the value if the key exists
             }
         }
         dataMap.push_back(dataLine);
-
     }
 
-    return dataMap;  // Возвращаем по значению
-   }
-
-
-
-   
-   
-   jsonManager LogJson;
-   std::vector<std::string> logType;//{"data","temp"}
-   private:
-   std::string filename;
-   std::unordered_map<std::string, std::string> dataTable;
-};
-
-
-#include "TimeManager.h"
+    return dataMap;  // Return the collected log data
+}
 
 
 
 
 //g++ -o logger Logger.cpp jsonManager.cpp -I/usr/include/cairo -lcairo TimeManager.cpp DS18B20.cpp
+/*
 int main(){
    Logger LOG("Log2",{"data","temp","tempOut","R1","R2"});
-   LOG.drawChart();
+   LOG.drawChart("Chart", "data",{"temp","tempOut"},{"R1","R2"});
 
-   /*
+   
    //DS18B20 temp1("28-0303979433f8");
 
    while (true) {
@@ -139,14 +112,14 @@ int main(){
         }
         usleep(100000); // Update every second
     }
-    */
+    
     
    
 
 
 
 
-   /*
+   
    for(int i = 0; i<100;i++){
    LOG.setData("data", std::to_string(to_unix_timestamp(std::chrono::system_clock::now())+i));
    LOG.setData("temp", std::to_string(i/2+i%10));
@@ -154,11 +127,6 @@ int main(){
    }
 
    LOG.LogJson.createImageFromJSON("Log1.json","qaq.png","maq","data","temp");
-   */
-
-   
-
-
-
    
 }
+*/

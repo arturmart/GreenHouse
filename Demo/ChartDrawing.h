@@ -9,6 +9,14 @@
 #include <cairo.h>
 #include "TimeManager.h"  // Assuming you have this header for the unixTimestampToTimeString function
 
+
+typedef struct {
+    double r, g, b;
+} rgb_color;
+
+
+extern rgb_color colorsCario[16];
+
 class ChartDrawing {
 public:
     // Public member methods
@@ -22,7 +30,7 @@ public:
     template <typename T>
     std::pair<T, T> getSmallAndLarge(const std::vector<T>& vec);
 
-    bool createImageFromJSON(const std::string& title, const std::string& time, const std::vector<std::string> charts);
+    bool createImageFromJSON(const std::string& title, const std::string& time, const std::vector<std::string>& charts, const std::vector<std::string>& bools);
 
 private:
     // Private member methods for drawing parts of the chart
