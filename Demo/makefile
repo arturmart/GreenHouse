@@ -1,29 +1,38 @@
-# Название конечного исполняемого файла
+# Название компилятора
+CXX = g++
+
+# Флаги компилятора
+CXXFLAGS = -std=c++17 -Wall -O0 -I/path/to/nlohmann/json -I/usr/include/cairo
+
+# Линковочные флаги
+LDFLAGS = -lwiringPi -lz -lcurl -lcairo -lTgBot -lboost_system -lssl -lcrypto -lpthread
+
+# Исходные файлы
+SRC = main.cpp Executor.cpp I2CLCD.cpp RelayControlModule.cpp DataParsing.cpp \
+      TreeParsing.cpp MessageQueuing.cpp SerialComm.cpp DataCombine.cpp \
+      crcCalc.cpp DataGeter.cpp DS18B20.cpp WeatherAPI.cpp Logger.cpp \
+      jsonManager.cpp ChartDrawing.cpp TimeManager.cpp TelegramBot.cpp
+
+# Объектные файлы (будут сгенерированы автоматически)
+OBJ = $(SRC:.cpp=.o)
+
+# Цель (исполнимый файл)
 TARGET = main
 
-# Компилятор и флаги
-CXX = g++
-CXXFLAGS = -pthread -Wall -Wextra
-LDFLAGS = -lwiringPi -lz -lcurl
+# Правило по умолчанию
+all: $(TARGET)
 
-# Список исходных файлов
-SRCS = main.cpp Executor.cpp I2CLCD.cpp RelayControlModule.cpp \
-       DataParsing.cpp TreeParsing.cpp MessageQueuing.cpp \
-       SerialComm.cpp DataCombine.cpp crcCalc.cpp DataGeter.cpp \
-       DS18B20.cpp WeatherAPI.cpp
+# Правило для сборки исполнимого файла
+$(TARGET): $(OBJ)
+	$(CXX) $(OBJ) -o $@ $(LDFLAGS)
 
-# Автоматическое определение объектных файлов
-OBJS = $(SRCS:.cpp=.o)
-
-# Правило сборки всего проекта
-$(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
-
-# Правило компиляции каждого .cpp в .o
+# Правило для компиляции исходных файлов в объектные файлы
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Очистка временных файлов
-.PHONY: clean
+# Очистка (удаляет объектные и исполнимые файлы)
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJ) $(TARGET)
+
+# Правило для инкрементальной сборки (если добавлены новые файлы)
+.PHONY: all clean

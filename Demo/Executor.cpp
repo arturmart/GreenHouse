@@ -78,14 +78,20 @@ void RCM_Delay_Strategy::executeCommands() {
 Executor::Executor() : lcd(0x3f), RCM() {
     // Добавление стратегий для различных команд
     executeMap["lcd"] = new I2C_LCD_Strategy(lcd);
-    executeMap["R1_ON"] = new RCM_Strategy(RCM, "83,0,1");
-    executeMap["R1_OFF"] = new RCM_Strategy(RCM, "83,0,0");
-    executeMap["R2_ON"] = new RCM_Strategy(RCM, "83,1,1");
-    executeMap["R2_OFF"] = new RCM_Strategy(RCM, "83,1,0");
-    executeMap["R3_ON"] = new RCM_Strategy(RCM, "83,2,1");
-    executeMap["R3_OFF"] = new RCM_Strategy(RCM, "83,2,0");
-    executeMap["R4_ON"] = new RCM_Strategy(RCM, "83,3,1");
-    executeMap["R4_OFF"] = new RCM_Strategy(RCM, "83,3,0");
+    executeMap["Bake_ON"] = new RCM_Strategy(RCM, "83,0,1");
+    executeMap["Bake_OFF"] = new RCM_Strategy(RCM, "83,0,0");
+    executeMap["Pump_ON"] = new RCM_Strategy(RCM, "83,1,1");
+    executeMap["Pump_OFF"] = new RCM_Strategy(RCM, "83,1,0");
+    executeMap["Falcon1_ON"] = new RCM_Strategy(RCM, "83,2,1");
+    executeMap["Falcon1_OFF"] = new RCM_Strategy(RCM, "83,2,0");
+    executeMap["Falcon2_ON"] = new RCM_Strategy(RCM, "83,3,1");
+    executeMap["Falcon2_OFF"] = new RCM_Strategy(RCM, "83,3,0");
+    executeMap["Falcon3_ON"] = new RCM_Strategy(RCM, "83,4,1");
+    executeMap["Falcon3_OFF"] = new RCM_Strategy(RCM, "83,4,0");
+    executeMap["Falcon4_ON"] = new RCM_Strategy(RCM, "83,5,1");
+    executeMap["Falcon4_OFF"] = new RCM_Strategy(RCM, "83,5,0");
+
+  
 
     executeMap["R1_OFF_5s"] = new RCM_Delay_Strategy(RCM, "83,0,0", 5);
     executeMap["R2_OFF_5s"] = new RCM_Delay_Strategy(RCM, "83,1,0", 5);

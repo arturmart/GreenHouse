@@ -55,8 +55,20 @@ void Logger::setAndLog(const std::unordered_map<std::string, std::string>& table
 
 void Logger::drawChart(const std::string& title, const std::string& x, const std::vector<std::string>& y, const std::vector<std::string>& bools) {
     // Create and draw a chart using data from the log
-    ChartDrawing chartDrawing(getLogElements());
-    chartDrawing.createImageFromJSON(title, x, y, bools);
+    std::vector<std::unordered_map<std::string, std::string>> logElements = getLogElements();
+    if (logElements.empty()) {
+        std::cerr << "Ошибка: Логовые элементы пусты!" << std::endl;
+        return;  // Прерываем выполнение, если данных нет
+    }
+
+    // Создаем объект для рисования графика
+    try {
+        ChartDrawing chartDrawing(logElements);
+        // Создаем изображение на основе данных
+        chartDrawing.createImageFromJSON(title, x, y, bools);
+    } catch (const std::exception& e) {
+        std::cerr << "Ошибка при создании графика: " << e.what() << std::endl;
+    }
 }
 
 void Logger::printLogElements(const std::vector<std::unordered_map<std::string, std::string>>& dataMap) {
@@ -71,6 +83,11 @@ void Logger::printLogElements(const std::vector<std::unordered_map<std::string, 
 std::vector<std::unordered_map<std::string, std::string>> Logger::getLogElements() {
     json root = LogJson.read_json_from_file();
     std::vector<std::unordered_map<std::string, std::string>> dataMap;
+
+    if (root.is_null()) {
+        std::cerr << "Ошибка: не удалось загрузить или распарсить JSON файл." << std::endl;
+        return {};  // Возвращаем пустой вектор, если данные не были загружены
+    }
 
     // Iterate through the JSON data and map it to the log columns
     for (auto& point : root) {
