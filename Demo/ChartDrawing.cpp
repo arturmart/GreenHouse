@@ -130,7 +130,7 @@ bool ChartDrawing::createImageFromJSON(const std::string& title, const std::stri
         std::vector<double> dataVector = getVectorDouble(chart);
         if (dataVector.empty()) {
             std::cerr << "Error: Data vector is empty!" << std::endl;
-            return false; // Return false if there's no data to plot
+            continue; // Return false if there's no data to plot
         }
         chartArrVectors.push_back(dataVector);
         std::pair<double,double> Y= getSmallAndLarge(dataVector);
@@ -142,14 +142,13 @@ bool ChartDrawing::createImageFromJSON(const std::string& title, const std::stri
 
 
     
-    double minY = *std::min_element(minYVec.begin(), minYVec.end());
-    double maxY = *std::max_element(maxYVec.begin(), maxYVec.end());
+    
  
  
     // Размер изображения
     int width = 1280;
-    int height = 640;
-    int marginChartTop = 200, marginChartBottom = 80, marginChartLeft = 100, marginChartRight = 60;
+    int height = 720;
+    int marginChartTop = 200, marginChartBottom = 80, marginChartLeft = 160, marginChartRight = 60;
     int XlinesChart = 20,YlinesChart = 10;
 
     // Создаем поверхность для изображения
@@ -172,21 +171,34 @@ bool ChartDrawing::createImageFromJSON(const std::string& title, const std::stri
    cairo_set_source_rgb(cr, 0.7, 0.7, 0.7);
    DrawGrid(cr,width,height,marginChartTop, marginChartBottom, marginChartLeft,marginChartRight,XlinesChart,YlinesChart);
 
-   for( int i = 0; i<charts.size();i++){
-        cairo_set_source_rgb(cr, colorsCario[i].r, colorsCario[i].g, colorsCario[i].b);
-        DraWChart(cr,getVectorPairDouble(time, charts[i]),minX, maxX,minY, maxY,width,height,marginChartTop, marginChartBottom, marginChartLeft,marginChartRight);
+   if(!minYVec.empty() && !maxYVec.empty()){
+   double minY = *std::min_element(minYVec.begin(), minYVec.end());
+   double maxY = *std::max_element(maxYVec.begin(), maxYVec.end());
+        
+        for( int i = 0; i<charts.size();i++){
+                cairo_set_source_rgb(cr, colorsCario[i].r, colorsCario[i].g, colorsCario[i].b);
+                DraWChart(cr,getVectorPairDouble(time, charts[i]),minX, maxX,minY, maxY,width,height,marginChartTop, marginChartBottom, marginChartLeft,marginChartRight);
+        }
+        
+
+
+        cairo_set_source_rgb(cr, 0.0, 0.0, 0.0); 
+        cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+        cairo_set_font_size(cr, 16);
+        DrawYLabelsByStepColored(cr,charts,charts.size(),20, width,height,marginChartTop, 50);
+
+        
+
+        cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+        cairo_set_font_size(cr, 16);
+        DrawChartXLabels(cr,minX, maxX, minY, maxY,XlinesChart, width ,height, marginChartBottom, marginChartLeft,marginChartRight);
+        DrawChartYLabels(cr,minY, maxY,YlinesChart, width,height,marginChartTop, marginChartBottom, marginChartLeft);
+        
    }
-
-
    cairo_set_source_rgb(cr, 0.0, 0.0, 0.0); 
-
-  
-
-    cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+   cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
    cairo_set_font_size(cr, 16);
-   DrawChartXLabels(cr,minX, maxX, minY, maxY,XlinesChart, width ,height, marginChartBottom, marginChartLeft,marginChartRight);
-   DrawChartYLabels(cr,minY, maxY,YlinesChart, width,height,marginChartTop, marginChartBottom, marginChartLeft);
-   DrawYLabels(cr,bools,bools.size(), width,height,40, (height-marginChartTop-marginChartBottom)+marginChartBottom+10, marginChartLeft);
+   DrawYLabels(cr,bools,bools.size(), width,height,40, (height-marginChartTop-marginChartBottom)+marginChartBottom+10, 50);
    
     cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
     cairo_set_font_size(cr, 20);
@@ -378,6 +390,25 @@ bool ChartDrawing::createImageFromJSON(const std::string& title, const std::stri
         cairo_stroke(cr); // Рисуем линии
 
     }
+   }
+   void ChartDrawing::DrawYLabelsByStepColored(
+    cairo_t* cr,
+    const std::vector<std::string>& strs,
+    int Ylines,
+    int Ystep,
+    int width, int height, 
+    int marginTop,int marginLeft){
+
+      for(int i = 0; i< Ylines;i++){
+        
+        //cairo_move_to(cr, ((width-margin)*i)/10, ( i * (height-2*margin))/10+margin);
+        cairo_set_source_rgb(cr, colorsCario[i].r, colorsCario[i].g, colorsCario[i].b);
+        cairo_move_to(cr, marginLeft-40, i * Ystep+marginTop+10);
+        cairo_show_text(cr, strs[i].c_str());
+        cairo_stroke(cr); // Рисуем линии
+
+    }
+    cairo_set_source_rgb(cr, 0, 0, 0);
    }
 
    

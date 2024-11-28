@@ -68,6 +68,14 @@ private:
         int width = 1280, int height = 640,
         int marginTop = 200,int marginBottom = 80,int marginLeft = 100);
 
+    void DrawYLabelsByStepColored(
+        cairo_t* cr,
+        const std::vector<std::string>& strs,
+        int Ylines = 20,
+        int YStep = 20,
+        int width = 1280, int height = 640,
+        int marginTop = 200,int marginLeft = 100);
+
     std::vector<std::unordered_map<std::string, std::string>> dataMap;  // Reference to dataMap
 };
 
