@@ -24,7 +24,7 @@ const int GET_KEYWORD = 1 << 12;
 
 
 const int RELAY_COUNT = 16;
-int relayPin[RELAY_COUNT] = {23,25,27,29,31,33,35,37,22,24,26,28,4,5,6,7};  
+int relayPin[RELAY_COUNT] = {32,34,36,38,40,42,44,46,22,24,26,28,4,5,6,7}; 
 bool states[RELAY_COUNT];
 RelayController relayController(relayPin, RELAY_COUNT); 
 
