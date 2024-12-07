@@ -11,4 +11,4 @@ For Connect to Device Control Module (Arduino Mega) Connect USB Type B to Contro
 
 
 ### For Change or Add Relay PinOut
-in [deviceControllModule]https://github.com/arturmart/GreenHose/blob/master/deviceControllModule/deviceControllModule.ino change `RELAY_COUNT` and `relayPin`
+in [deviceControllModule](https://github.com/arturmart/GreenHose/blob/master/deviceControllModule/deviceControllModule.ino) change `RELAY_COUNT` and `relayPin`
