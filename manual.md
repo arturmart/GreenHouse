@@ -16,3 +16,18 @@ in [deviceControllModule](https://github.com/arturmart/GreenHose/blob/master/dev
 ## Main Controller
 
 for test Relay [testRCM](https://github.com/arturmart/GreenHose/blob/master/Demo/testRCM.cpp)
+
+--------
+for test Temp Module!
+
+>lsmod | grep w1
+```bash
+w1_therm               28672  0
+w1_gpio                16384  0
+wire                   36864  2 w1_gpio,w1_therm
+```
+
+>ls /sys/bus/w1/devices/
+```
+w1_bus_master1  28-XXXXXXXXXXXX
+```
