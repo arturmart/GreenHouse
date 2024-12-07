@@ -22,12 +22,14 @@ for test Temp Module!
 
 for Change or Add Module 
 
-1) on [DataGetter](https://github.com/arturmart/GreenHose/blob/master/Demo/DataGeter.cpp) DataGetter::DataGetter() Constructor add Strategy `strategy["temp"] = new TempStrategy("28-0303979402d4");` F
-2) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp)  getterCommandsMap add Telegram Commands in Main `getterCommandsMap = {... ,{{"TG_BOT", "getTemp"} , {"DATA_GETTER", "temp"}}, ...} ` For Telegram Command
-3) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp) Logger LOG Constructor Add Names  `Logger LOG(... ,{...,"temp",...});` for Logging
-4) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp) in `getterCommandTGBot(...)` change `LOG.drawChart(... , ... ,{"temp",...}, ...);` for Chart
-5) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp) on Registers Initilizationa add module `double tempRegister = -255;`
-6) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp) on `registerUpdate()` add module `tempRegister = dataGetter.getNewData("temp");`
+
+1) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp)  getterCommandsMap add Telegram Commands in Main `getterCommandsMap = {... ,{{"TG_BOT", "getTemp"} , {"DATA_GETTER", "temp"}}, ...} ` For Telegram Command
+2) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp) Logger LOG Constructor Add Names  `Logger LOG(... ,{...,"temp",...});` for Logging
+3) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp) in `getterCommandTGBot(...)` change `LOG.drawChart(... , ... ,{"temp",...}, ...);` for Chart
+4) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp) on Registers Initilizationa add module `double tempRegister = -255;`
+5) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp) on `registerUpdate()` add module `tempRegister = dataGetter.getNewData("temp");` For Register
+6) on [DataGetter](https://github.com/arturmart/GreenHose/blob/master/Demo/DataGeter.cpp) DataGetter::DataGetter() Constructor add Strategy `strategy["temp"] = new TempStrategy("28-0303979402d4");` 
+7) on [TelegramBot](https://github.com/arturmart/GreenHose/blob/master/Demo/TelegramBot.cpp) getterCommands() `{{"TEXT", "get Temp In"}, {"CALL_BACK_DATA", "getTemp"}},` For Button on Telegram
    
    
 |ID|For                        | Name |
