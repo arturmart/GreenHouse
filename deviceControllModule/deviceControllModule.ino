@@ -23,8 +23,8 @@ const int GET_KEYWORD = 1 << 12;
 
 
 
-const int RELAY_COUNT = 4;
-int relayPin[RELAY_COUNT] = {2,3,4,5};  
+const int RELAY_COUNT = 16;
+int relayPin[RELAY_COUNT] = {23,25,27,29,31,33,35,37,22,24,26,28,4,5,6,7};  
 bool states[RELAY_COUNT];
 RelayController relayController(relayPin, RELAY_COUNT); 
 
@@ -117,8 +117,11 @@ void doAction(int size){
 void setup() {
     //Serial.begin(9600);
     //Serial.println("___________");
-    Serial1.begin(9600); // Инициализация последовательного порта
-    
+    Serial1.begin(57600); // Инициализация последовательного порта
+
+
+    pinMode(13, OUTPUT);
+    digitalWrite(13,HIGH);
     
     parser.setCRC(crcCalk);
   
