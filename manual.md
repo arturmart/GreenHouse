@@ -20,12 +20,16 @@ for test Relay [testRCM](https://github.com/arturmart/GreenHose/blob/master/Demo
 --------
 for test Temp Module!
 
-|ID|Command                        |
-|--|--                        |
-|28-0303979402d4| main |
-|28-030397942cf4| secondory|
-|28-030397946349| input Bake |
-|28-04175013faff| Output Bake |
+for Change or Add Module 
+
+1) on [DataGetter](https://github.com/arturmart/GreenHose/blob/master/Demo/DataGeter.cpp) DataGetter::DataGetter() Constructor add Strategy `strategy["temp"] = new TempStrategy("28-0303979402d4");`
+
+|ID|For                        | Name |
+|--|--                        | --|
+|28-0303979402d4| main | temp|
+|28-030397942cf4| secondory|temp2|
+|28-030397946349| input Bake |inBake|
+|28-04175013faff| Output Bake | outBake|
 
 >lsmod | grep w1
 ```bash
