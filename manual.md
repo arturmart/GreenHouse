@@ -22,7 +22,10 @@ for test Temp Module!
 
 for Change or Add Module 
 
-1) on [DataGetter](https://github.com/arturmart/GreenHose/blob/master/Demo/DataGeter.cpp) DataGetter::DataGetter() Constructor add Strategy `strategy["temp"] = new TempStrategy("28-0303979402d4");`
+1) on [DataGetter](https://github.com/arturmart/GreenHose/blob/master/Demo/DataGeter.cpp) DataGetter::DataGetter() Constructor add Strategy `strategy["temp"] = new TempStrategy("28-0303979402d4");` F
+2) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp)  getterCommandsMap add Telegram Commands in Main `getterCommandsMap = {... ,{{"TG_BOT", "getTemp"} , {"DATA_GETTER", "temp"}}, ...} ` For Telegram Command
+3) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp) Logger LOG Constructor Add Names  `Logger LOG(... ,{...,"temp",...});` for Logging
+4) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp) in `getterCommandTGBot(...)` change `LOG.drawChart(... , ... ,{"temp",...}, ...);` for Chart
 
 |ID|For                        | Name |
 |--|--                        | --|
