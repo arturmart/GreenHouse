@@ -29,7 +29,7 @@ for Change or Add Module
 4) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp) on Registers Initilizationa add module `double tempRegister = -255;`
 5) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp) on `registerUpdate()` add module `tempRegister = dataGetter.getNewData("temp");` For Register
 6) on [DataGetter](https://github.com/arturmart/GreenHose/blob/master/Demo/DataGeter.cpp) DataGetter::DataGetter() Constructor add Strategy `strategy["temp"] = new TempStrategy("28-0303979402d4");` 
-7) on [TelegramBot](https://github.com/arturmart/GreenHose/blob/master/Demo/TelegramBot.cpp) getterCommands() `{{"TEXT", "get Temp In"}, {"CALL_BACK_DATA", "getTemp"}},` For Button on Telegram
+7) on [TelegramBot](https://github.com/arturmart/GreenHose/blob/master/Demo/TelegramBot.cpp) getterCommands() `{{"TEXT", "get Temp In"}, {"CALL_BACK_DATA", "getTemp"}},` For Button on Telegram *same as point 1*
    
    
 |ID|For                        | Name |
