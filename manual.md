@@ -26,7 +26,10 @@ for Change or Add Module
 2) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp)  getterCommandsMap add Telegram Commands in Main `getterCommandsMap = {... ,{{"TG_BOT", "getTemp"} , {"DATA_GETTER", "temp"}}, ...} ` For Telegram Command
 3) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp) Logger LOG Constructor Add Names  `Logger LOG(... ,{...,"temp",...});` for Logging
 4) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp) in `getterCommandTGBot(...)` change `LOG.drawChart(... , ... ,{"temp",...}, ...);` for Chart
-
+5) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp) on Registers Initilizationa add module `double tempRegister = -255;`
+6) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp) on `registerUpdate()` add module `tempRegister = dataGetter.getNewData("temp");`
+   
+   
 |ID|For                        | Name |
 |--|--                        | --|
 |28-0303979402d4| main | temp|
