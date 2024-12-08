@@ -5,7 +5,7 @@
 #include <fstream>
 #include <string>
 #include <nlohmann/json.hpp>
-
+#include <filesystem>
 
 
 // Упростим доступ к пространству имен библиотеки
@@ -19,6 +19,8 @@ class jsonManager{
     
     json read_json_from_file(const std::string &otherfilename);
     json read_json_from_file();
+    bool file_exists(const std::string& filename);
+    bool create_backup(const std::string& filename);
 
     // Пример функции записи JSON в файл
     void write_json_to_file(const json& j);

@@ -77,6 +77,22 @@ std::string to_iso8601(std::chrono::system_clock::time_point time_point) {
     return oss.str();
 }
 
+int getDaySecondsFromTimePoint(std::chrono::system_clock::time_point time_point) {
+    // Преобразуем time_point в std::time_t
+    std::time_t time = std::chrono::system_clock::to_time_t(time_point);
+
+    // Преобразуем в локальное время
+    std::tm* local_time = std::localtime(&time);
+
+    // Рассчитываем количество секунд с начала дня
+    return (local_time->tm_hour * 60 * 60) + (local_time->tm_min * 60) + local_time->tm_sec;
+}
+
+int getDaySecondsFrom3Int(int h, int m, int s) {
+    // Переводим часы в секунды, затем минуты в секунды и добавляем количество секунд
+    return (h * 3600) + (m * 60) + s;
+}
+
 long long to_unix_timestamp(std::chrono::system_clock::time_point time_point) {
     return std::chrono::duration_cast<std::chrono::seconds>(time_point.time_since_epoch()).count();
 }

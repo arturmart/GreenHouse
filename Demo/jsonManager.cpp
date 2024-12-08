@@ -7,6 +7,7 @@
 
 
 
+
 //тест
 
 
@@ -47,8 +48,66 @@ void jsonManager::write_json_to_file(const json& j) {
         throw std::runtime_error("Ошибка записи JSON: " + std::string(e.what()));
     }
 }
+bool jsonManager::create_backup(const std::string& filename) {
+    try {
+        std::filesystem::copy(filename, filename +"-"+ unixTimestampToTimeString(to_unix_timestamp(std::chrono::system_clock::now()))) + ".bak", std::filesystem::copy_options::overwrite_existing);
+        std::cout << "Резервная копия файла создана: " << filename + ".bak" << std::endl;
+        return true;
+    } catch (const std::exception& e) {
+        std::cerr << "Не удалось создать резервную копию: " << e.what() << std::endl;
+        return false;
+    }
+}
 
-bool jsonManager::appendToJsonArray( const nlohmann::json& new_element) {
+bool jsonManager::file_exists(const std::string& filename) {
+    return std::filesystem::exists(filename);
+}
+
+bool jsonManager::appendToJsonArray(const nlohmann::json& new_element) {
+    std::ifstream input_file(filename);
+    nlohmann::json json_array;
+
+    // Проверка на существование файла
+    if (!file_exists(filename)) {
+        std::cerr << "Файл не найден. Создаю новый массив..." << std::endl;
+        json_array = nlohmann::json::array(); // Создаем новый массив
+    } else {
+        try {
+            input_file >> json_array;
+
+            // Проверка, является ли содержимое файла массивом
+            if (!json_array.is_array()) {
+                std::cerr << "Ошибка: JSON не является массивом. Исправляю..." << std::endl;
+                json_array = nlohmann::json::array(); // Преобразуем в новый массив
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "Ошибка парсинга: " << e.what() << ". Создаю новый массив..." << std::endl;
+
+            // Создаем бекап поврежденного файла
+            if (!create_backup(filename)) {
+                std::cerr << "Не удалось создать резервную копию." << std::endl;
+            }
+
+            json_array = nlohmann::json::array(); // Если ошибка парсинга, создаем новый массив
+        }
+    }
+
+    // Добавляем новый элемент в массив
+    json_array.push_back(new_element);
+
+    // Перезаписываем файл с новым массивом
+    std::ofstream output_file(filename);
+    if (output_file.is_open()) {
+        output_file << json_array.dump(4); // Запись с форматированием
+    } else {
+        std::cerr << "Ошибка записи в файл!" << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+/*bool jsonManager::appendToJsonArray( const nlohmann::json& new_element) {
     // Открываем файл в режиме чтения и записи
     std::ifstream input_file(filename);
     nlohmann::json json_array;
@@ -86,7 +145,7 @@ bool jsonManager::appendToJsonArray( const nlohmann::json& new_element) {
     }
     output_file.close();
     return true;
-}
+}*/
 
 void jsonManager::changeName(const std::string& newfilename){
         filename = newfilename;

@@ -20,7 +20,7 @@ int main(){
    {
       
       std::cout<<"sand Message:";
-      std::cin>>input;
+      std::getline(std::cin,input);
       lcd.clear();
       std::cout<<">"<<input.c_str()<<std::endl;
       lcd.displayString(input.c_str(), 1);

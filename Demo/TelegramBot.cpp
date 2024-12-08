@@ -27,11 +27,16 @@ std::vector<std::unordered_map<std::string, std::string>> manualCommands = {
 
 std::vector<std::unordered_map<std::string, std::string>> getterCommands = {
     {{"TEXT", "get Temp In"}, {"CALL_BACK_DATA", "getTemp"}},
+    {{"TEXT", "get Temp In 2"}, {"CALL_BACK_DATA", "getTemp2"}},
+
+    {{"TEXT", "get Temp Bake In"}, {"CALL_BACK_DATA", "getTempInBake"}},
+    {{"TEXT", "get Temp Bake Out"}, {"CALL_BACK_DATA", "getTempOutBake"}},
+
     {{"TEXT", "get Temp Out API"}, {"CALL_BACK_DATA", "getTempOut"}},
-    {{"TEXT", "get Temp Water In"}, {"CALL_BACK_DATA", "getTempWaterIn"}},
-    {{"TEXT", "get Temp Water Out"}, {"CALL_BACK_DATA", "getTempWaterOut"}},
+    
     {{"TEXT", "get Chart"}, {"CALL_BACK_DATA", "getChart"}},
-    {{"TEXT", "get Log and Chart"}, {"CALL_BACK_DATA", "getLogChart"}}
+    {{"TEXT", "get Log and Chart"}, {"CALL_BACK_DATA", "getLogChart"}},
+    {{"TEXT", "get States"}, {"CALL_BACK_DATA", "getStates"}}
 };
 
 TgBot::InlineKeyboardMarkup::Ptr TelegramBot::createKeyboard(const std::vector<std::unordered_map<std::string, std::string>>& commands, int columns) {
@@ -48,7 +53,8 @@ TgBot::InlineKeyboardMarkup::Ptr TelegramBot::createKeyboard(const std::vector<s
     for (size_t i = 0; i < buttons.size(); i += columns) {
         std::vector<TgBot::InlineKeyboardButton::Ptr> row;
         for (size_t j = 0; j < columns && i + j < buttons.size(); ++j) {
-            row.push_back(buttons[i + j]);
+            if(i+j <buttons.size())
+                row.push_back(buttons[i + j]);
         }
         keyboard->inlineKeyboard.push_back(row);
     }

@@ -18,4 +18,8 @@ std::string to_iso8601(std::chrono::system_clock::time_point time_point);
 // Функция для преобразования времени в Unix timestamp
 long long to_unix_timestamp(std::chrono::system_clock::time_point time_point);
 
+int getDaySecondsFromTimePoint(std::chrono::system_clock::time_point time_point);
+
+int getDaySecondsFrom3Int(int h, int m, int s);
+
 #endif // TIME_UTILS_H

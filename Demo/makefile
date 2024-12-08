@@ -8,10 +8,11 @@ CXXFLAGS = -std=c++17 -Wall -O0 -I/path/to/nlohmann/json -I/usr/include/cairo
 LDFLAGS = -lwiringPi -lz -lcurl -lcairo -lTgBot -lboost_system -lssl -lcrypto -lpthread
 
 # Исходные файлы
-SRC = main.cpp Executor.cpp I2CLCD.cpp RelayControlModule.cpp DataParsing.cpp \
+SRC = main.cpp tokens.cpp Executor.cpp I2CLCD.cpp RelayControlModule.cpp DataParsing.cpp \
       TreeParsing.cpp MessageQueuing.cpp SerialComm.cpp DataCombine.cpp \
       crcCalc.cpp DataGeter.cpp DS18B20.cpp WeatherAPI.cpp Logger.cpp \
-      jsonManager.cpp ChartDrawing.cpp TimeManager.cpp TelegramBot.cpp
+      jsonManager.cpp ChartDrawing.cpp TimeManager.cpp TelegramBot.cpp \
+		
 
 # Объектные файлы (будут сгенерированы автоматически)
 OBJ = $(SRC:.cpp=.o)
