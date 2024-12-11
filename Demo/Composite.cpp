@@ -145,15 +145,32 @@ public:
         addStrategy<bool>("NotZeroB", new NotZero<bool>);
         addStrategy<bool>("IsZeroB", new IsZero<bool>);
 
-        addStrategy<bool>("Always", new Always<bool>);
+        addStrategy<double>("Always", new Always<double>);
     }
 
     // Регистрация стратегии
     
 
     bool check(const std::string& key, const std::vector<std::string>& args) {
-        std::vector<double> convertedArgs;
-        if (!convertArgs<double>(args, convertedArgs)) return false;
+        if (strategies<double>().count(key)) {
+            return check<double>(key, args);
+        }
+        else if (strategies<long long>().count(key)) {
+            return check<long long>(key, args);
+        }
+        else if (strategies<bool>().count(key)) {
+            return check<bool>(key, args);
+        }
+        else {
+            std::cerr << "Strategy not found: " << key << std::endl;
+            return false;
+        }
+    }
+
+    template <typename T>
+    bool check(const std::string& key, const std::vector<std::string>& args) {
+        std::vector<T> convertedArgs;
+        if (!convertArgs<T>(args, convertedArgs)) return false;
         return checkImpl(key, convertedArgs);
     }
 
@@ -170,15 +187,38 @@ public:
     
     }
 
+    
+    void printStrtegies() {
+        
+        std::cout << "Strategies for double:" << std::endl;
+        for (const auto& it : strategies<double>()) {
+            std::cout << it.first << std::endl;
+        }
+
+        std::cout << "Strategies for long long:" << std::endl;
+        for (const auto& it : strategies<long long>()) {
+            std::cout << it.first << std::endl;
+        }
+
+        std::cout << "Strategies for bool:" << std::endl;
+        for (const auto& it : strategies<bool>()) {
+            std::cout << it.first << std::endl;
+        }
+
+
+    }
+
 
 private:
     template <typename T>
     bool checkImpl(const std::string& key, const std::vector<T>& args) {
         auto& strategy_map = strategies<T>();
+       
         auto it = strategy_map.find(key);
         if (it != strategy_map.end() && it->second) {
             return it->second->evaluate(args);
         }
+        
         std::cerr << "Strategy not found: " << key << std::endl;
         return false;
     }
@@ -188,14 +228,17 @@ private:
     bool convertArgs(const std::vector<std::string>& args, std::vector<T>& convertedArgs) {
         try {
             for (const auto& arg : args) {
-                std::istringstream iss(arg);
-                T value;
-                iss >> value;
-                if (iss.fail()) {
-                    std::cerr << "Failed to convert string to type T: " << arg << std::endl;
-                    return false;
-                }
-                convertedArgs.push_back(value);
+                
+                    std::cout << arg << " ";
+                    std::istringstream iss(arg);
+                    T value;
+                    iss >> value;
+                    if (iss.fail()) {
+                        std::cerr << "Failed to convert string to type T: " << arg << std::endl;
+                        return false;
+                    }
+                    convertedArgs.push_back(value);
+                
             }
         }
         catch (const std::exception& e) {
@@ -246,7 +289,10 @@ public:
             const std::function<void()>& exe,
             Node* parent = nullptr
             )
-            : parent(parent), title(title), cnodition(cnodition), conditionArgs(conditionArgs), executing(exe) {}
+            : parent(parent), title(title), cnodition(cnodition), conditionArgs(conditionArgs), executing(exe) {
+            std::cout << "Node Constructor. Ndoe Title (" << title << ") Cond (" << cnodition << ")" << std::endl;
+            std::cout << "condArg "; for (auto it : conditionArgs) std::cout << it << " "; std::cout << std::endl;
+        }
 
         void addChild(Node* child) {
             children.push_back(child);
@@ -292,14 +338,18 @@ public:
         }
 
         std::string getCondArgVar() const {
-            return conditionArgs[0];
+            if (conditionArgs.size() > 0)
+                return conditionArgs[0];
+            else return (NULL);
         }
 
         std::vector<std::string> getCondArgs() const{
 
-            std::vector<std::string> newVec(conditionArgs.begin() + 1, conditionArgs.end());
+            if(conditionArgs.size()>=2)
 
-            return newVec;
+                return std::vector<std::string>(conditionArgs.begin() + 1, conditionArgs.end());
+            else
+                return std::vector<std::string>();
         }
 
         
@@ -325,9 +375,11 @@ public:
             const std::function<void()>& exe = NULL
         ): dataGetter(dataGetter){
 
+        std::cout << "Composite Constructor. Ndoe Title (" << title<<") Cond ("<<condition<<")" << std::endl;
+
         root = new Node(title, condition, condArg, exe);
 
-        std::cout << "condArg ";for (auto it : condArg) std::cout << it << " "; std::cout << std::endl;
+        
         current = root;
     }
 
@@ -374,12 +426,31 @@ public:
         }
     }
 
+
+    std::string getDataGetterString(const std::string& condArgVar) {
+
+        if (dataGetter.find(condArgVar) != dataGetter.end()) {
+            return dataGetter[condArgVar];
+        }
+        else {
+            return "";
+        }
+
+        
+
+    }
+
     bool checkNode(Node* node) {
         return(cond.check(
-            node->getCondition(), addFirstElement(node->getCondArgs(), dataGetter[node->getCondArgVar()])));
+            node->getCondition(), addFirstElement(node->getCondArgs(), getDataGetterString(node->getCondArgVar()))));
 
 
 
+    }
+
+    
+    void printStrtegies() {
+        cond.printStrtegies();
     }
 
 private:
@@ -407,6 +478,7 @@ private:
 
     std::vector<std::string> addFirstElement(const std::vector<std::string>& vec, const std::string& value) {
         // Создаем новый вектор, в котором сначала добавляем новый элемент
+        if (value.empty() || vec.empty()) return std::vector<std::string>();
         std::vector<std::string> newVec;
         newVec.push_back(value);  // Добавляем элемент в начало
 
@@ -434,6 +506,8 @@ private:
         }
     }
 
+
+
     ConditionContext cond;
     std::unordered_map<std::string, std::string>& dataGetter;
     Node* root;
@@ -446,7 +520,12 @@ int main() {
     std::unordered_map<std::string,  std::string> dataGetter;
     dataGetter["var1"] = "5";
 
-    Composite testPattern(dataGetter, "main", "Always", { "var1", "0" }, []() { std::cout << "Executing main" << "\n"; });
+
+    std::cout << "1" << "Always" << std::endl;
+    Composite testPattern(dataGetter, "main", "Always", {"0"}, []() { std::cout << "Executing main" << "\n"; });
+    
+    
+    testPattern.printStrtegies();
 
    
 
