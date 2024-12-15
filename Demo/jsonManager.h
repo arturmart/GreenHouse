@@ -33,4 +33,3 @@ class jsonManager{
 };
 
 #endif //JSONMANAGER_H
-

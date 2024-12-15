@@ -6,7 +6,7 @@
 #include <nlohmann/json.hpp>
 
 
-
+namespace fs = std::filesystem;
 
 //тест
 
@@ -50,14 +50,20 @@ void jsonManager::write_json_to_file(const json& j) {
 }
 bool jsonManager::create_backup(const std::string& filename) {
     try {
-        std::filesystem::copy(filename, filename +"-"+ unixTimestampToTimeString(to_unix_timestamp(std::chrono::system_clock::now()))) + ".bak", std::filesystem::copy_options::overwrite_existing);
-        std::cout << "Резервная копия файла создана: " << filename + ".bak" << std::endl;
+        // Формируем имя резервной копии
+        std::string backup_filename = filename + "-" +
+            unixTimestampToTimeString(to_unix_timestamp(std::chrono::system_clock::now())) + ".bak";
+
+        // Копируем файл
+        std::filesystem::copy(filename, backup_filename, std::filesystem::copy_options::overwrite_existing);
+        std::cout << "Резервная копия файла создана: " << backup_filename << std::endl;
         return true;
     } catch (const std::exception& e) {
         std::cerr << "Не удалось создать резервную копию: " << e.what() << std::endl;
         return false;
     }
 }
+
 
 bool jsonManager::file_exists(const std::string& filename) {
     return std::filesystem::exists(filename);

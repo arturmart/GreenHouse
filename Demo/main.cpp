@@ -8,6 +8,7 @@
 #include "Logger.h"
 #include "TelegramBot.h"
 #include "tokens.h"
+#include "ConditionJson.h"
 
 
 #include <thread> // Для работы с потоками
@@ -41,6 +42,11 @@ std::vector<std::unordered_map<std::string, std::string>> getterCommandsMap = {
     {{"TG_BOT", "getChart"}, {"SAND_CHART", "true"}},
     {{"TG_BOT", "getLogChart"}, {"SAND_CHART", "true"}, {"SAND_LOG", "true"}},
     {{"TG_BOT", "getStates"}, {"SAND_STATES", "true"}},
+
+    
+
+    {{"TG_BOT", "getConditionJson"}, {"SAND_COND_JSON", "true"}},
+    {{"TG_BOT", "getConditionTree"}, {"SAND_COND_TREE", "true"}}
 };
 
 std::vector<std::unordered_map<std::string, std::string>> executeCommandsMap = {
@@ -77,22 +83,20 @@ std::mutex Mutex;
 void getterCommandTGBot(const std::string& arg);
 void executorCommandTGBot(const std::string& arg);
 
-Executor executor;
-DataGetter dataGetter;
-Logger LOG("Log/Log"+getDay(),{"date","temp","temp2","inBake", "outBake","tempOut","Bake","Pump","Falcon1","Falcon2","Falcon3","Falcon4"});
-TelegramBot bot("7804127004:AAEQkzTISnsoBpESYJQdVERP6gX10d6rA1c"/*TOKEN_TELEGRAM*/,getterCommandTGBot,executorCommandTGBot);
+
 
 
 //Registers Initilization
 
-std::unordered_map<std::string, double> getterRegistor = {
-    {"temp",-255},
-    {"temp2",-255},
+std::unordered_map<std::string, std::string> getterRegistor = {
+    {"temp","-255"},
+    {"date","0"},
+    {"temp2","-255"},
 
-    {"inBake",-255},
-    {"outBake",-255},
+    {"inBake","-255"},
+    {"outBake","-255"},
 
-    {"tempOut",-255},
+    {"tempOut","-255"},
 };
 
 std::unordered_map<std::string, bool> executorRegister = {
@@ -117,35 +121,56 @@ std::unordered_map<std::string, bool> autoModeExecutorRegister = {
 };
 
 
+void doExecuteAuto(const std::string& exe); //init
+
+Executor executor;
+DataGetter dataGetter;
+Logger LOG("Log/Log"+getDay(),{"date","temp","temp2","inBake", "outBake","tempOut","Bake","Pump","Falcon1","Falcon2","Falcon3","Falcon4"});
+TelegramBot bot("7804127004:AAEQkzTISnsoBpESYJQdVERP6gX10d6rA1c"/*TOKEN_TELEGRAM*/,getterCommandTGBot,executorCommandTGBot);
+Composite  MainPattern(getterRegistor,doExecuteAuto, "main", "Always", {}, "");
+
+
+
 void getterRegisterUpdate(){
    //Maded for same types 
    std::lock_guard<std::mutex> lock(Mutex);
    for(auto& pair  : getterRegistor){
       //std::cout<<pair.first <<" "<< dataGetter.getNewData(pair.first)<<std::endl;
-      pair.second =  dataGetter.getNewData(pair.first);
+      if(pair.first == "date"){
+      
+         pair.second =  std::to_string(to_unix_timestamp(std::chrono::system_clock::now()));
+      }
+      else
+         pair.second =  std::to_string(dataGetter.getNewData(pair.first));
    }
 
 }
 void getterRegisterLog(){
 
    std::lock_guard<std::mutex> lock(Mutex);
-   LOG.setData("date", std::to_string(to_unix_timestamp(std::chrono::system_clock::now())));
+   //LOG.setData("date", std::to_string(to_unix_timestamp(std::chrono::system_clock::now())));
    for(auto pair  : getterRegistor)
-      LOG.setData(pair.first,std::to_string( pair.second));
+      LOG.setData(pair.first, pair.second);
    LOG.log();
 }
 void LogUnion(const std::string& first, const std::string& second){
-   LOG.setData("date", std::to_string(to_unix_timestamp(std::chrono::system_clock::now())));
+   LOG.setData("date", std::to_string(to_unix_timestamp(std::chrono::system_clock::now())));//poxel
    LOG.setData(first,second);
    LOG.log();
 }
-void GetterAndLogLoop(){
-   while(true){
+void GetterAndLog(){
+   
       getterRegisterUpdate();
       getterRegisterLog();
       std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+   
+}
+void GetterAndLogLoop(){
+   while(true){
+      GetterAndLog();
    }
 }
+
 
 void doExecuteManual(const std::string& exe){
    std::lock_guard<std::mutex> lock(Mutex);
@@ -242,6 +267,16 @@ void getterCommandTGBot(const std::string& arg){
             
 
          }
+         
+         if(it.find("SAND_COND_TREE") != it.end()){
+            bot.sendAllUserMessage(MainPattern.getTreeString());
+            
+
+         }
+         if(it.find("SAND_COND_JSON") != it.end()){
+            bot.sendAllUserDocument("Condition.json",getDay() + " Condition");
+
+         }
       }
       
    }
@@ -273,7 +308,10 @@ int fromSec(int h, int m ,int s){
 
 }
 
+
+
 int main(){
+  
 
   
 
@@ -282,8 +320,13 @@ int main(){
 
    
    
-   std::thread botThread(&TelegramBot::run, &bot);
+   GetterAndLog();
+
    std::thread logThread(&GetterAndLogLoop);
+
+   MainPattern.setRoot(fromJSONRecursively(jmCond.read_json_from_file()));
+
+   std::thread botThread(&TelegramBot::run, &bot);
 
    TurnOffAllRCM();
 
@@ -294,11 +337,12 @@ int main(){
 
       //if(nowSec() > fromSec(06,28,1))
 
-      executor.execute("lcd",std::to_string(getterRegistor["temp"]));
+      executor.execute("lcd",getterRegistor["temp"]);
+      MainPattern.executeAll();
 
 
 
-
+      /*
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
       doExecuteAuto("Bake_ON");
       
@@ -307,13 +351,14 @@ int main(){
       doExecuteAuto("Bake_OFF");
       
 
-      if(getterRegistor["temp"] > 24){
+      if(std::stod(getterRegistor["temp"]) > 24){
          doExecuteAuto("Pump_ON");
       }
 
-      if(getterRegistor["temp"] < 22){
+      if(std::stod(getterRegistor["temp"]) < 22){
          doExecuteAuto("Pump_OFF");
       }
+      */
       
 
    }

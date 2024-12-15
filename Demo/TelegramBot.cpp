@@ -1,7 +1,7 @@
 #include "TelegramBot.h"
 #include <nlohmann/json.hpp> // Для работы с JSON
 
-
+#define REPOSITORY_PATH "/home/orangepi/greenhouse/Demo/"
 
 // Глобальные переменные
 std::vector<std::unordered_map<std::string, std::string>> manualCommands = {
@@ -36,7 +36,10 @@ std::vector<std::unordered_map<std::string, std::string>> getterCommands = {
     
     {{"TEXT", "get Chart"}, {"CALL_BACK_DATA", "getChart"}},
     {{"TEXT", "get Log and Chart"}, {"CALL_BACK_DATA", "getLogChart"}},
-    {{"TEXT", "get States"}, {"CALL_BACK_DATA", "getStates"}}
+    {{"TEXT", "get States"}, {"CALL_BACK_DATA", "getStates"}},
+
+    {{"TEXT", "get Condition Json"}, {"CALL_BACK_DATA", "getConditionJson"}},
+    {{"TEXT", "get Condition Tree"}, {"CALL_BACK_DATA", "getConditionTree"}}
 };
 
 TgBot::InlineKeyboardMarkup::Ptr TelegramBot::createKeyboard(const std::vector<std::unordered_map<std::string, std::string>>& commands, int columns) {
@@ -126,6 +129,45 @@ void TelegramBot::setupCommands() {
             std::cout << "Получено сообщение: " << message->text << std::endl;
         }
     });
+
+    bot.getEvents().onAnyMessage([this](TgBot::Message::Ptr message) {
+    // Проверяем, является ли сообщение документом
+    if (message->document) {
+        // Проверяем MIME тип, чтобы удостовериться, что это JSON файл
+        if (message->document->mimeType == "application/json") {
+            std::string fileName = message->document->fileName;  // Имя файла
+            
+            // Проверяем имя файла (например, начинается ли с "data_")
+            if (fileName.find("Condition") == 0) {
+                try {
+                    // Получаем ID файла
+                    std::string fileId = message->document->fileId;
+
+                    // Получаем информацию о файле
+                    TgBot::File::Ptr file = bot.getApi().getFile(fileId);
+
+
+
+                       std::string downloadPath = REPOSITORY_PATH  + fileName;  // Full download path
+                    // Загружаем файл на локальный диск
+                    bot.getApi().downloadFile(file->filePath,downloadPath);
+
+                    // Отправляем сообщение подтверждения
+                    bot.getApi().sendMessage(message->chat->id, "JSON файл успешно получен и загружен. "+ fileName);
+                } catch (const std::exception& e) {
+                    // Обрабатываем ошибки
+                    bot.getApi().sendMessage(message->chat->id, "Не удалось скачать JSON файл. Ошибка: " + std::string(e.what()));
+                }
+            } else {
+                // Если имя файла не соответствует ожиданиям
+                bot.getApi().sendMessage(message->chat->id, "Имя файла не соответствует требованиям (должно начинаться с 'Condition').");
+            }
+        } else {
+            // Если загруженный файл не является JSON, отправляем сообщение пользователю
+            bot.getApi().sendMessage(message->chat->id, "Пожалуйста, отправьте файл в формате JSON.");
+        }
+    }
+});
 }
 
 /*TelegramBot::TelegramBot(const std::string& token) : bot(token) {
@@ -152,6 +194,14 @@ void TelegramBot::sendMessage(int64_t chatId, const std::string& message) {
         std::cerr << "Ошибка отправки сообщения: " << e.what() << std::endl;
     }
 }
+void TelegramBot::sendMessageHTML(int64_t chatId, const std::string& message) {
+    try {
+        bot.getApi().sendMessage(chatId, message,nullptr,nullptr,nullptr, "HTML");
+        std::cout << "Сообщение отправлено в чат " << chatId << std::endl;
+    } catch (const TgBot::TgException& e) {
+        std::cerr << "Ошибка отправки сообщения: " << e.what() << std::endl;
+    }
+}
 
 void TelegramBot::sendPhoto( int64_t chatId, const std::string& photoPath, const std::string& caption) {
     try {
@@ -169,6 +219,7 @@ void TelegramBot::sendPhoto( int64_t chatId, const std::string& photoPath, const
 }
 
 void TelegramBot::sendDocument( int64_t chatId, const std::string& documentPath, const std::string& caption) {
+
     try {
         std::ifstream file(documentPath);
         if (!file.is_open()) {
@@ -201,6 +252,12 @@ void TelegramBot::sendAllUserMessage(const std::string& message) {
     for (const auto& user : users) {  // Предполагаем, что список пользователей хранится в переменной `users`
         int64_t chatId = std::stoll(user.at("chatId"));
         sendMessage(chatId, message);  // Используем уже существующий метод sendMessage
+    }
+}
+void TelegramBot::sendAllUserMessageHTML(const std::string& message) {
+    for (const auto& user : users) {  // Предполагаем, что список пользователей хранится в переменной `users`
+        int64_t chatId = std::stoll(user.at("chatId"));
+        sendMessageHTML(chatId, message);  // Используем уже существующий метод sendMessage
     }
 }
 void TelegramBot::sendAllUserDocument(const std::string& filePath, const std::string& caption) {

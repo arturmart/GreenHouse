@@ -52,6 +52,7 @@ public:
 
     // Отправка текстового сообщения
    void sendMessage(int64_t chatId, const std::string& message);
+   void sendMessageHTML(int64_t chatId, const std::string& message);
     // Отправка фото
     void sendPhoto(int64_t chatId, const std::string& photoPath, const std::string& caption = "");
     // Отправка документа
@@ -62,6 +63,7 @@ public:
 
    // Отправка сообщения всем пользователям
    void sendAllUserMessage(const std::string& message);
+   void sendAllUserMessageHTML(const std::string& message);
 
    // Отправка документа всем пользователям
    void sendAllUserDocument(const std::string& filePath, const std::string& caption = "");

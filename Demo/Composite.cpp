@@ -1,137 +1,85 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include <functional>
-#include <queue>
-#include <unordered_map>
-#include <stdexcept>
-#include <sstream>
-#include <algorithm>
 
 
+#include "Composite.h"
 
-template <typename T>
-class IConditionStrategy {
-public:
-    virtual ~IConditionStrategy() = default;
-    virtual bool evaluate(const std::vector<T>& args) const = 0;
-};
 
 // Реализация стратегий
 template <typename T>
-class GreaterThan : public IConditionStrategy<T> {
-public:
-    bool evaluate(const std::vector<T>& args) const override {
-        //std::cout << "GreaterThan" << std::endl;
-        return args.size() == 2 && args[0] > args[1];
-    }
-};
+bool GreaterThan<T>::evaluate(const std::vector<T>& args) const  {
+    //std::cout << "GreaterThan" << std::endl;
+    return args.size() == 2 && args[0] > args[1];
+}
 
 template <typename T>
-class LessThan : public IConditionStrategy<T> {
-public:
-    bool evaluate(const std::vector<T>& args) const override {
-        //std::cout << "LessThan" << std::endl;
-        return args.size() == 2 && args[0] < args[1];
-    }
-};
+bool  LessThan<T>::evaluate(const std::vector<T>& args) const  {
+    //std::cout << "LessThan" << std::endl;
+    return args.size() == 2 && args[0] < args[1];
+}
 
 template <typename T>
-class EqualTo : public IConditionStrategy<T> {
-public:
-    bool evaluate(const std::vector<T>& args) const override {
+bool  EqualTo<T>::evaluate(const std::vector<T>& args) const  {
         //std::cout << "EqualTo" << std::endl;
         return args.size() == 2 && args[0] == args[1];
-    }
-};
+}
 
 template <typename T>
-class NotEqualTo : public IConditionStrategy<T> {
-public:
-    bool evaluate(const std::vector<T>& args) const override {
-        //std::cout << "NotEqualTo" << std::endl;
-        return args.size() == 2 && args[0] != args[1];
-    }
-};
+bool NotEqualTo<T>::evaluate(const std::vector<T>& args) const {
+    //std::cout << "NotEqualTo" << std::endl;
+    return args.size() == 2 && args[0] != args[1];
+}
 
 template <typename T>
-class GreaterThanOrEqual : public IConditionStrategy<T> {
-public:
-    bool evaluate(const std::vector<T>& args) const override {
-        //std::cout << "GreaterThanOrEqual" << std::endl;
-        return args.size() == 2 && args[0] >= args[1];
-    }
-};
+bool GreaterThanOrEqual<T>::evaluate(const std::vector<T>& args) const {
+    //std::cout << "GreaterThanOrEqual" << std::endl;
+    return args.size() == 2 && args[0] >= args[1];
+}
 
 template <typename T>
-class LessThanOrEqual : public IConditionStrategy<T> {
-public:
-    bool evaluate(const std::vector<T>& args) const override {
-        //std::cout << "LessThanOrEqual" << std::endl;
-        return args.size() == 2 && args[0] <= args[1];
-    }
-};
+bool LessThanOrEqual<T>::evaluate(const std::vector<T>& args) const {
+    //std::cout << "LessThanOrEqual" << std::endl;
+    return args.size() == 2 && args[0] <= args[1];
+}
 
 template <typename T>
-class InRange : public IConditionStrategy<T> {
-public:
-    bool evaluate(const std::vector<T>& args) const override {
-        //std::cout << "InRange" << std::endl;
-        return args.size() == 3 && args[0] >= args[1] && args[0] <= args[2];
-    }
-};
+bool InRange<T>::evaluate(const std::vector<T>& args) const  {
+    //std::cout << "InRange" << std::endl;
+    return args.size() == 3 && args[0] >= args[1] && args[0] <= args[2];
+}
 
 template <typename T>
-class OutOfRange : public IConditionStrategy<T> {
-public:
-    bool evaluate(const std::vector<T>& args) const override {
-        //std::cout << "OutOfRange" << std::endl;
-        return args.size() == 3 && (args[0] < args[1] || args[0] > args[2]);
-    }
-};
+bool OutOfRange<T>::evaluate(const std::vector<T>& args) const {
+    //std::cout << "OutOfRange" << std::endl;
+    return args.size() == 3 && (args[0] < args[1] || args[0] > args[2]);
+}
 
 template <typename T>
-class NotZero : public IConditionStrategy<T> {
-public:
-    bool evaluate(const std::vector<T>& args) const override {
-        //std::cout << "NotZero" << std::endl;
-        return args.size() == 1 && args[0] != 0;
-    }
-};
+bool NotZero<T>::evaluate(const std::vector<T>& args) const  {
+    //std::cout << "NotZero" << std::endl;
+    return args.size() == 1 && args[0] != 0;
+}
 
 template <typename T>
-class IsZero : public IConditionStrategy<T> {
-public:
-    bool evaluate(const std::vector<T>& args) const override {
-        //std::cout << "IsZero" << std::endl;
-        return args.size() == 1 && args[0] == 0;
-    }
-};
+bool IsZero<T>::evaluate(const std::vector<T>& args) const {
+    //std::cout << "IsZero" << std::endl;
+    return args.size() == 1 && args[0] == 0;
+}
 
 template <typename T>
-class Always : public IConditionStrategy<T> {
-public:
-    bool evaluate(const std::vector<T>& args) const override {
-        //std::cout << "Always" << std::endl;
-        return true;
-    }
-};
+bool Always<T>::evaluate(const std::vector<T>& args) const {
+    //std::cout << "Always" << std::endl;
+    return true;
+}
 
 template <typename T>
-class Never : public IConditionStrategy<T> {
-public:
-    bool evaluate(const std::vector<T>& args) const override {
-        //std::cout << "Always" << std::endl;
-        return false;
-    }
-};
+bool Never<T>::evaluate(const std::vector<T>& args) const {
+    //std::cout << "Always" << std::endl;
+    return false;
+}
+
 
 
 // Контекст для хранения и применения стратегий
-class ConditionContext {
-public:
-
-    ConditionContext() {
+    ConditionContext::ConditionContext() {
 
       
         addStrategy<double>(">D", new GreaterThan<double>);
@@ -159,9 +107,7 @@ public:
     }
 
     // Регистрация стратегии
-    
-
-    bool check(const std::string& key, const std::vector<std::string>& args) {
+    bool ConditionContext::check(const std::string& key, const std::vector<std::string>& args) {
         if (strategies<double>().count(key)) {
             return check<double>(key, args);
         }
@@ -178,15 +124,14 @@ public:
     }
 
     template <typename T>
-    bool check(const std::string& key, const std::vector<std::string>& args) {
+    bool ConditionContext::check(const std::string& key, const std::vector<std::string>& args) {
         std::vector<T> convertedArgs;
         if (!convertArgs<T>(args, convertedArgs)) return false;
         return checkImpl(key, convertedArgs);
     }
 
     // Освобождение памяти стратегий
-
-    ~ConditionContext() {
+    ConditionContext::~ConditionContext() {
         // Очистка стратегий для типа `double`
         clearStrategies<double>();
         // Очистка стратегий для типа `long long`
@@ -197,8 +142,7 @@ public:
     
     }
 
-    
-    void printStrtegies() {
+    void ConditionContext::printStrtegies() {
         
         std::cout << "Strategies for double:" << std::endl;
         for (const auto& it : strategies<double>()) {
@@ -219,9 +163,8 @@ public:
     }
 
 
-private:
     template <typename T>
-    bool checkImpl(const std::string& key, const std::vector<T>& args) {
+    bool ConditionContext::checkImpl(const std::string& key, const std::vector<T>& args) {
         auto& strategy_map = strategies<T>();
        
         auto it = strategy_map.find(key);
@@ -235,7 +178,7 @@ private:
 
     // Преобразование строковых аргументов в нужный тип
     template <typename T>
-    bool convertArgs(const std::vector<std::string>& args, std::vector<T>& convertedArgs) {
+    bool ConditionContext::convertArgs(const std::vector<std::string>& args, std::vector<T>& convertedArgs) {
         try {
             for (const auto& arg : args) {
                 
@@ -258,14 +201,13 @@ private:
         return true;
     }
 
- 
     template <typename T>
-    void addStrategy(const std::string& key, IConditionStrategy<T>* strategy) {
+    void ConditionContext::addStrategy(const std::string& key, IConditionStrategy<T>* strategy) {
         strategies<T>()[key] = strategy;
     }
 
     template <typename T>
-    void clearStrategies() {
+    void ConditionContext::clearStrategies() {
         auto& strategy_map = strategies<T>();
         for (auto it = strategy_map.begin(); it != strategy_map.end(); ++it) {
             delete it->second; // Удаляем значение
@@ -274,54 +216,48 @@ private:
        
     }
 
-
-
-
     // Хранение стратегий для разных типов в хеш-таблице
     template <typename T>
-    std::unordered_map<std::string, IConditionStrategy<T>*>& strategies() {
+    std::unordered_map<std::string, IConditionStrategy<T>*>& ConditionContext::strategies() {
         static std::unordered_map<std::string, IConditionStrategy<T>*> strategy_map;
         return strategy_map;
     }
-};
 
 
 
 
 
-class Composite {
-public:
-    class Node {
-    public:
-        Node(const std::string& title,
+
+
+        Composite::Node::Node(const std::string& title,
             const std::string& cnodition,
             const std::vector <std::string>& conditionArgs,
-            const std::function<void()>& exe,
-            Node* parent = nullptr
+            const std::string& exe,
+            Composite::Node* parent
             )
-            : parent(parent), title(title), cnodition(cnodition), conditionArgs(conditionArgs), executing(exe) {
+            : parent(parent), title(title), cnodition(cnodition), conditionArgs(conditionArgs), exe(exe) {
             //std::cout << "Node Constructor. Ndoe Title (" << title << ") Cond (" << cnodition << ")" << std::endl;
             //std::cout << "condArg "; for (auto it : conditionArgs) std::cout << it << " "; std::cout << std::endl;
         }
 
-        void addChild(Node* child) {
+        void Composite::Node::addChild(Node* child) {
             children.push_back(child);
         }
 
-        void removeChild(size_t childID) {
+        void Composite::Node::removeChild(size_t childID) {
             if (childID < children.size())
                 children.erase(children.begin() + childID);
             else
                 std::cerr << "Node does not have child " << childID << std::endl;
         }
 
-        Node* getParent() {
+        Composite::Node* Composite::Node::getParent() {
             if (parent) return parent;
-            std::cerr << "Node does not have a parent" << std::endl;
+            //std::cerr << "Node does not have a parent" << std::endl;
             return nullptr;
         }
 
-        Node* getChild(size_t childID = 0) {
+        Composite::Node* Composite::Node::getChild(size_t childID) {
             if (childID < children.size()) {
                 return children[childID];
             }
@@ -331,27 +267,25 @@ public:
             }
         }
 
-
-        size_t getChildSize() const {
+        size_t Composite::Node::getChildSize() const {
             return children.size();
         }
 
-        void execute() {
-            if (executing) executing();
+        void Composite::Node::execute(std::function<void(std::string)> executor) {
+            if (!exe.empty()) executor(exe);
         }
 
-        std::string getTitle() const {
+        std::string Composite::Node::getTitle() const {
             return title;
         }
-        std::string getCondition() const {
+        std::string Composite::Node::getExe() const {
+            return exe;
+        }
+        std::string Composite::Node::getCondition() const {
             return cnodition;
         }
-
-        //jnjel
-
     
-
-        std::vector<std::string> getCondArgs() const{
+        std::vector<std::string> Composite::Node::getCondArgs() const{
 
             return conditionArgs;
             /*
@@ -366,26 +300,16 @@ public:
 
         
 
-    private:
-        std::string title;
+    
 
-        std::string cnodition;
-        std::vector <std::string> conditionArgs;
-
-        std::function<void()> executing;
-
-        std::vector<Node*> children;
-        Node* parent;
-    };
-
-    Composite(
-        std::unordered_map<
-            std::string, std::string>& dataGetter,
+    Composite::Composite(
+            std::unordered_map<std::string, std::string>& dataGetter,
+            const std::function<void(std::string)>& executor,
             const std::string& title, 
             const std::string& condition,
             const std::vector<std::string>& condArg, 
-            const std::function<void()>& exe = NULL
-        ): dataGetter(dataGetter){
+            const std::string& exe
+        ): dataGetter(dataGetter), executor(executor){
 
         //std::cout << "Composite Constructor. Ndoe Title (" << title<<") Cond ("<<condition<<")" << std::endl;
 
@@ -394,38 +318,82 @@ public:
         
         current = root;
     }
+    
+    Composite::Composite(Composite&& other) 
+    : dataGetter((other.dataGetter)), 
+      executor((other.executor)),
+      root(std::move(other.root)), 
+      current(std::move(other.current)), 
+      cond(std::move(other.cond)) {
+    // Reset the moved-from object
+    other.root = nullptr;
+    other.current = nullptr;
+    }
 
-    void addChild(
+Composite& Composite::operator=(Composite&& other) noexcept {
+    if (this != &other) {
+        // Clean up current object
+        delete root;
+
+        // Transfer ownership
+        dataGetter = std::move(other.dataGetter);
+        executor = std::move(other.executor);
+        root = other.root;
+        current = other.current;
+        cond = std::move(other.cond);
+
+        // Reset the moved-from object
+        other.root = nullptr;
+        other.current = nullptr;
+    }
+    return *this;
+}
+    void Composite::setRoot(Composite::Node* newRoot)  {
+         if (root) {
+            delete root;  // или другое освобождение ресурсов, если требуется
+        }
+        this->root = newRoot;
+        this->current = newRoot;  // Также можно установить текущий узел в корень
+    }
+
+    void Composite::addChild(
         const std::string& title,
         const std::string& condition,
         const std::vector<std::string>& condArg,
-        const std::function<void()> & exe = NULL
+        const std::string& exe
     ) {
 
         current->addChild(new Node(title, condition, condArg, exe, current));
     }
 
-    void goToRoot() {
+    void Composite::goToRoot() {
         current = root;
     }
 
-    void goToParent() {
+    void Composite::goToParent() {
         Node* tmp = current->getParent();
         if (tmp)
             current = tmp;
     }
 
-    void goToChild(size_t childID) {
+    void Composite::goToChild(size_t childID) {
         Node* tmp = current->getChild(childID);
         if (tmp)
             current = tmp;
     }
 
-    void printTree() {
+    void Composite::printTree() {
         printTree(root);
     }
 
-    void executeAll() {
+    std::string Composite::getTreeString(){
+        std::string str;
+        getTreeString(root,str);
+
+        return str;
+    }
+
+    void Composite::executeAll() {
         std::vector<Node*> iterators = getLevelOrderPtr();
         std::vector<bool> iteratorsBools;
 
@@ -444,13 +412,13 @@ public:
 
                 iteratorsBools.back() = iteratorsBools.back() && iteratorsBools[indexPrnt];
                 if(iteratorsBools.back()){
-                    it->execute();
+                    it->execute(executor);
                 }
                
             }
             else{
                 if(iteratorsBools.back()){
-                    it->execute();
+                    it->execute(executor);
                 }
             }
 
@@ -464,7 +432,11 @@ public:
     }
 
 
-    std::string getDataGetterString(const std::string& condArgVar) {
+    Composite::Node* Composite::getCurrent(){
+        return current;
+    }
+
+    std::string Composite::getDataGetterString(const std::string& condArgVar) {
 
         if (dataGetter.find(condArgVar) != dataGetter.end()) {
             return dataGetter[condArgVar];
@@ -477,7 +449,7 @@ public:
 
     }
 
-    bool checkNode(Node* node) {
+    bool Composite::checkNode(Node* node) {
 
 
         std::vector<std::string> varToStrArgs;
@@ -506,12 +478,12 @@ public:
     }
 
     
-    void printStrtegies() {
+    void Composite::printStrtegies() {
         cond.printStrtegies();
     }
 
-private:
-    std::vector<Node*> getLevelOrderPtr() {
+
+    std::vector<Composite::Node*> Composite::getLevelOrderPtr() {
         std::vector<Node*> iterators;
 
         if (root == nullptr)
@@ -533,7 +505,7 @@ private:
         return iterators;
     }
 
-    std::vector<std::string> addFirstElement(const std::vector<std::string>& vec, const std::string& value) {
+    std::vector<std::string> Composite::addFirstElement(const std::vector<std::string>& vec, const std::string& value) {
         // Создаем новый вектор, в котором сначала добавляем новый элемент
         if (value.empty() || vec.empty()) return std::vector<std::string>();
         std::vector<std::string> newVec;
@@ -545,7 +517,7 @@ private:
         return newVec;
     }
 
-    void printTree(Node* node, const std::string& prefix = "", bool isLast = true) {
+    void Composite::printTree(Composite::Node* node, const std::string& prefix, bool isLast) {
         if (!node) return;
 
         std::cout << prefix;
@@ -558,18 +530,18 @@ private:
         if (checkNode(node)){
                if(node->getParent()){
                     if (checkNode(node->getParent())){
-                            std::cout << "\033[32m";
+                            std::cout << "\033[32m";//[+]
                     }
                     else{
-                            std::cout << "\033[33m";
+                            std::cout << "\033[33m";//[~]
                     }
                }
                else{
-                    std::cout << "\033[32m";
+                    std::cout << "\033[32m";//[+]
                }
         }
          else
-               std::cout << "\033[31m";
+               std::cout << "\033[31m";//[-]
          
 
         std::cout << "[" << node->getTitle() << "]" << std::endl;
@@ -583,16 +555,58 @@ private:
         }
     }
 
+    void Composite::getTreeString(Composite::Node* node, std::string& reciveString, const std::string& prefix, bool isLast) {
+        if (!node) return;
+
+        reciveString += prefix;
+
+        if (!prefix.empty()) {
+           reciveString += (isLast ? "+-- " : "|-- ");
+        }
+
+        reciveString +=  "[" + node->getTitle() + "]";
+
+        if (checkNode(node)){
+               if(node->getParent()){
+                    if (checkNode(node->getParent())){
+                            reciveString += "[+]";
+                    }
+                    else{
+                            reciveString += "[~]";
+                    }
+               }
+               else{
+                    reciveString += "[+]";
+               }
+        }
+         else{
+            reciveString += "[-]";
+         }
+
+        reciveString += " ("+node->getCondition() + ") { ";
+
+        for(auto it : node->getCondArgs()){
+            reciveString += it + " ";
+        }
+        reciveString += "};\n";
+        
+         
+        
+        
+
+        std::string childPrefix = prefix + (isLast ? "    " : "|   ");
+        for (size_t i = 0; i < node->getChildSize(); ++i) {
+            bool lastChild = (i == node->getChildSize() - 1);
+            getTreeString(node->getChild(i), reciveString, childPrefix, lastChild);
+        }
+    }
 
 
-    ConditionContext cond;
-    std::unordered_map<std::string, std::string>& dataGetter;
-    Node* root;
-    Node* current;
-};
 
 
 
+
+/*
 int main() {
     std::unordered_map<std::string,  std::string> dataGetter;
     dataGetter["var1"] = "5";
@@ -637,4 +651,4 @@ int main() {
 
     return 0;
 }
-
+*/
