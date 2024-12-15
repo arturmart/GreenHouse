@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <stdexcept>
 #include <sstream>
+#include <algorithm>
 
 
 
@@ -21,7 +22,7 @@ template <typename T>
 class GreaterThan : public IConditionStrategy<T> {
 public:
     bool evaluate(const std::vector<T>& args) const override {
-        std::cout << "GreaterThan" << std::endl;
+        //std::cout << "GreaterThan" << std::endl;
         return args.size() == 2 && args[0] > args[1];
     }
 };
@@ -30,7 +31,7 @@ template <typename T>
 class LessThan : public IConditionStrategy<T> {
 public:
     bool evaluate(const std::vector<T>& args) const override {
-        std::cout << "LessThan" << std::endl;
+        //std::cout << "LessThan" << std::endl;
         return args.size() == 2 && args[0] < args[1];
     }
 };
@@ -39,7 +40,7 @@ template <typename T>
 class EqualTo : public IConditionStrategy<T> {
 public:
     bool evaluate(const std::vector<T>& args) const override {
-        std::cout << "EqualTo" << std::endl;
+        //std::cout << "EqualTo" << std::endl;
         return args.size() == 2 && args[0] == args[1];
     }
 };
@@ -48,7 +49,7 @@ template <typename T>
 class NotEqualTo : public IConditionStrategy<T> {
 public:
     bool evaluate(const std::vector<T>& args) const override {
-        std::cout << "NotEqualTo" << std::endl;
+        //std::cout << "NotEqualTo" << std::endl;
         return args.size() == 2 && args[0] != args[1];
     }
 };
@@ -57,7 +58,7 @@ template <typename T>
 class GreaterThanOrEqual : public IConditionStrategy<T> {
 public:
     bool evaluate(const std::vector<T>& args) const override {
-        std::cout << "GreaterThanOrEqual" << std::endl;
+        //std::cout << "GreaterThanOrEqual" << std::endl;
         return args.size() == 2 && args[0] >= args[1];
     }
 };
@@ -66,7 +67,7 @@ template <typename T>
 class LessThanOrEqual : public IConditionStrategy<T> {
 public:
     bool evaluate(const std::vector<T>& args) const override {
-        std::cout << "LessThanOrEqual" << std::endl;
+        //std::cout << "LessThanOrEqual" << std::endl;
         return args.size() == 2 && args[0] <= args[1];
     }
 };
@@ -75,7 +76,7 @@ template <typename T>
 class InRange : public IConditionStrategy<T> {
 public:
     bool evaluate(const std::vector<T>& args) const override {
-        std::cout << "InRange" << std::endl;
+        //std::cout << "InRange" << std::endl;
         return args.size() == 3 && args[0] >= args[1] && args[0] <= args[2];
     }
 };
@@ -84,7 +85,7 @@ template <typename T>
 class OutOfRange : public IConditionStrategy<T> {
 public:
     bool evaluate(const std::vector<T>& args) const override {
-        std::cout << "OutOfRange" << std::endl;
+        //std::cout << "OutOfRange" << std::endl;
         return args.size() == 3 && (args[0] < args[1] || args[0] > args[2]);
     }
 };
@@ -93,7 +94,7 @@ template <typename T>
 class NotZero : public IConditionStrategy<T> {
 public:
     bool evaluate(const std::vector<T>& args) const override {
-        std::cout << "NotZero" << std::endl;
+        //std::cout << "NotZero" << std::endl;
         return args.size() == 1 && args[0] != 0;
     }
 };
@@ -102,7 +103,7 @@ template <typename T>
 class IsZero : public IConditionStrategy<T> {
 public:
     bool evaluate(const std::vector<T>& args) const override {
-        std::cout << "IsZero" << std::endl;
+        //std::cout << "IsZero" << std::endl;
         return args.size() == 1 && args[0] == 0;
     }
 };
@@ -111,8 +112,17 @@ template <typename T>
 class Always : public IConditionStrategy<T> {
 public:
     bool evaluate(const std::vector<T>& args) const override {
-        std::cout << "Always" << std::endl;
+        //std::cout << "Always" << std::endl;
         return true;
+    }
+};
+
+template <typename T>
+class Never : public IConditionStrategy<T> {
+public:
+    bool evaluate(const std::vector<T>& args) const override {
+        //std::cout << "Always" << std::endl;
+        return false;
     }
 };
 
@@ -229,7 +239,7 @@ private:
         try {
             for (const auto& arg : args) {
                 
-                    std::cout << arg << " ";
+                    // std::cout << arg << " ";
                     std::istringstream iss(arg);
                     T value;
                     iss >> value;
@@ -290,8 +300,8 @@ public:
             Node* parent = nullptr
             )
             : parent(parent), title(title), cnodition(cnodition), conditionArgs(conditionArgs), executing(exe) {
-            std::cout << "Node Constructor. Ndoe Title (" << title << ") Cond (" << cnodition << ")" << std::endl;
-            std::cout << "condArg "; for (auto it : conditionArgs) std::cout << it << " "; std::cout << std::endl;
+            //std::cout << "Node Constructor. Ndoe Title (" << title << ") Cond (" << cnodition << ")" << std::endl;
+            //std::cout << "condArg "; for (auto it : conditionArgs) std::cout << it << " "; std::cout << std::endl;
         }
 
         void addChild(Node* child) {
@@ -337,19 +347,21 @@ public:
             return cnodition;
         }
 
-        std::string getCondArgVar() const {
-            if (conditionArgs.size() > 0)
-                return conditionArgs[0];
-            else return (NULL);
-        }
+        //jnjel
+
+    
 
         std::vector<std::string> getCondArgs() const{
+
+            return conditionArgs;
+            /*
 
             if(conditionArgs.size()>=2)
 
                 return std::vector<std::string>(conditionArgs.begin() + 1, conditionArgs.end());
             else
                 return std::vector<std::string>();
+                */
         }
 
         
@@ -375,7 +387,7 @@ public:
             const std::function<void()>& exe = NULL
         ): dataGetter(dataGetter){
 
-        std::cout << "Composite Constructor. Ndoe Title (" << title<<") Cond ("<<condition<<")" << std::endl;
+        //std::cout << "Composite Constructor. Ndoe Title (" << title<<") Cond ("<<condition<<")" << std::endl;
 
         root = new Node(title, condition, condArg, exe);
 
@@ -415,14 +427,39 @@ public:
 
     void executeAll() {
         std::vector<Node*> iterators = getLevelOrderPtr();
+        std::vector<bool> iteratorsBools;
+
+       
 
         for (auto it : iterators) {
-            if (checkNode(it))
-                std::cout << "\033[32m";
-            else
-                std::cout << "\033[31m";
-            it->execute();
-            std::cout << "\033[0m";
+            
+            //local check
+            iteratorsBools.push_back(checkNode(it));
+
+            auto prnt = std::find(iterators.begin(), iterators.end(), it->getParent());
+            
+
+            if(prnt != iterators.end()){
+                int indexPrnt = std::distance(iterators.begin(), prnt);
+
+                iteratorsBools.back() = iteratorsBools.back() && iteratorsBools[indexPrnt];
+                if(iteratorsBools.back()){
+                    it->execute();
+                }
+               
+            }
+            else{
+                if(iteratorsBools.back()){
+                    it->execute();
+                }
+            }
+
+            /*
+            if(checkNode(it)){
+               it->execute();
+            }
+            */
+            
         }
     }
 
@@ -441,8 +478,28 @@ public:
     }
 
     bool checkNode(Node* node) {
+
+
+        std::vector<std::string> varToStrArgs;
+        std::string varToStrBuf;
+
+        //std::cout<<node->getTitle()<<"(";
+        for(auto it : node->getCondArgs()){
+            varToStrBuf = getDataGetterString(it);
+
+            if(varToStrBuf != "") varToStrArgs.push_back(varToStrBuf);
+            else varToStrArgs.push_back(it);
+
+            //std::cout<<it<<"{";
+            //std::cout<<varToStrBuf;
+            //std::cout<<"},";
+        }
+
+        //std::cout<<")"<<std::endl;
+
+
         return(cond.check(
-            node->getCondition(), addFirstElement(node->getCondArgs(), getDataGetterString(node->getCondArgVar()))));
+            node->getCondition(), varToStrArgs));
 
 
 
@@ -497,7 +554,27 @@ private:
             std::cout << (isLast ? "+-- " : "|-- ");
         }
 
+        
+        if (checkNode(node)){
+               if(node->getParent()){
+                    if (checkNode(node->getParent())){
+                            std::cout << "\033[32m";
+                    }
+                    else{
+                            std::cout << "\033[33m";
+                    }
+               }
+               else{
+                    std::cout << "\033[32m";
+               }
+        }
+         else
+               std::cout << "\033[31m";
+         
+
         std::cout << "[" << node->getTitle() << "]" << std::endl;
+        
+        std::cout << "\033[0m";
 
         std::string childPrefix = prefix + (isLast ? "    " : "|   ");
         for (size_t i = 0; i < node->getChildSize(); ++i) {
@@ -519,18 +596,20 @@ private:
 int main() {
     std::unordered_map<std::string,  std::string> dataGetter;
     dataGetter["var1"] = "5";
+    dataGetter["var2"] = "10";
 
 
-    std::cout << "1" << "Always" << std::endl;
-    Composite testPattern(dataGetter, "main", "Always", {"0"}, []() { std::cout << "Executing main" << "\n"; });
+   
+    Composite testPattern(dataGetter, "main", "Always", {}, []() { std::cout << "Executing main" << "\n"; });
     
     
-    testPattern.printStrtegies();
+    //testPattern.printStrtegies();
 
    
 
     testPattern.addChild("Child1", ">D", {"var1", "0"}, []() { std::cout << "Executing Child" << 10 << "\n"; });
     testPattern.addChild("Child2", "<D", { "var1", "0" }, []() { std::cout << "Executing Child2\n"; });
+    testPattern.addChild("Child3", "==D", { "var1", "var2" }, []() { std::cout << "Executing Child3\n"; });
 
     testPattern.goToChild(0); // Переходим к Child1
     testPattern.addChild("Child1.1", ">D", { "var1", "20" }, []() { std::cout << "Executing Child1.1\n"; });
@@ -546,9 +625,10 @@ int main() {
 
     while (true)
     {
+        
         std::cout << "get var1: ";
         std::cin >> dataGetter["var1"];
-        
+        testPattern.printTree();
 
         testPattern.executeAll();
 
@@ -557,5 +637,4 @@ int main() {
 
     return 0;
 }
-
 
