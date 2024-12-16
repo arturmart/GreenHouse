@@ -22,7 +22,9 @@ std::vector<std::unordered_map<std::string, std::string>> manualCommands = {
     {{"TEXT", "Falcon3 Auto"}, {"CALL_BACK_DATA", "Falcon3Auto"}},
     {{"TEXT", "Falcon4 On"}, {"CALL_BACK_DATA", "Falcon4On"}},
     {{"TEXT", "Falcon4 Off"}, {"CALL_BACK_DATA", "Falcon4Off"}},
-    {{"TEXT", "Falcon4 Auto"}, {"CALL_BACK_DATA", "Falcon4Auto"}}
+    {{"TEXT", "Falcon4 Auto"}, {"CALL_BACK_DATA", "Falcon4Auto"}},
+    {{"TEXT", "Read New Json Condition"}, {"CALL_BACK_DATA", "ReadNewJsonCond"}}
+
 };
 
 std::vector<std::unordered_map<std::string, std::string>> getterCommands = {
@@ -41,6 +43,8 @@ std::vector<std::unordered_map<std::string, std::string>> getterCommands = {
     {{"TEXT", "get Condition Json"}, {"CALL_BACK_DATA", "getConditionJson"}},
     {{"TEXT", "get Condition Tree"}, {"CALL_BACK_DATA", "getConditionTree"}}
 };
+
+
 
 TgBot::InlineKeyboardMarkup::Ptr TelegramBot::createKeyboard(const std::vector<std::unordered_map<std::string, std::string>>& commands, int columns) {
     TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
@@ -130,15 +134,16 @@ void TelegramBot::setupCommands() {
         }
     });
 
-    bot.getEvents().onAnyMessage([this](TgBot::Message::Ptr message) {
-    // Проверяем, является ли сообщение документом
+    #include <fstream> // Для записи файла
+
+bot.getEvents().onAnyMessage([this](TgBot::Message::Ptr message) {
     if (message->document) {
-        // Проверяем MIME тип, чтобы удостовериться, что это JSON файл
-        if (message->document->mimeType == "application/json") {
-            std::string fileName = message->document->fileName;  // Имя файла
+        if (message->document->mimeType == "application/json" || 
+            message->document->fileName.substr(message->document->fileName.find_last_of('.') + 1) == "json") {
             
-            // Проверяем имя файла (например, начинается ли с "data_")
-            if (fileName.find("Condition") == 0) {
+            std::string fileName = message->document->fileName;
+
+            if (fileName.find("Condition_New.json") == 0) {
                 try {
                     // Получаем ID файла
                     std::string fileId = message->document->fileId;
@@ -146,28 +151,37 @@ void TelegramBot::setupCommands() {
                     // Получаем информацию о файле
                     TgBot::File::Ptr file = bot.getApi().getFile(fileId);
 
+                    // Загружаем содержимое файла
+                    std::string fileContent = bot.getApi().downloadFile(file->filePath);
 
+                    // Путь для сохранения файла
+                    std::string downloadPath = REPOSITORY_PATH + fileName;
 
-                       std::string downloadPath = REPOSITORY_PATH  + fileName;  // Full download path
-                    // Загружаем файл на локальный диск
-                    bot.getApi().downloadFile(file->filePath,downloadPath);
+                    // Сохраняем файл на диск
+                    std::ofstream outFile(downloadPath, std::ios::binary);
+                    if (outFile.is_open()) {
+                        outFile << fileContent;
+                        outFile.close();
 
-                    // Отправляем сообщение подтверждения
-                    bot.getApi().sendMessage(message->chat->id, "JSON файл успешно получен и загружен. "+ fileName);
+                        // Подтверждаем успешное сохранение
+                        bot.getApi().sendMessage(message->chat->id, "JSON файл успешно получен и сохранён: " + fileName);
+                        funcManual("ReadNewJsonCond");
+                    } else {
+                        bot.getApi().sendMessage(message->chat->id, "Не удалось сохранить файл на диск: " + downloadPath);
+                    }
                 } catch (const std::exception& e) {
                     // Обрабатываем ошибки
                     bot.getApi().sendMessage(message->chat->id, "Не удалось скачать JSON файл. Ошибка: " + std::string(e.what()));
                 }
             } else {
-                // Если имя файла не соответствует ожиданиям
-                bot.getApi().sendMessage(message->chat->id, "Имя файла не соответствует требованиям (должно начинаться с 'Condition').");
+                bot.getApi().sendMessage(message->chat->id, "Имя файла не соответствует требованиям (должно начинаться с 'Condition_New.json').");
             }
         } else {
-            // Если загруженный файл не является JSON, отправляем сообщение пользователю
             bot.getApi().sendMessage(message->chat->id, "Пожалуйста, отправьте файл в формате JSON.");
         }
     }
 });
+
 }
 
 /*TelegramBot::TelegramBot(const std::string& token) : bot(token) {

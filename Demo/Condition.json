@@ -1,35 +1,35 @@
 {
-    "children": [
-        {
-            "condition": ">D",
-            "conditionArgs": [
-                "temp",
-                "20"
-            ],
-            "executing": "Bake_ON",
-            "title": "Child1"
-        },
-        {
-            "condition": "<D",
-            "conditionArgs": [
-                "temp",
-                "20"
-            ],
-            "executing": "Bake_OFF",
-            "title": "Child2"
-        },
-        {
-            "condition": "==D",
-            "conditionArgs": [
-                "temp",
-                "temp2"
-            ],
-            "executing": "doChild3",
-            "title": "Child3"
-        }
-    ],
-    "condition": "Always",
-    "conditionArgs": [],
-    "executing": "main",
-    "title": "main"
+  "children": [
+    {
+      "condition": ">D",
+      "conditionArgs": [
+        "temp",
+        "25"
+      ],
+      "executing": "Bake_ON",
+      "title": "Child1"
+    },
+    {
+      "condition": "<D",
+      "conditionArgs": [
+        "temp",
+        "25"
+      ],
+      "executing": "Bake_OFF",
+      "title": "Child2"
+    },
+    {
+      "condition": "==D",
+      "conditionArgs": [
+        "temp",
+        "temp2"
+      ],
+      "executing": "doChild3",
+      "title": "Child3"
+    }
+  ],
+  "condition": "Always",
+  "conditionArgs": [],
+  "executing": "main",
+  "title": "main"
 }

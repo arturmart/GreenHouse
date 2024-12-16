@@ -47,6 +47,8 @@ std::vector<std::unordered_map<std::string, std::string>> getterCommandsMap = {
 
     {{"TG_BOT", "getConditionJson"}, {"SAND_COND_JSON", "true"}},
     {{"TG_BOT", "getConditionTree"}, {"SAND_COND_TREE", "true"}}
+
+    
 };
 
 std::vector<std::unordered_map<std::string, std::string>> executeCommandsMap = {
@@ -67,7 +69,8 @@ std::vector<std::unordered_map<std::string, std::string>> executeCommandsMap = {
     {{"TG_BOT", "Falcon3Auto"}, {"MODE", "auto"},{"MODULE", "Falcon3"}},
     {{"TG_BOT", "Falcon4On"}, {"EXECUTOR", "Falcon4_ON"}, {"MODE", "on"}, {"MODULE", "Falcon4"}},
     {{"TG_BOT", "Falcon4Off"}, {"EXECUTOR", "Falcon4_OFF"}, {"MODE", "off"}, {"MODULE", "Falcon4"}},
-    {{"TG_BOT", "Falcon4Auto"}, {"MODE", "auto"},{"MODULE", "Falcon4"}}
+    {{"TG_BOT", "Falcon4Auto"}, {"MODE", "auto"},{"MODULE", "Falcon4"}},
+    {{"TG_BOT", "ReadNewJsonCond"}, {"READ_NEW_JSON_DATA", "true"}}
 
 };
 
@@ -243,11 +246,7 @@ void getterCommandTGBot(const std::string& arg){
 
          }
          if(it.find("SAND_LOG") != it.end()){
-            bot.sendAllUserDocument("Log"+getDay()+".json",getDay() + "Log");
-
-         }
-         if(it.find("SAND_LOG") != it.end()){
-            bot.sendAllUserDocument("Log"+getDay()+".json",getDay() + "Log");
+            bot.sendAllUserDocument("Log/Log"+getDay()+".json",getDay() + "Log");
 
          }
          if(it.find("SAND_STATES") != it.end()){
@@ -281,6 +280,11 @@ void getterCommandTGBot(const std::string& arg){
       
    }
 }
+
+void sendConditionToTgBot(const std::string& str){
+   bot.sendAllUserDocument(str,getDay() + " Old Condition");
+}
+
 void executorCommandTGBot(const std::string& arg){
    std::cout<<"from \033[34m[TG]\033[0m "<<arg<<std::endl;
    //std::lock_guard<std::mutex> lock(Mutex);
@@ -294,6 +298,19 @@ void executorCommandTGBot(const std::string& arg){
             if(it["MODE"] == "auto"){
                autoModeExecutorRegister[it["MODULE"]] = true;
             }
+         }
+         if(it.find("READ_NEW_JSON_DATA") != it.end()){
+
+            // Шаг 1: Проверка синтаксиса Condition_New.json
+            if (validateJsonSyntax("Condition_New.json", MainPattern)) {
+               // Шаг 2: Если все правильно, продолжаем
+               // Шаг 3 и 4: Переименование и отправка
+               renameAndProcessFiles(sendConditionToTgBot);
+               std::cout << "Composite has been successfully updated." << std::endl;
+            } else {
+               std::cerr << "Error: Invalid JSON syntax in Condition_New.json" << std::endl;
+            }
+            std::cout<<"Condition restored!"<<std::endl;
          }
       }
    }
