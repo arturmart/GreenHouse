@@ -6,6 +6,7 @@
 
 std::string unixTimestampToTimeString(time_t timestamp);
 std::string unixTimestampToDateString(time_t timestamp);
+std::string unixTimestampToTimeStringDate(time_t timestamp);
 // Функция для выполнения задачи
 void execute_task();
 

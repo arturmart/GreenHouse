@@ -29,6 +29,12 @@ std::string getDay(){
    return unixTimestampToDateString(to_unix_timestamp(std::chrono::system_clock::now()));
 }
 
+std::string getDayHMS(){
+   return unixTimestampToTimeStringDate(to_unix_timestamp(std::chrono::system_clock::now()));
+}
+
+
+
 
 std::vector<std::unordered_map<std::string, std::string>> getterCommandsMap = {
     {{"TG_BOT", "getTemp"} , {"DATA_GETTER", "temp"}},
@@ -92,8 +98,9 @@ void executorCommandTGBot(const std::string& arg);
 //Registers Initilization
 
 std::unordered_map<std::string, std::string> getterRegistor = {
-    {"temp","-255"},
     {"date","0"},
+    {"dateDaily","0"},//Daily Time
+    {"temp","-255"},
     {"temp2","-255"},
 
     {"inBake","-255"},
@@ -143,6 +150,9 @@ void getterRegisterUpdate(){
       
          pair.second =  std::to_string(to_unix_timestamp(std::chrono::system_clock::now()));
       }
+      else if(pair.first == "dateDaily" ){
+         pair.second =  getDayHMS();//Daily Time
+      }
       else
          pair.second =  std::to_string(dataGetter.getNewData(pair.first));
    }
@@ -152,8 +162,15 @@ void getterRegisterLog(){
 
    std::lock_guard<std::mutex> lock(Mutex);
    //LOG.setData("date", std::to_string(to_unix_timestamp(std::chrono::system_clock::now())));
-   for(auto pair  : getterRegistor)
-      LOG.setData(pair.first, pair.second);
+   
+   LOG.setData("date", getterRegistor["date"]);
+   LOG.setData("dateDaily", getterRegistor["dateDaily"]);
+   LOG.setData("temp", getterRegistor["temp"]);
+   LOG.setData("temp2", getterRegistor["temp2"]);
+   LOG.setData("inBake", getterRegistor["inBake"]);
+   LOG.setData("outBake", getterRegistor["outBake"]);
+   LOG.setData("tempOut", getterRegistor["tempOut"]);
+
    LOG.log();
 }
 void LogUnion(const std::string& first, const std::string& second){

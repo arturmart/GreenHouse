@@ -283,40 +283,50 @@ bool ChartDrawing::createImageFromJSON(const std::string& title, const std::stri
         long long minX, long long maxX,
         int Ylines, int Yid,
         int width, int height,
-        int marginTop,int marginBottom,int marginLeft,int marginRight){
+        int marginTop, int marginBottom, int marginLeft, int marginRight){
 
-        for (size_t i = 0; i < vec.size(); ++i) {
-            //std::cout<<vec[i].first<<" "<<vec[i].second<<std::endl;
-            long long firstPoint;
-            long long secondPoint;
-            if(vec[i].second == true){
-                    firstPoint=vec[i].first; 
-            }
-            else continue;
+    for(auto it : vec) std::cout<<it.first<<" "<<it.second<<std::endl;
+    
+    // Проверка на пустой вектор
+    if (vec.empty()) {
+        //std::cerr << "Ошибка: вектор данных пуст.\n";
+        return;
+    }
 
-            i++;
-            while(vec[i].second == true && i < vec.size()-1){
-                i++;
-            }
-            secondPoint=vec[i].first;
-
-            double x1 = ((firstPoint - minX) / (double)(maxX - minX) * (width-(marginRight+marginLeft)))+marginLeft;
-            double x2 = ((secondPoint - minX) / (double)(maxX - minX) * (width-(marginRight+marginLeft)))+marginLeft;
-
-            double y1 = ((  Yid * (height-(marginTop+marginBottom)))/Ylines+marginTop);
-            double y2 = ((  (Yid+1) * (height-(marginTop+marginBottom)))/Ylines+marginTop);
+    size_t i = 0;
+    while (i < vec.size()) {
+        // Найдем начало сегмента
+        if (vec[i].second == true) {
             
+            long long firstPoint = vec[i].first;
 
-            cairo_rectangle(cr, x1, y1, x2-x1, y2-y1); // Координаты и размеры (x, y, ширина, высота)
+            // Ищем конец сегмента
+           
+            do  {
+                ++i;
+            } while (i < vec.size()-1 && vec[i].second == true);
+            long long secondPoint = vec[i].first; // Последняя точка в сегменте
+
+            // Вычисляем координаты на экране
+            double x1 = ((firstPoint - minX) / (double)(maxX - minX) * (width - (marginRight + marginLeft))) + marginLeft;
+            double x2 = ((secondPoint - minX) / (double)(maxX - minX) * (width - (marginRight + marginLeft))) + marginLeft;
+
+            // Корректируем координаты Y
+            double y1 = ((Yid * (height - (marginTop + marginBottom))) / Ylines) + marginTop;
+            double y2 = (((Yid + 1) * (height - (marginTop + marginBottom))) / Ylines) + marginTop;
+
+            // Отрисовываем прямоугольник для сегмента
+            cairo_rectangle(cr, x1, y1, x2 - x1, y2 - y1); // Координаты и размеры
             cairo_fill(cr); // Заливаем прямоугольник
-            cairo_stroke(cr);
-             
-               
-                
+            cairo_stroke(cr); // Окончательное рисование
 
+            // Переходим к следующему сегменту
+           
+        } else {
+            ++i; // Переходим к следующей точке, если текущая точка - false
         }
-
-        }
+    }
+}
    void ChartDrawing::DrawChartXLabels(
         cairo_t* cr,
         long long minX, long long maxX, double minY, double maxY,
@@ -331,7 +341,7 @@ bool ChartDrawing::createImageFromJSON(const std::string& title, const std::stri
         
 
     
-        std::string timeString = unixTimestampToTimeString(((maxX - minX) *  i) / 10 + minX);//?
+           std::string timeString = unixTimestampToTimeString(((maxX - minX) * i) / Xlines + minX);//?
 
         cairo_text_extents_t extents;
         cairo_text_extents(cr, timeString.c_str(), &extents);

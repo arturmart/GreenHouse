@@ -100,6 +100,7 @@ bool Never<T>::evaluate(const std::vector<T>& args) const {
         addStrategy<long long>("OutOfRangeLL", new OutOfRange<long long>);
 
 
+
         addStrategy<bool>("NotZeroB", new NotZero<bool>);
         addStrategy<bool>("IsZeroB", new IsZero<bool>);
 

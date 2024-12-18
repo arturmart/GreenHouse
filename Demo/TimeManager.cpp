@@ -16,6 +16,17 @@ std::string unixTimestampToTimeString(time_t timestamp) {
     return std::string(buffer);  // Возвращаем строку
 }
 
+std::string unixTimestampToTimeStringDate(time_t timestamp) {
+    // Преобразуем timestamp в структуру tm
+    struct tm *timeInfo = localtime(&timestamp);
+    
+    // Создаем строку с нужным форматом (часы:минуты:секунды)
+    char buffer[9];  // Формат "HH:MM:SS"
+    strftime(buffer, sizeof(buffer), "%H%M%S", timeInfo);
+    
+    return std::string(buffer);  // Возвращаем строку
+}
+
 std::string unixTimestampToDateString(time_t timestamp) {
     // Преобразуем timestamp в структуру tm
     struct tm *timeInfo = localtime(&timestamp);
