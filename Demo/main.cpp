@@ -87,12 +87,16 @@ std::vector<std::unordered_map<std::string, std::string>> executeCommandsMap = {
     {{"TG_BOT", "Light1Off"}, {"EXECUTOR", "Light1_OFF"}, {"MODE", "off"}, {"MODULE", "Light1"}},
     {{"TG_BOT", "Light1Auto"}, {"MODE", "auto"},{"MODULE", "Light1"}},
 
+    {{"EXECUTOR", "AlertHighTemBake"},{"MODULE_TG", "ALERT"}, {"TEXTSEND", "AlertHighTemBake"}},
+ 
+
 
     {{"TG_BOT", "ReadNewJsonCond"}, {"READ_NEW_JSON_DATA", "true"}}
 
 };
 
 std::mutex Mutex;
+//std::mutex Mutex;
 
 void getterCommandTGBot(const std::string& arg);
 void executorCommandTGBot(const std::string& arg);
@@ -152,7 +156,7 @@ Executor executor;
 DataGetter dataGetter;
 Logger LOG("Log/Log"+thisDay,{"date","temp","temp2","inBake", "outBake","tempOut","Bake","Pump","Falcon1","Falcon2","Falcon3","Falcon4","IR1","IR2","Light1"});
 TelegramBot bot("7804127004:AAEQkzTISnsoBpESYJQdVERP6gX10d6rA1c"/*TOKEN_TELEGRAM*/,getterCommandTGBot,executorCommandTGBot);
-Composite  MainPattern(getterRegistor,doExecuteAuto, "main", "Always", {}, "");
+Composite  MainPattern(getterRegistor,doExecuteAuto, "main", "Always", {}, {});
 
 
 
@@ -227,9 +231,15 @@ void GetterAndLog(){
       std::this_thread::sleep_for(std::chrono::milliseconds(1000));
    
 }
-void GetterAndLogLoop(){
+void GetterAndLogLoop(){ 
    while(true){
-      GetterAndLog();
+        try {
+             GetterAndLog();
+        }
+        catch (const std::exception& e) {
+            std::cout << "Caught exception: " << e.what() << std::endl;
+        }
+     
    }
 }
 
@@ -273,7 +283,13 @@ void doExecuteAuto(const std::string& exe){
                   }
 
          }
+         else if(it["MODULE_TG"] == "ALERT"){
+            bot.alertAllUser(it["TEXTSEND"]);
+
+         }
+         
       }
+
    }
 
 }
@@ -364,13 +380,13 @@ void executorCommandTGBot(const std::string& arg){
          if(it.find("READ_NEW_JSON_DATA") != it.end()){
 
             // Шаг 1: Проверка синтаксиса Condition_New.json
-            if (validateJsonSyntax("Condition_New.json", MainPattern)) {
+            if (validateJsonSyntax("Condition_New", MainPattern)) {
                // Шаг 2: Если все правильно, продолжаем
                // Шаг 3 и 4: Переименование и отправка
                renameAndProcessFiles(sendConditionToTgBot);
                std::cout << "Composite has been successfully updated." << std::endl;
             } else {
-               std::cerr << "Error: Invalid JSON syntax in Condition_New.json" << std::endl;
+               std::cerr << "Error: Invalid JSON syntax in Condition_New" << std::endl;
             }
             std::cout<<"Condition restored!"<<std::endl;
          }
@@ -389,14 +405,17 @@ int fromSec(int h, int m ,int s){
 
 
 bool chackDayChanged(){
-   if(thisDay !=getDay()){
+   if(thisDay !=getDay() ){
       bot.sendAllUserMessage("Day "+thisDay+" Change!");
       LOG.drawChart("Chart"+thisDay,"date",{"temp","temp2","inBake", "outBake","tempOut"},{"Bake","Pump","Falcon1","Falcon2","Falcon3","Falcon4","IR1","IR2","Light1"});
+      bot.sendAllUserPhoto("Chart"+thisDay+".png", thisDay+" Chart");
 
       thisDay = getDay();
-      LOG.setFileName("Log/Log"+getDay());
+      LOG.setFileName("Log/Log"+thisDay);
       executorReigisterLog();
+      return true;
    }
+   return false;
 }
 
 int main(){
@@ -412,7 +431,7 @@ int main(){
 
    std::thread logThread(&GetterAndLogLoop);
 
-   MainPattern.setRoot(fromJSONRecursively(jmCond.read_json_from_file()));
+   MainPattern.setRoot(fromJSONRecursively(jmCond.read_json_from_file(),nullptr));
 
    std::thread botThread(&TelegramBot::run, &bot);
 
@@ -422,16 +441,23 @@ int main(){
    std::string lcdString = "";
 
    while(true){
-
-      lcdString = "T1=" + doubleToString(std::stod(getterRegistor["temp"]))+ 
+      try {
+            // Simulating code that may throw an exception
+            lcdString = "T1=" + doubleToString(std::stod(getterRegistor["temp"]))+ 
                   " T2="+ doubleToString(std::stod(getterRegistor["temp2"]))+ 
                   "\nBI="+ doubleToString(std::stod(getterRegistor["inBake"]))+ 
                   " BO="+ doubleToString(std::stod(getterRegistor["outBake"]));
     
-      executor.execute("lcd",lcdString);//doubleToString
-      MainPattern.executeAll();
-      chackDayChanged();
-      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            executor.execute("lcd",lcdString);//doubleToString
+            MainPattern.executeAll();
+            chackDayChanged();
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        }
+        catch (const std::exception& e) {
+            std::cout << "Caught exception: " << e.what() << std::endl;
+        }
+
+      
 
    }
 

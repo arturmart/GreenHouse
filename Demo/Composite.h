@@ -148,7 +148,7 @@ public:
         Node(const std::string& title,
             const std::string& cnodition,
             const std::vector <std::string>& conditionArgs,
-            const std::string& exe,
+            const std::vector <std::string>& exe,
             Node* parent = nullptr
             );
 
@@ -160,7 +160,7 @@ public:
         void execute(std::function<void(std::string)> executor);
         std::string getTitle() const;
         std::string getCondition() const;
-        std::string getExe() const;
+        std::vector<std::string> getExe() const;
 
         std::vector<std::string> getCondArgs() const;
 
@@ -169,7 +169,7 @@ public:
 
         std::string cnodition;
         std::vector <std::string> conditionArgs;
-        std::string exe;
+        std::vector<std::string>  exe;
 
         std::vector<Node*> children;
         Node* parent;
@@ -181,7 +181,7 @@ public:
             const std::string& title, 
             const std::string& condition,
             const std::vector<std::string>& condArg, 
-            const std::string& exe
+            const std::vector<std::string>& exe
         );
 
     Composite(Composite&& other);
@@ -197,7 +197,7 @@ public:
         const std::string& title,
         const std::string& condition,
         const std::vector<std::string>& condArg,
-        const std::string& exe
+        const std::vector<std::string>& exe
     );
 
     void goToRoot();
@@ -206,6 +206,7 @@ public:
     void printTree();
     std::string getTreeString();
     void executeAll();
+    
     Node* getCurrent();
 
     std::string getDataGetterString(const std::string& condArgVar);
@@ -221,6 +222,7 @@ private:
     void getTreeString(Node* node,  std::string& reciveString ,const std::string& prefix = "", bool isLast = true);
 
     ConditionContext cond;
+
     std::unordered_map<std::string, std::string>& dataGetter;
     std::function<void(std::string)> executor;
     Node* root;

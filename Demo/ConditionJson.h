@@ -13,7 +13,7 @@ extern jsonManager jmCond;
 
 nlohmann::json toJSONRecursively(Composite::Node* node);
 void executorPrint(std::string str);
-Composite::Node* fromJSONRecursively(const nlohmann::json& nodeJson);
+Composite::Node* fromJSONRecursively(const nlohmann::json& nodeJson, Composite::Node* parent = nullptr);
 
 bool validateJsonSyntax(const std::string& filePath, Composite& composite);
 void renameAndProcessFiles(const std::function<void(const std::string&)>& sendFile);

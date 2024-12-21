@@ -81,38 +81,51 @@ bool jsonManager::file_exists(const std::string& filename) {
 
 
 bool jsonManager::appendToJsonArray(const nlohmann::json& new_element) {
-    std::lock_guard<std::mutex> lock(fileMutex);
-    std::ifstream input_file(filename+ ".json");
+    std::lock_guard<std::mutex> lock(fileMutex); // Синхронизация доступа
+
     nlohmann::json json_array;
 
-    // Проверка на существование файла
+    // Проверяем, существует ли файл
     if (!file_exists(filename)) {
-    json_array = nlohmann::json::array();
-    std::cerr << "Файл не найден. Создаю новый массив..." << std::endl;
-} else {
-    try {
-        input_file >> json_array;
-        if (!json_array.is_array()) {
-            throw std::runtime_error("JSON не является массивом.");
-        }
-    } catch (const std::exception& e) {
-        std::cerr << "Ошибка обработки файла: " << e.what() << std::endl;
-        if (!create_backup(filename)) {
-            std::cerr << "Не удалось создать резервную копию поврежденного файла." << std::endl;
-        }
+        std::cerr << "Файл не найден. Создаю новый массив..." << std::endl;
         json_array = nlohmann::json::array();
+    } else {
+        // Если файл существует, пытаемся его прочитать
+        std::ifstream input_file(filename + ".json");
+        try {
+            input_file >> json_array;
+
+            // Проверяем, является ли содержимое файла массивом
+            if (!json_array.is_array()) {
+                throw std::runtime_error("JSON не является массивом.");
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "Ошибка обработки файла: " << e.what() << std::endl;
+
+            // Создаем резервную копию поврежденного файла
+            if (!create_backup(filename)) {
+                std::cerr << "Не удалось создать резервную копию поврежденного файла." << std::endl;
+            }
+
+            // Создаем новый массив вместо поврежденного содержимого
+            json_array = nlohmann::json::array();
+        }
     }
-}
 
     // Добавляем новый элемент в массив
     json_array.push_back(new_element);
 
-    // Перезаписываем файл с новым массивом
-    std::ofstream output_file(filename+ ".json");
+    // Записываем массив обратно в файл
+    std::ofstream output_file(filename + ".json"); // Перемещено объявление
     if (output_file.is_open()) {
-        output_file << json_array.dump(4); // Запись с форматированием
+        try {
+            output_file << json_array.dump(4); // Запись с форматированием
+        } catch (const std::exception& e) {
+            std::cerr << "Ошибка записи в файл: " << e.what() << std::endl;
+            return false;
+        }
     } else {
-        std::cerr << "Ошибка записи в файл!" << std::endl;
+        std::cerr << "Не удалось открыть файл для записи!" << std::endl;
         return false;
     }
 

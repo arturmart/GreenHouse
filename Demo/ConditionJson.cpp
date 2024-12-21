@@ -6,7 +6,7 @@
 
 
 
-jsonManager jmCond("Condition.json");
+jsonManager jmCond("Condition");
 
 
 nlohmann::json toJSONRecursively(Composite::Node* node) {
@@ -34,7 +34,7 @@ nlohmann::json toJSONRecursively(Composite::Node* node) {
 
 
 
-Composite::Node* fromJSONRecursively(const nlohmann::json& nodeJson) {
+Composite::Node* fromJSONRecursively(const nlohmann::json& nodeJson, Composite::Node* parent) {
     if (nodeJson.is_null()) {
         return nullptr;
     }
@@ -42,18 +42,19 @@ Composite::Node* fromJSONRecursively(const nlohmann::json& nodeJson) {
     // Получаем заголовок, условие и аргументы
     std::string title = nodeJson["title"];
     std::string condition = nodeJson["condition"];
+    
     std::vector<std::string> conditionArgs = nodeJson["conditionArgs"].get<std::vector<std::string>>();
-    std::string exe = nodeJson["executing"];
+    std::vector<std::string> exe = nodeJson["executing"].get<std::vector<std::string>>();
 
    
 
     // Создаем узел
-    Composite::Node* node = new Composite::Node(title, condition, conditionArgs,exe);
+    Composite::Node* node = new Composite::Node(title, condition, conditionArgs,exe, parent);
 
     // Рекурсивно добавляем дочерние элементы
     if (nodeJson.contains("children")) {
         for (const auto& childJson : nodeJson["children"]) {
-            Composite::Node* childNode = fromJSONRecursively(childJson);
+            Composite::Node* childNode = fromJSONRecursively(childJson, node);
             node->addChild(childNode);
         }
     }
@@ -67,7 +68,7 @@ namespace fs = std::filesystem;
 
 bool validateJsonSyntax(const std::string& filePath, Composite& composite) {
     try {
-        std::ifstream inputFile(filePath);
+        std::ifstream inputFile(filePath+".json");
         if (!inputFile.is_open()) {
             std::cerr << "Error: Unable to open the file " << filePath << std::endl;
             return false;
@@ -77,7 +78,7 @@ bool validateJsonSyntax(const std::string& filePath, Composite& composite) {
         inputFile >> jsonData;
 
         // Преобразуем JSON в Composite
-        Composite::Node* rootNode = fromJSONRecursively(jsonData); // используйте вашу функцию
+        Composite::Node* rootNode = fromJSONRecursively(jsonData,nullptr); // используйте вашу функцию
         if (rootNode == nullptr) {
             std::cerr << "Error: Failed to parse the JSON into a Composite structure" << std::endl;
             return false;

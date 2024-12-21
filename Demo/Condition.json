@@ -1,55 +1,144 @@
 {
   "children": [
     {
-      "condition": ">D",
+      "condition": "OutOfRangeLL",
       "conditionArgs": [
-        "temp",
-        "25"
+        "dateDaily",
+        "060000",
+        "180000"
       ],
-      "executing": "Bake_ON",
-      "title": "Child1"
-    },
-    {
-      "condition": "<D",
-      "conditionArgs": [
-        "temp",
-        "25"
-      ],
-      "executing": "Bake_OFF",
-      "title": "Child2"
-    },
-    {
-      "condition": "==D",
-      "conditionArgs": [
-        "temp",
-        "temp2"
-      ],
-      "executing": "doChild3",
-      "title": "Child3"
+      "executing": [],
+      "title": "Heating",
+      "children": [
+        {
+          "condition": "Always",
+          "conditionArgs": [],
+          "executing": [
+            "Pump_ON"
+          ],
+          "title": "IBake",
+          "children": [
+            {
+              "condition": "<LL",
+              "conditionArgs": [
+                "outBake",
+                "80"
+              ],
+              "executing": [
+                "Bake_ON"
+              ],
+              "title": "BakeOn",
+              "children": []
+            },
+            {
+              "condition": ">LL",
+              "conditionArgs": [
+                "outBake",
+                "50"
+              ],
+              "executing": [],
+              "title": "IFalkon",
+              "children": [
+                {
+                  "condition": "%LL",
+                  "conditionArgs": [
+                    "date",
+                    "30",
+                    "2",
+                    "0"
+                  ],
+                  "executing": [
+                    "Falcon3_OFF",
+                    "Falcon4_OFF",
+                    "Falcon1_ON",
+                    "Falcon2_ON"
+                  ],
+                  "title": "firstFalkon",
+                  "children": []
+                },
+                {
+                  "condition": "%LL",
+                  "conditionArgs": [
+                    "date",
+                    "30",
+                    "2",
+                    "1"
+                  ],
+                  "executing": [
+                    "Falcon1_OFF",
+                    "Falcon2_OFF",
+                    "Falcon3_ON",
+                    "Falcon4_ON"
+                  ],
+                  "title": "secondFalkon",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "condition": "<LL",
+              "conditionArgs": [
+                "outBake",
+                "50"
+              ],
+              "executing": [
+                "Falcon1_OFF",
+                "Falcon2_OFF",
+                "Falcon3_OFF",
+                "Falcon4_OFF"
+              ],
+              "title": "NotIFalkon",
+              "children": []
+            },
+            {
+              "condition": ">LL",
+              "conditionArgs": [
+                "outBake",
+                "80"
+              ],
+              "executing": [
+                "Bake_OFF"
+              ],
+              "title": "BakeOff",
+              "children": []
+            },
+            {
+              "condition": ">LL",
+              "conditionArgs": [
+                "outBake",
+                "90"
+              ],
+              "executing": [
+                "AlertHighTemBake"
+              ],
+              "title": "BakeHighTemp",
+              "children": []
+            }
+          ]
+        }
+      ]
     },
     {
       "condition": "InRangeLL",
       "conditionArgs": [
         "dateDaily",
-        "003000",
-        "003500"
+        "060000",
+        "180000"
       ],
-      "executing": "Pump_ON",
-      "title": "Child4"
-    },
-    {
-      "condition": "OutOfRangeLL",
-      "conditionArgs": [
-        "dateDaily",
-        "003000",
-        "003500"
+      "executing": [
+        "Bake_OFF",
+        "Pump_OFF",
+        "Falcon1_OFF",
+        "Falcon2_OFF",
+        "Falcon3_OFF",
+        "Falcon4_OFF"
       ],
-      "executing": "Pump_OFF",
-      "title": "Child5"
+      "title": "NotHeating",
+      "children": []
     }
   ],
   "condition": "Always",
   "conditionArgs": [],
-  "executing": "main",
+  "executing": [],
   "title": "main"
 }

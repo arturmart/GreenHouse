@@ -8,7 +8,7 @@
 //g++ -o logger Logger.cpp jsonManager.cpp ChartDrawing.cpp TimeManager.cpp -I/path/to/headers -lcairo
 
 Logger::Logger(const std::string& filename, const std::vector<std::string>& table)
-    : filename(filename), LogJson(filename + ".json"), logType(table) {
+    : filename(filename), LogJson(filename ), logType(table) {
     setTable(table);  // Initialize the table with the provided column names
 }
 

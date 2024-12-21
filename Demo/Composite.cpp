@@ -121,6 +121,7 @@ bool ModulusPart<T>::evaluate(const std::vector<T>& args) const {
         addStrategy<bool>("IsZeroB", new IsZero<bool>);
 
         addStrategy<double>("Always", new Always<double>);
+        addStrategy<double>("Never", new Never<double>);
     }
 
     // Регистрация стратегии
@@ -249,7 +250,7 @@ bool ModulusPart<T>::evaluate(const std::vector<T>& args) const {
         Composite::Node::Node(const std::string& title,
             const std::string& cnodition,
             const std::vector <std::string>& conditionArgs,
-            const std::string& exe,
+            const std::vector <std::string>& exe,
             Composite::Node* parent
             )
             : parent(parent), title(title), cnodition(cnodition), conditionArgs(conditionArgs), exe(exe) {
@@ -289,13 +290,17 @@ bool ModulusPart<T>::evaluate(const std::vector<T>& args) const {
         }
 
         void Composite::Node::execute(std::function<void(std::string)> executor) {
-            if (!exe.empty()) executor(exe);
+            if (!exe.empty()) {
+                for(auto it : exe) {
+                    executor(it);
+                }
+            }
         }
 
         std::string Composite::Node::getTitle() const {
             return title;
         }
-        std::string Composite::Node::getExe() const {
+        std::vector<std::string> Composite::Node::getExe() const {
             return exe;
         }
         std::string Composite::Node::getCondition() const {
@@ -320,12 +325,12 @@ bool ModulusPart<T>::evaluate(const std::vector<T>& args) const {
     
 
     Composite::Composite(
-            std::unordered_map<std::string, std::string>& dataGetter,
+            std::unordered_map<std::string, std::string>& dataGetter, 
             const std::function<void(std::string)>& executor,
             const std::string& title, 
             const std::string& condition,
             const std::vector<std::string>& condArg, 
-            const std::string& exe
+            const std::vector<std::string>& exe
         ): dataGetter(dataGetter), executor(executor){
 
         //std::cout << "Composite Constructor. Ndoe Title (" << title<<") Cond ("<<condition<<")" << std::endl;
@@ -377,7 +382,7 @@ Composite& Composite::operator=(Composite&& other) noexcept {
         const std::string& title,
         const std::string& condition,
         const std::vector<std::string>& condArg,
-        const std::string& exe
+        const std::vector<std::string>& exe
     ) {
 
         current->addChild(new Node(title, condition, condArg, exe, current));
@@ -411,31 +416,44 @@ Composite& Composite::operator=(Composite&& other) noexcept {
     }
 
     void Composite::executeAll() {
+
+        if (root == NULL) return;
+        goToRoot();
+
+
+        //LevelOrder
+
         std::vector<Node*> iterators = getLevelOrderPtr();
-        std::vector<bool> iteratorsBools;
+        std::vector<bool> iteratorsBools(iterators.size(), false);
+
+        //for(auto it: iterators)std::cout<<it<<std::endl;
+        
 
        
 
-        for (auto it : iterators) {
+        for (int i = 0; i<iterators.size(); i++) {
             
             //local check
-            iteratorsBools.push_back(checkNode(it));
+            iteratorsBools[i] = checkNode(iterators[i]);
 
-            auto prnt = std::find(iterators.begin(), iterators.end(), it->getParent());
+             //std::cout<<(iterators[i]->getParent())<<" ";
+            auto prnt = std::find(iterators.begin(), iterators.end(), iterators[i]->getParent());
             
 
             if(prnt != iterators.end()){
+                //std::cout<<"fnd"<<std::endl;
                 int indexPrnt = std::distance(iterators.begin(), prnt);
 
-                iteratorsBools.back() = iteratorsBools.back() && iteratorsBools[indexPrnt];
-                if(iteratorsBools.back()){
-                    it->execute(executor);
+                iteratorsBools[i] = iteratorsBools[i] && iteratorsBools[indexPrnt];
+                if(iteratorsBools[i]){
+                    iterators[i]->execute(executor);
                 }
                
             }
             else{
-                if(iteratorsBools.back()){
-                    it->execute(executor);
+                //std::cout<<"nfnd"<<std::endl;
+                if(iteratorsBools[i]){
+                    iterators[i]->execute(executor);
                 }
             }
 
@@ -446,6 +464,8 @@ Composite& Composite::operator=(Composite&& other) noexcept {
             */
             
         }
+        //for(auto it: iteratorsBools)std::cout<<it<<std::endl;
+        
     }
 
 
@@ -467,6 +487,7 @@ Composite& Composite::operator=(Composite&& other) noexcept {
     }
 
     bool Composite::checkNode(Node* node) {
+        
 
 
         std::vector<std::string> varToStrArgs;

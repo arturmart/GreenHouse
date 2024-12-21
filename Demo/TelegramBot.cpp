@@ -346,7 +346,13 @@ void TelegramBot::run() {
         std::cout << "Бот запущен..." << std::endl;
         TgBot::TgLongPoll longPoll(bot);
         while (true) {
+            try {
             longPoll.start();
+        }
+        catch (const std::exception& e) {
+            std::cout << "Caught exception: " << e.what() << std::endl;
+        }
+            
         }
     } catch (TgBot::TgException& e) {
         std::cerr << "Ошибка: " << e.what() << std::endl;
