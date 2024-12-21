@@ -18,9 +18,9 @@ in [deviceControllModule](https://github.com/arturmart/GreenHose/blob/master/dev
 for test Relay [testRCM](https://github.com/arturmart/GreenHose/blob/master/Demo/testRCM.cpp)
 
 --------
-for test Temp Module!
 
-for Change or Add Module 
+
+## for Change or Add Getter 
 
 
 1) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp)  getterCommandsMap add Telegram Commands in Main `getterCommandsMap = {... ,{{"TG_BOT", "getTemp"} , {"DATA_GETTER", "temp"}}, ...} ` For Telegram Command
@@ -30,7 +30,8 @@ for Change or Add Module
 6) on [DataGetter](https://github.com/arturmart/GreenHose/blob/master/Demo/DataGeter.cpp) DataGetter::DataGetter() Constructor add Strategy `strategy["temp"] = new TempStrategy("28-0303979402d4");` 
 7) on [TelegramBot](https://github.com/arturmart/GreenHose/blob/master/Demo/TelegramBot.cpp) getterCommands() `{{"TEXT", "get Temp In"}, {"CALL_BACK_DATA", "getTemp"}},` For Button on Telegram *same as point 1*. There must be odd
    
-   
+## for test Temp Module!  
+
 |ID|For                        | Name |
 |--|--                        | --|
 |28-0303979402d4| main | temp|
@@ -49,3 +50,16 @@ wire                   36864  2 w1_gpio,w1_therm
 ```
 w1_bus_master1  28-XXXXXXXXXXXX
 ```
+
+--------
+
+## for Add Executor
+
+1) on [Executor](https://github.com/arturmart/GreenHouse/blob/master/Demo/Executor.cpp) in Executor::Executor() add New Strategy `executeMap["IR1_ON"] = new RCM_Strategy(RCM, "83,6,1");` `executeMap["IR1_OFF"] = new RCM_Strategy(RCM, "83,6,0");`
+2) on [TelegramBot](https://github.com/arturmart/GreenHose/blob/master/Demo/TelegramBot.cpp) manualCommands() `{{"TEXT", "IR1 On"}, {"CALL_BACK_DATA", "IR1On"}},
+    {{"TEXT", "IR1 Off"}, {"CALL_BACK_DATA", "IR2Off"}},
+    {{"TEXT", "IR1 Auto"}, {"CALL_BACK_DATA", "IR3Auto"}},`
+   For Button on Telegram *same as point 1*. There must be divide to 3
+
+
+
