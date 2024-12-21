@@ -26,6 +26,9 @@ void Logger::setTable(const std::vector<std::string>& table) {
 void Logger::setData(const std::string& key, const std::string& data) {
     dataTable[key] = data;  // Set the value for a specific column
 }
+void Logger::setFileName(const std::string& newfilename) {
+    filename = newfilename;
+}
 
 void Logger::log() {
     json newDict = json::object();

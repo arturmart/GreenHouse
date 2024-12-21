@@ -164,6 +164,9 @@ bool ChartDrawing::createImageFromJSON(const std::string& title, const std::stri
    for( int i = 0; i<bools.size();i++){
    cairo_set_source_rgb(cr, colorsCario[i].r, colorsCario[i].g, colorsCario[i].b);
    DraWBoolChart(cr, getVectorPairBool(time, bools[i]),minX,maxX,bools.size(),i,width,height,40, (height-marginChartTop-marginChartBottom)+marginChartBottom+10, marginChartLeft);
+   cairo_set_source_rgb(cr, 0, 0, 0);
+   DraWBoolChartEvent(cr, getVectorPairBool(time, bools[i]),minX,maxX,bools.size(),i,width,height,40, (height-marginChartTop-marginChartBottom)+marginChartBottom+10, marginChartLeft);
+   
    }
    cairo_set_source_rgb(cr, 0.7, 0.7, 0.7);
    DrawGrid(cr,width,height,40, (height-marginChartTop-marginChartBottom)+marginChartBottom+10, marginChartLeft,marginChartRight,XlinesChart,bools.size());
@@ -278,38 +281,30 @@ bool ChartDrawing::createImageFromJSON(const std::string& title, const std::stri
       cairo_stroke(cr); // Рисуем линии
    }
 
-    void ChartDrawing::DraWBoolChart(
+    void ChartDrawing::DraWBoolChartEvent(
         cairo_t* cr, const std::vector<std::pair<long long, bool>>& vec,
         long long minX, long long maxX,
         int Ylines, int Yid,
         int width, int height,
         int marginTop, int marginBottom, int marginLeft, int marginRight){
 
-    for(auto it : vec) std::cout<<it.first<<" "<<it.second<<std::endl;
+    //for(auto it : vec) std::cout<<it.first<<" "<<it.second<<std::endl;
     
     // Проверка на пустой вектор
     if (vec.empty()) {
         //std::cerr << "Ошибка: вектор данных пуст.\n";
         return;
     }
+ 
+    for (auto pair : vec) {
 
-    size_t i = 0;
-    while (i < vec.size()) {
-        // Найдем начало сегмента
-        if (vec[i].second == true) {
-            
-            long long firstPoint = vec[i].first;
-
-            // Ищем конец сегмента
+       
            
-            do  {
-                ++i;
-            } while (i < vec.size()-1 && vec[i].second == true);
-            long long secondPoint = vec[i].first; // Последняя точка в сегменте
 
             // Вычисляем координаты на экране
-            double x1 = ((firstPoint - minX) / (double)(maxX - minX) * (width - (marginRight + marginLeft))) + marginLeft;
-            double x2 = ((secondPoint - minX) / (double)(maxX - minX) * (width - (marginRight + marginLeft))) + marginLeft;
+            double x1 = ((pair.first - minX) / (double)(maxX - minX) * (width - (marginRight + marginLeft))) + marginLeft;
+            double x2 = x1+2;
+            //double x2 = ((secondPoint - minX) / (double)(maxX - minX) * (width - (marginRight + marginLeft))) + marginLeft;
 
             // Корректируем координаты Y
             double y1 = ((Yid * (height - (marginTop + marginBottom))) / Ylines) + marginTop;
@@ -322,10 +317,58 @@ bool ChartDrawing::createImageFromJSON(const std::string& title, const std::stri
 
             // Переходим к следующему сегменту
            
-        } else {
-            ++i; // Переходим к следующей точке, если текущая точка - false
-        }
+       
     }
+}
+
+    void ChartDrawing::DraWBoolChart(
+        cairo_t* cr, const std::vector<std::pair<long long, bool>>& vec,
+        long long minX, long long maxX,
+        int Ylines, int Yid,
+        int width, int height,
+        int marginTop, int marginBottom, int marginLeft, int marginRight){
+
+    //for(auto it : vec) std::cout<<it.first<<" "<<it.second<<std::endl;
+    
+    // Проверка на пустой вектор
+    if (vec.empty()) {
+        //std::cerr << "Ошибка: вектор данных пуст.\n";
+        return;
+    }
+
+    int firstTrue;  
+   
+
+
+    for (int i = 0; i<vec.size()-1;i++) {
+
+        if(vec[i].second == true){
+            // Вычисляем координаты на экране
+            double x1 = ((vec[i].first  - minX) / (double)(maxX - minX) * (width - (marginRight + marginLeft))) + marginLeft;
+            double x2 = ((vec[i+1].first  - minX) / (double)(maxX - minX) * (width - (marginRight + marginLeft))) + marginLeft;
+            // Корректируем координаты Y
+            double y1 = ((Yid * (height - (marginTop + marginBottom))) / Ylines) + marginTop;
+            double y2 = (((Yid + 1) * (height - (marginTop + marginBottom))) / Ylines) + marginTop;
+            // Отрисовываем прямоугольник для сегмента
+            cairo_rectangle(cr, x1, y1, x2 - x1, y2 - y1); // Координаты и размеры
+            cairo_fill(cr); // Заливаем прямоугольник
+            cairo_stroke(cr); // Окончательное рисование
+            // Переходим к следующему сегменту
+        } 
+    }
+    if(vec[vec.size()-1].second == true){
+            // Вычисляем координаты на экране
+            double x1 = ((vec[vec.size()-1].first  - minX) / (double)(maxX - minX) * (width - (marginRight + marginLeft))) + marginLeft;
+            double x2 = ((maxX  - minX) / (double)(maxX - minX) * (width - (marginRight + marginLeft))) + marginLeft;
+            // Корректируем координаты Y
+            double y1 = ((Yid * (height - (marginTop + marginBottom))) / Ylines) + marginTop;
+            double y2 = (((Yid + 1) * (height - (marginTop + marginBottom))) / Ylines) + marginTop;
+            // Отрисовываем прямоугольник для сегмента
+            cairo_rectangle(cr, x1, y1, x2 - x1, y2 - y1); // Координаты и размеры
+            cairo_fill(cr); // Заливаем прямоугольник
+            cairo_stroke(cr); // Окончательное рисование
+            // Переходим к следующему сегменту
+        } 
 }
    void ChartDrawing::DrawChartXLabels(
         cairo_t* cr,

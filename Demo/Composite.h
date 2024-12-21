@@ -94,6 +94,12 @@ public:
     bool evaluate(const std::vector<T>& args) const override;
 };
 
+template <typename T>
+class ModulusPart:public IConditionStrategy<T> {
+public:
+    bool evaluate(const std::vector<T>& args) const override;
+};
+
 
 // Контекст для хранения и применения стратегий
 class ConditionContext {

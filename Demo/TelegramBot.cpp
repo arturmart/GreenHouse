@@ -23,6 +23,19 @@ std::vector<std::unordered_map<std::string, std::string>> manualCommands = {
     {{"TEXT", "Falcon4 On"}, {"CALL_BACK_DATA", "Falcon4On"}},
     {{"TEXT", "Falcon4 Off"}, {"CALL_BACK_DATA", "Falcon4Off"}},
     {{"TEXT", "Falcon4 Auto"}, {"CALL_BACK_DATA", "Falcon4Auto"}},
+
+    {{"TEXT", "IR1 On"}, {"CALL_BACK_DATA", "IR1On"}},
+    {{"TEXT", "IR1 Off"}, {"CALL_BACK_DATA", "IR1Off"}},
+    {{"TEXT", "IR1 Auto"}, {"CALL_BACK_DATA", "IR1Auto"}},
+
+    {{"TEXT", "IR2 On"}, {"CALL_BACK_DATA", "IR2On"}},
+    {{"TEXT", "IR2 Off"}, {"CALL_BACK_DATA", "IR2Off"}},
+    {{"TEXT", "IR2 Auto"}, {"CALL_BACK_DATA", "IR2Auto"}},
+
+    {{"TEXT", "Light1 On"}, {"CALL_BACK_DATA", "Light1On"}},
+    {{"TEXT", "Light1 Off"}, {"CALL_BACK_DATA", "Light1Off"}},
+    {{"TEXT", "Light1 Auto"}, {"CALL_BACK_DATA", "Light1Auto"}},
+
     {{"TEXT", "Read New Json Condition"}, {"CALL_BACK_DATA", "ReadNewJsonCond"}}
 
 };
@@ -77,9 +90,55 @@ void TelegramBot::setupCommands() {
     bot.getEvents().onCommand("getter", [this](TgBot::Message::Ptr message) {
         bot.getApi().sendMessage(message->chat->id, "Սենսորների գործիքների ցուցակ", nullptr, 0, createKeyboard(getterCommands, 2));
     });
+    /*
+
+    bot.getEvents().onCommand("menu", [this](TgBot::Message::Ptr message) {
+        // Создаем инлайн-клавиатуру
+        TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
+
+        // Первая кнопка меню
+        TgBot::InlineKeyboardButton::Ptr button1(new TgBot::InlineKeyboardButton);
+        button1->text = "Getter";
+        button1->callbackData = "getter";
+
+        // Вторая кнопка меню
+        TgBot::InlineKeyboardButton::Ptr button2(new TgBot::InlineKeyboardButton);
+        button2->text = "Executor";
+        button2->callbackData = "manual";
+
+        // Добавляем кнопки в строку
+        std::vector<TgBot::InlineKeyboardButton::Ptr> row = {button1, button2};
+
+        // Добавляем строку в клавиатуру
+        keyboard->inlineKeyboard.push_back(row);
+
+        // Отправляем сообщение с клавиатурой
+        bot.getApi().sendMessage(message->chat->id, "Выберите опцию:", nullptr, 0, keyboard);
+    });
+    */
 
     bot.getEvents().onCommand("start", [this](TgBot::Message::Ptr message) {
-        bot.getApi().sendMessage(message->chat->id, "/manual մանուալ գործիքներ \n /getter Սենսորների գործիքներ", nullptr, 0, nullptr);
+
+        /*
+
+        TgBot::ReplyKeyboardMarkup::Ptr keyboard(new TgBot::ReplyKeyboardMarkup);
+        keyboard->resizeKeyboard = true;
+
+        std::vector<TgBot::KeyboardButton::Ptr> row1;
+        TgBot::KeyboardButton::Ptr button1(new TgBot::KeyboardButton);
+        button1->text = "Getter";
+        row1.push_back(button1);
+
+        TgBot::KeyboardButton::Ptr button2(new TgBot::KeyboardButton);
+        button2->text = "Executor";
+
+        
+        row1.push_back(button2);
+
+        keyboard->keyboard.push_back(row1);
+        */
+
+        bot.getApi().sendMessage(message->chat->id, "/manual մանուալ գործիքներ \n /getter Սենսորների գործիքներ", nullptr, 0, nullptr/*keyboard*/);
     });
 
     bot.getEvents().onCallbackQuery([this](TgBot::CallbackQuery::Ptr query) {
@@ -96,6 +155,7 @@ void TelegramBot::setupCommands() {
                 //bot.getApi().sendMessage(query->message->chat->id, "/getter " + hTable.at("TEXT"));
             }
         }
+        
     });
 
     bot.getEvents().onCommand("help", [this](TgBot::Message::Ptr message) {

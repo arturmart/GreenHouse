@@ -91,12 +91,19 @@ Executor::Executor() : lcd(0x3f), RCM() {
     executeMap["Falcon4_ON"] = new RCM_Strategy(RCM, "83,5,1");
     executeMap["Falcon4_OFF"] = new RCM_Strategy(RCM, "83,5,0");
 
+    executeMap["IR1_ON"] = new RCM_Strategy(RCM, "83,6,1");
+    executeMap["IR1_OFF"] = new RCM_Strategy(RCM, "83,6,0");
+    executeMap["IR2_ON"] = new RCM_Strategy(RCM, "83,7,1");
+    executeMap["IR2_OFF"] = new RCM_Strategy(RCM, "83,7,0");
+    executeMap["Light1_ON"] = new RCM_Strategy(RCM, "83,8,1");
+    executeMap["Light1_OFF"] = new RCM_Strategy(RCM, "83,8,0");
+
   
 
-    executeMap["R1_OFF_5s"] = new RCM_Delay_Strategy(RCM, "83,0,0", 5);
-    executeMap["R2_OFF_5s"] = new RCM_Delay_Strategy(RCM, "83,1,0", 5);
-    executeMap["R3_OFF_5s"] = new RCM_Delay_Strategy(RCM, "83,2,0", 5);
-    executeMap["R4_OFF_5s"] = new RCM_Delay_Strategy(RCM, "83,3,0", 5);
+    //executeMap["R1_OFF_5s"] = new RCM_Delay_Strategy(RCM, "83,0,0", 5);
+    //executeMap["R2_OFF_5s"] = new RCM_Delay_Strategy(RCM, "83,1,0", 5);
+    //executeMap["R3_OFF_5s"] = new RCM_Delay_Strategy(RCM, "83,2,0", 5);
+    //executeMap["R4_OFF_5s"] = new RCM_Delay_Strategy(RCM, "83,3,0", 5);
 }
 
 Executor::~Executor() {

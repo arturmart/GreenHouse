@@ -76,6 +76,20 @@ bool Never<T>::evaluate(const std::vector<T>& args) const {
     return false;
 }
 
+template <typename T>
+bool ModulusPart<T>::evaluate(const std::vector<T>& args) const {
+    //arg0 is number we comper
+    //arg1 is part
+    //arg2 is part counts
+    //arg3 is which part we check
+
+    //     ((1734789429  % (600*4))/600) == 1
+    //      (data % (part*partCnt))/part == which part we check
+
+
+    return args.size() == 4 && (((args[0] % (args[1]*args[2]))/args[1]) == args[3]);
+}
+
 
 
 // Контекст для хранения и применения стратегий
@@ -98,6 +112,8 @@ bool Never<T>::evaluate(const std::vector<T>& args) const {
         addStrategy<long long>("<=LL", new LessThanOrEqual<long long>);
         addStrategy<long long>("InRangeLL", new InRange<long long>);
         addStrategy<long long>("OutOfRangeLL", new OutOfRange<long long>);
+
+        addStrategy<long long>("%LL", new ModulusPart<long long>);
 
 
 

@@ -16,6 +16,7 @@ public:
     void addTable(const std::string& str);
     void setTable(const std::vector<std::string>& table);
     void setData(const std::string& key, const std::string& data);
+    void setFileName(const std::string& newfilename);
     void log();
     void setAndLog(const std::unordered_map<std::string, std::string>& table);
     void drawChart(const std::string& title, const std::string& x, const std::vector<std::string>& y, const std::vector<std::string>& bools);

@@ -26,6 +26,26 @@
       ],
       "executing": "doChild3",
       "title": "Child3"
+    },
+    {
+      "condition": "InRangeLL",
+      "conditionArgs": [
+        "dateDaily",
+        "003000",
+        "003500"
+      ],
+      "executing": "Pump_ON",
+      "title": "Child4"
+    },
+    {
+      "condition": "OutOfRangeLL",
+      "conditionArgs": [
+        "dateDaily",
+        "003000",
+        "003500"
+      ],
+      "executing": "Pump_OFF",
+      "title": "Child5"
     }
   ],
   "condition": "Always",

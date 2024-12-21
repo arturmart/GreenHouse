@@ -43,12 +43,20 @@ private:
         long long minX, long long maxX, double minY, double maxY,
         int width = 1280, int height = 640,
         int marginTop = 200,int marginBottom = 80,int marginLeft = 100,int marginRight = 60);
+    void DraWBoolChartEvent(
+        cairo_t* cr, const std::vector<std::pair<long long, bool>>& vec,
+        long long minX, long long maxX,
+        int Ylines = 10, int Yid = 0,
+        int width = 1280, int height = 640,
+        int marginTop = 200,int marginBottom = 80,int marginLeft = 100,int marginRight = 60);
+
     void DraWBoolChart(
         cairo_t* cr, const std::vector<std::pair<long long, bool>>& vec,
         long long minX, long long maxX,
         int Ylines = 10, int Yid = 0,
         int width = 1280, int height = 640,
         int marginTop = 200,int marginBottom = 80,int marginLeft = 100,int marginRight = 60);
+    
     
     void DrawChartXLabels(
         cairo_t* cr,
