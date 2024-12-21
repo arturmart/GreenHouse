@@ -54,11 +54,14 @@ w1_bus_master1  28-XXXXXXXXXXXX
 --------
 
 ## for Add Executor
-
-1) on [Executor](https://github.com/arturmart/GreenHouse/blob/master/Demo/Executor.cpp) in Executor::Executor() add New Strategy `executeMap["IR1_ON"] = new RCM_Strategy(RCM, "83,6,1");` `executeMap["IR1_OFF"] = new RCM_Strategy(RCM, "83,6,0");`
-2) on [TelegramBot](https://github.com/arturmart/GreenHose/blob/master/Demo/TelegramBot.cpp) manualCommands() `{{"TEXT", "IR1 On"}, {"CALL_BACK_DATA", "IR1On"}},
-    {{"TEXT", "IR1 Off"}, {"CALL_BACK_DATA", "IR2Off"}},
-    {{"TEXT", "IR1 Auto"}, {"CALL_BACK_DATA", "IR3Auto"}},`
+1) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp) executeCommandsMap add Telegram Commands in Main `getterCommandsMap = {... ,{{"TG_BOT", "IR1On"}, {"EXECUTOR", "IR1_ON"}, {"MODE", "on"}, {"MODULE", "IR1"}}, ...} ` For Telegram Command
+2)  on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp)  on Registers Initilizationa on executorRegister and autoModeExecutorRegister add module `std::unordered_map<std::string, double> autoModeExecutorRegister and executorRegister = {"IR1", false},`  For Register
+3) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp) Logger LOG Constructor Add Names  `Logger LOG(... ,{...,"IR1",...});` for Logging
+4) on [main](https://github.com/arturmart/GreenHose/blob/master/Demo/main.cpp) in `getterCommandTGBot(...)` change `LOG.drawChart(... , ... ,..., {"IR1",...});` for Chart
+5) on [Executor](https://github.com/arturmart/GreenHouse/blob/master/Demo/Executor.cpp) in Executor::Executor() add New Strategy `executeMap["IR1_ON"] = new RCM_Strategy(RCM, "83,6,1");` `executeMap["IR1_OFF"] = new RCM_Strategy(RCM, "83,6,0");`
+6) on [TelegramBot](https://github.com/arturmart/GreenHose/blob/master/Demo/TelegramBot.cpp) manualCommands() `{{"TEXT", "IR1 On"}, {"CALL_BACK_DATA", "IR1On"}},
+    {{"TEXT", "IR1 Off"}, {"CALL_BACK_DATA", "IR1Off"}},
+    {{"TEXT", "IR1 Auto"}, {"CALL_BACK_DATA", "IR1Auto"}},`
    For Button on Telegram *same as point 1*. There must be divide to 3
 
 
