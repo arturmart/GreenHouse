@@ -132,9 +132,43 @@ bool jsonManager::appendToJsonArray(const nlohmann::json& new_element) {
     return true;
 }
 
-
+/*
 void jsonManager::changeName(const std::string& newfilename){
         filename = newfilename;
+}
+*/
+
+bool jsonManager::create_empty_json_file() {
+    std::lock_guard<std::mutex> lock(fileMutex);
+
+    // Проверяем, существует ли файл
+    if (file_exists(filename)) {
+        std::cerr << "Файл уже существует: " << filename << ".json" << std::endl;
+        return false;
+    }
+
+    // Создаем пустой JSON объект
+    nlohmann::json empty_json = nlohmann::json::object();
+
+    // Пытаемся записать его в файл
+    std::ofstream output_file(filename + ".json");
+    if (output_file.is_open()) {
+        try {
+            output_file << empty_json.dump(4); // Запись с форматированием
+            std::cout << "Файл успешно создан: " << filename << ".json" << std::endl;
+            return true;
+        } catch (const std::exception& e) {
+            std::cerr << "Ошибка записи в файл: " << e.what() << std::endl;
+            return false;
+        }
+    } else {
+        std::cerr << "Не удалось открыть файл для записи!" << std::endl;
+        return false;
+    }
+}
+
+void jsonManager::setFileName(const std::string& newFileName){
+    filename = newFileName;
 }
 
 

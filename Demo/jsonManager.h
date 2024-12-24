@@ -25,7 +25,9 @@ class jsonManager{
     // Пример функции записи JSON в файл
     void write_json_to_file(const json& j);
     bool appendToJsonArray( const nlohmann::json& new_element);
-    void changeName(const std::string& newfilename);
+    //void changeName(const std::string& newfilename);
+    bool create_empty_json_file();
+    void setFileName(const std::string& newFileName);
 
     private:
     std::string filename;

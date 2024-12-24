@@ -130,6 +130,7 @@ bool WeatherAPI::isInited() const {
                       "&lon=" + std::to_string(longitude) +
                       "&appid=" + apiKey + "&units=metric";
     std::string response = makeRequest(url);
+    
 
     if (!response.empty()) {
         try {
@@ -148,30 +149,36 @@ bool WeatherAPI::isInited() const {
 
 
 bool WeatherAPI::isInternetAvailable() const {
-    // Попробуем выполнить запрос к публичному DNS-серверу (например, 8.8.8.8 от Google)
-    CURL* curl;
-    CURLcode res;
-    std::string readBuffer;
-    
-    curl = curl_easy_init();
-    if (curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, "http://8.8.8.8"); // Публичный DNS Google
-        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5L); // Таймаут в 5 секунд
+    try {
+        CURL* curl = curl_easy_init();
+        if (!curl) {
+            std::cerr << "Не удалось инициализировать CURL" << std::endl;
+            return false;
+        }
+
+        std::string readBuffer;
+        curl_easy_setopt(curl, CURLOPT_URL, "https://google.com"); // Публичный URL
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5L);             // Таймаут в 5 секунд
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-        
-        res = curl_easy_perform(curl); // Выполняем запрос
-        
-        // Если запрос прошел успешно, интернет доступен
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);      // Следование за редиректами
+        curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);           // Отключение сигналов
+
+        CURLcode res = curl_easy_perform(curl); // Выполняем запрос
+
         if (res == CURLE_OK) {
             curl_easy_cleanup(curl);
             return true;
         } else {
-            // Ошибка при подключении, интернет недоступен
             std::cerr << "Ошибка при проверке интернета: " << curl_easy_strerror(res) << std::endl;
             curl_easy_cleanup(curl);
             return false;
         }
+    } catch (const std::exception& e) {
+        std::cerr << "Исключение при проверке интернета: " << e.what() << std::endl;
+        return false;
+    } catch (...) {
+        std::cerr << "Неизвестная ошибка при проверке интернета." << std::endl;
+        return false;
     }
-    return false;  // Не удалось инициализировать curl, интернет недоступен
 }

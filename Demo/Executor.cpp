@@ -91,6 +91,18 @@ Executor::Executor() : lcd(0x3f), RCM() {
     executeMap["Falcon4_ON"] = new RCM_Strategy(RCM, "83,5,1");
     executeMap["Falcon4_OFF"] = new RCM_Strategy(RCM, "83,5,0");
 
+    /*
+    Bake 0
+    pump 1
+    Falcon1 2
+    Falcon2 3
+    Falcon3 4
+    Falcon4 5
+    IR1 6
+    IR2 7
+    Light 8
+    */
+
     executeMap["IR1_ON"] = new RCM_Strategy(RCM, "83,6,1");
     executeMap["IR1_OFF"] = new RCM_Strategy(RCM, "83,6,0");
     executeMap["IR2_ON"] = new RCM_Strategy(RCM, "83,7,1");

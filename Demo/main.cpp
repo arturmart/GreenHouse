@@ -2,6 +2,7 @@
 #include <string>
 #include <unordered_map>
 #include <mutex>
+#include <curl/curl.h>
 
 #include "Executor.h"
 #include "DataGeter.h"
@@ -87,7 +88,9 @@ std::vector<std::unordered_map<std::string, std::string>> executeCommandsMap = {
     {{"TG_BOT", "Light1Off"}, {"EXECUTOR", "Light1_OFF"}, {"MODE", "off"}, {"MODULE", "Light1"}},
     {{"TG_BOT", "Light1Auto"}, {"MODE", "auto"},{"MODULE", "Light1"}},
 
-    {{"EXECUTOR", "AlertHighTemBake"},{"MODULE_TG", "ALERT"}, {"TEXTSEND", "AlertHighTemBake"}},
+    {{"EXECUTOR", "AlertHighTempBake"},{"MODULE_TG", "ALERT"}, {"TEXTSEND", "AlertHighTempBake"}},
+    {{"EXECUTOR", "AlertLowTemp"},{"MODULE_TG", "ALERT"}, {"TEXTSEND", "AlertLowTemp"}},
+    {{"EXECUTOR", "AlertBakeBadWork"},{"MODULE_TG", "ALERT"}, {"TEXTSEND", "AlertBakeBadWork"}},
  
 
 
@@ -151,12 +154,55 @@ std::unordered_map<std::string, bool> autoModeExecutorRegister = {
 void doExecuteAuto(const std::string& exe); //init
 
 std::string thisDay = getDay();
+int thisHMS = stoi(getDayHMS());
+bool isIntr = false;
 
 Executor executor;
 DataGetter dataGetter;
 Logger LOG("Log/Log"+thisDay,{"date","temp","temp2","inBake", "outBake","tempOut","Bake","Pump","Falcon1","Falcon2","Falcon3","Falcon4","IR1","IR2","Light1"});
 TelegramBot bot("7804127004:AAEQkzTISnsoBpESYJQdVERP6gX10d6rA1c"/*TOKEN_TELEGRAM*/,getterCommandTGBot,executorCommandTGBot);
 Composite  MainPattern(getterRegistor,doExecuteAuto, "main", "Always", {}, {});
+
+size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* buffer) {
+    size_t totalSize = size * nmemb;
+    buffer->append((char*)contents, totalSize);
+    return totalSize;
+}
+
+bool isInternet() {
+    try {
+        CURL* curl = curl_easy_init();
+        if (!curl) {
+            std::cerr << "Не удалось инициализировать CURL" << std::endl;
+            return false;
+        }
+
+        std::string readBuffer;
+        curl_easy_setopt(curl, CURLOPT_URL, "https://google.com"); // Публичный URL
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5L);             // Таймаут в 5 секунд
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);      // Следование за редиректами
+        curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);           // Отключение сигналов
+
+        CURLcode res = curl_easy_perform(curl); // Выполняем запрос
+
+        if (res == CURLE_OK) {
+            curl_easy_cleanup(curl);
+            return true;
+        } else {
+            std::cerr << "Ошибка при проверке интернета: " << curl_easy_strerror(res) << std::endl;
+            curl_easy_cleanup(curl);
+            return false;
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Исключение при проверке интернета: " << e.what() << std::endl;
+        return false;
+    } catch (...) {
+        std::cerr << "Неизвестная ошибка при проверке интернета." << std::endl;
+        return false;
+    }
+}
 
 
 
@@ -215,7 +261,7 @@ void getterRegisterLog(){
    LOG.setData("temp2", getterRegistor["temp2"]);
    LOG.setData("inBake", getterRegistor["inBake"]);
    LOG.setData("outBake", getterRegistor["outBake"]);
-   LOG.setData("tempOut", getterRegistor["tempOut"]);
+   if(isIntr && getterRegistor["tempOut"] != "-255.000000") LOG.setData("tempOut", getterRegistor["tempOut"]);
 
    LOG.log();
 }
@@ -228,7 +274,7 @@ void GetterAndLog(){
    
       getterRegisterUpdate();
       getterRegisterLog();
-      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+      std::this_thread::sleep_for(std::chrono::milliseconds(10000));
    
 }
 void GetterAndLogLoop(){ 
@@ -284,7 +330,7 @@ void doExecuteAuto(const std::string& exe){
 
          }
          else if(it["MODULE_TG"] == "ALERT"){
-            bot.alertAllUser(it["TEXTSEND"]);
+            if(isIntr)bot.alertAllUser(it["TEXTSEND"]);
 
          }
          
@@ -316,15 +362,15 @@ void getterCommandTGBot(const std::string& arg){
       if(arg == it["TG_BOT"]) {
          if(it.find("DATA_GETTER") != it.end()){
             double dt = dataGetter.getNewData(it["DATA_GETTER"]);
-            bot.sendAllUserMessage(doubleToString(dt));
+            if(isIntr)bot.sendAllUserMessage(doubleToString(dt));
          }
          if(it.find("SAND_CHART") != it.end()){
             LOG.drawChart("Chart"+thisDay,"date",{"temp","temp2","inBake", "outBake","tempOut"},{"Bake","Pump","Falcon1","Falcon2","Falcon3","Falcon4","IR1","IR2","Light1"});
-            bot.sendAllUserPhoto("Chart"+thisDay+".png", thisDay+" Chart");
+            if(isIntr)bot.sendAllUserPhoto("Chart"+thisDay+".png", thisDay+" Chart");
 
          }
          if(it.find("SAND_LOG") != it.end()){
-            bot.sendAllUserDocument("Log/Log"+thisDay+".json",thisDay + "Log");
+            if(isIntr)bot.sendAllUserDocument("Log/Log"+thisDay+".json",thisDay + "Log");
 
          }
          if(it.find("SAND_STATES") != it.end()){
@@ -340,18 +386,18 @@ void getterCommandTGBot(const std::string& arg){
                data+="\n";
                
             }
-            bot.sendAllUserMessage(data);
+            if(isIntr)bot.sendAllUserMessage(data);
             
 
          }
          
          if(it.find("SAND_COND_TREE") != it.end()){
-            bot.sendAllUserMessage(MainPattern.getTreeString());
+            if(isIntr)bot.sendAllUserMessage(MainPattern.getTreeString());
             
 
          }
          if(it.find("SAND_COND_JSON") != it.end()){
-            bot.sendAllUserDocument("Condition.json",getDay() + " Condition");
+            if(isIntr)bot.sendAllUserDocument("Condition.json",thisDay + " Condition");
 
          }
       }
@@ -360,7 +406,7 @@ void getterCommandTGBot(const std::string& arg){
 }
 
 void sendConditionToTgBot(const std::string& str){
-   bot.sendAllUserDocument(str,getDay() + " Old Condition");
+   if(isIntr)bot.sendAllUserDocument(str,thisDay + " Old Condition");
 }
 
 void executorCommandTGBot(const std::string& arg){
@@ -405,10 +451,17 @@ int fromSec(int h, int m ,int s){
 
 
 bool chackDayChanged(){
-   if(thisDay !=getDay() ){
-      bot.sendAllUserMessage("Day "+thisDay+" Change!");
-      LOG.drawChart("Chart"+thisDay,"date",{"temp","temp2","inBake", "outBake","tempOut"},{"Bake","Pump","Falcon1","Falcon2","Falcon3","Falcon4","IR1","IR2","Light1"});
-      bot.sendAllUserPhoto("Chart"+thisDay+".png", thisDay+" Chart");
+   thisHMS = stoi(getDayHMS());
+   
+
+   if(thisHMS > 60000 && thisDay !=getDay()){   //thisDay !=getDay() for 24 h
+      std::cout<<"Day Changed!"<<std::endl;
+      if(isIntr){
+         bot.sendAllUserMessage("Day "+thisDay+" Change!");
+         LOG.drawChart("Chart"+thisDay,"date",{"temp","temp2","inBake", "outBake","tempOut"},{"Bake","Pump","Falcon1","Falcon2","Falcon3","Falcon4","IR1","IR2","Light1"});
+         bot.sendAllUserPhoto("Chart"+thisDay+".png", thisDay+" Chart");
+         bot.sendAllUserDocument("Log/Log"+thisDay+".json",thisDay + "Log");
+      }
 
       thisDay = getDay();
       LOG.setFileName("Log/Log"+thisDay);
@@ -425,7 +478,7 @@ int main(){
 
 
    
-   
+   isIntr = isInternet();
    GetterAndLog();
    executorReigisterLog();
 
@@ -436,12 +489,14 @@ int main(){
    std::thread botThread(&TelegramBot::run, &bot);
 
    TurnOffAllRCM();
-   bot.sendAllUserMessage("Green House Lounch!");
+   if(isIntr)bot.sendAllUserMessage("Green House Lounch!");
 
    std::string lcdString = "";
 
    while(true){
       try {
+            isIntr = isInternet();
+            getterRegisterUpdate();
             // Simulating code that may throw an exception
             lcdString = "T1=" + doubleToString(std::stod(getterRegistor["temp"]))+ 
                   " T2="+ doubleToString(std::stod(getterRegistor["temp2"]))+ 
@@ -475,3 +530,4 @@ int main(){
     return 0;
 
 }
+

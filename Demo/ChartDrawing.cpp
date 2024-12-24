@@ -108,8 +108,6 @@ std::pair<T, T> ChartDrawing::getSmallAndLarge(const std::vector<T>& vec) {
 }
 
 
-
-
 bool ChartDrawing::createImageFromJSON(const std::string& title, const std::string& time, const std::vector<std::string>& charts, const std::vector<std::string>& bools){
 
    std::vector<long long> timeVector = getVectorLongLong(time);

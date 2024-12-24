@@ -101,7 +101,7 @@ bool ModulusPart<T>::evaluate(const std::vector<T>& args) const {
         addStrategy<double>("==D", new EqualTo<double>);
         addStrategy<double>(">=D", new GreaterThanOrEqual<double>);
         addStrategy<double>("<=D", new LessThanOrEqual<double>);
-        addStrategy<double>("inRangeD", new InRange<double>);
+        addStrategy<double>("InRangeD", new InRange<double>);
         addStrategy<double>("OutOfRangeD", new OutOfRange<double>);
 
 

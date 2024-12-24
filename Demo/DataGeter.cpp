@@ -30,14 +30,21 @@ double OutTempStrategy::getData() const {
     return std::stod(((weather.getWeather()) ["temp"]));
 }
 bool OutTempStrategy::isInited() const{
+   if(weather.isInternetAvailable()){
     return weather.isInited()&&weather.isInternetAvailable();
+   }
 }
 void OutTempStrategy::update() {
+   if(weather.isInternetAvailable()){
     weather.updateWeather();
+   }
 }
 double OutTempStrategy::getNewData(){
-   update();
-   return getData();
+   if(weather.isInternetAvailable()){
+      update();
+      return getData();
+   }
+   else return(-255);
 }
 
 

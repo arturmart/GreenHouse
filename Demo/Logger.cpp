@@ -27,7 +27,16 @@ void Logger::setData(const std::string& key, const std::string& data) {
     dataTable[key] = data;  // Set the value for a specific column
 }
 void Logger::setFileName(const std::string& newfilename) {
-    filename = newfilename;
+    if(filename != newfilename){
+        filename = newfilename;
+        LogJson.setFileName(newfilename);
+        if(LogJson.create_empty_json_file()){
+            std::cout<<"new json log file created!"<<std::endl;
+        }
+        else{
+            std::cout<<"cant create json log file !"<<std::endl;
+        }
+    }
 }
 
 void Logger::log() {

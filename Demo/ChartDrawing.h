@@ -31,7 +31,7 @@ public:
     std::pair<T, T> getSmallAndLarge(const std::vector<T>& vec);
 
     bool createImageFromJSON(const std::string& title, const std::string& time, const std::vector<std::string>& charts, const std::vector<std::string>& bools);
-
+    
 private:
     // Private member methods for drawing parts of the chart
     void DrawGrid(
