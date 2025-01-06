@@ -30,6 +30,12 @@ public:
         }
     }
 
+    void relayWriteAll() {
+        for(int i = 0; i < RELAY_COUNT; i++){
+          digitalWrite(relayPin[i], !(states[i]));
+        }
+    }
+
     // Method to test each relay
     void testRelay() {
         for (int i = 0; i < RELAY_COUNT; i++) {
@@ -58,8 +64,6 @@ public:
       for(int i = 0 ; i<RELAY_COUNT;i++){
         st<<=1;
         st|= states[i];
-
-
       }
       return st;
     }
@@ -81,7 +85,7 @@ private:
     
     int* relayPin;       // Pointer to the array of relay pins
     const int RELAY_COUNT;     // Number of relays connected
-    bool states[32];
+    bool states[16];
 };
 
 #endif // RELAYCONTROLLER_H

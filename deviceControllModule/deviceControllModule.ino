@@ -24,8 +24,8 @@ const int GET_KEYWORD = 1 << 12;
 
 
 const int RELAY_COUNT = 16;
-int relayPin[RELAY_COUNT] = {30,32,34,36,38,40,42,44,22,24,26,28,4,5,6,7}; 
-bool states[RELAY_COUNT];
+int relayPin[RELAY_COUNT] = {30,32,34,36,38,40,42,44,22,24,26,28,4,5,6,7};  
+
 RelayController relayController(relayPin, RELAY_COUNT); 
 
 StringLimited<BUFFER_SIZE> str;   //83,0,1;83,1,1;83,2,1;83,3,1/61204cfc //83,0,0;83,1,0;83,2,0;83,3,0/745ec3dc
@@ -79,7 +79,6 @@ void serialWriteKeyWord(int feedback, enum DataParser::KEYWORD key){
 
 void serialWriteFeedBack(int feedback){
 
-      //Serial.print("feedbeck ");
       
       StringLimited<BUFFER_SIZE> write = "";
       
@@ -88,15 +87,6 @@ void serialWriteFeedBack(int feedback){
 
 
       Serial1.println(write+"/"+crcCalk(write));
-   
-      //if (feedback & ERROR_SYNTAX)                    Serial.println("[ER1-SY]");
-      //if (feedback & ERROR_1L_NO_DATA)                Serial.println("[ER2-1N]");
-      //if (feedback & ERROR_1L_TOO_MANY_DATA)          Serial.println("[ER3-1M]");
-      //if (feedback & ERROR_INVALID_CRC)               Serial.println("[ER4-IC]");
-      //if (feedback & ERROR_NULL_CRC)                  Serial.println("[ER5-NC]");
-      //if (feedback & ERROR_2L_NO_DATA_PACKETS)        Serial.println("[ER6-2N]");
-      //if (feedback & ERROR_2L_TOO_MANY_PACKETS)       Serial.println("[ER7-2M]");
-      //if (feedback & ERROR_3L_WRONG_DATA_PACKETS)     Serial.println("[ER8-3W]");
 }
 
 void doAction(int size){
@@ -114,61 +104,39 @@ void doAction(int size){
 
       
 }
+
+void doAll(){
+ relayController.relayWriteAll();
+}
+
+
+//  83,0,0/6e0d4821
+//  83,0,1/190a78b7
+
+//  83,1,0/6fcf2216
+//  83,1,1/18c81280
+
+//  83,2,0/6d899c4f 
+//  83,2,1/1a8eacd9
+
+//  83,3,0/6c4bf678
+//  83,3,1/1b4cc6ee
+
+//  83,4,0/6904e0fd
+//  83,4,1/1e03d06b
+
+//  83,5,0/68c68aca
+//  83,5,1/1fc1ba5c
+
+//  83,12,0/f0af7675
+//  83,12,1/87a846e3
+
 void setup() {
-    //Serial.begin(9600);
-    //Serial.println("___________");
-    Serial1.begin(57600); // Инициализация последовательного порта
-
-
+    Serial1.begin(57600);
     pinMode(13, OUTPUT);
     digitalWrite(13,HIGH);
-    
     parser.setCRC(crcCalk);
   
-
-
-    /*
-    parser.setStr(str);
-    feedback = parser.parse( data); // Парсим данные, передавая указатель на строку и массив байтов
-    Serial.print("feedbeck "); Serial.println(feedback,BIN);
-    int size = (feedback & PACKETS_COUNT)>>8;
-
-    // Использование массива байтов
-    for (int i = 0; i < size; i++) {
-        Serial.print("Row "); Serial.print(i); Serial.print(": ");
-        for (int j = 0; j < 3; j++) {
-            Serial.print(data[i][j]);
-            Serial.print(" ");
-        }
-        Serial.println();
-    }*/
-
-    /*
-
-    if (feedback & ERROR_SYNTAX)                    Serial.println("[ERROR_SYNTAX] Ошибка синтаксиса.");
-    if (feedback & ERROR_1L_NO_DATA)                Serial.println("[ERROR_1L_NO_DATA] Ошибка 1L. Нет данных или разделитля");
-    if (feedback & ERROR_1L_TOO_MANY_DATA)          Serial.println("[ERROR_1L_TOO_MANY_DATA] Ошибка 1L. данных больше 2");
-    if (feedback & ERROR_INVALID_CRC)               Serial.println("[ERROR_INVALID_CRC] Неверный CRC.");
-    if (feedback & ERROR_NULL_CRC)                  Serial.println("[ERROR_NULL_CRC] пустой CRC.");
-    if (feedback & ERROR_2L_NO_DATA_PACKETS)        Serial.println("[ERROR_2L_NO_DATA_PACKETS] Ошибка 2L. Нет данных пакетов.");
-    if (feedback & ERROR_2L_TOO_MANY_PACKETS)       Serial.println("[ERROR_2L_TOO_MANY_PACKETS] Ошибка 2L.  данных больше 8.");
-    if (feedback & ERROR_3L_WRONG_DATA_PACKETS)     Serial.println("[ERROR_3L_WRONG_DATA_PACKETS] Ошибка 3L. Неверный Количество пакетов.");
-    if (feedback == ERROR_NONE)                     Serial.println("Парсинг выполнен успешно.");
-
-    if (feedback & ERROR_SYNTAX)                    Serial.println("[ER1]");
-    if (feedback & ERROR_1L_NO_DATA)                Serial.println("[ER2]");
-    if (feedback & ERROR_1L_TOO_MANY_DATA)          Serial.println("[ER3]");
-    if (feedback & ERROR_INVALID_CRC)               Serial.println("[ER4]");
-    if (feedback & ERROR_NULL_CRC)                  Serial.println("[ER5]");
-    if (feedback & ERROR_2L_NO_DATA_PACKETS)        Serial.println("[ER6]");
-    if (feedback & ERROR_2L_TOO_MANY_PACKETS)       Serial.println("[ER7]");
-    if (feedback & ERROR_3L_WRONG_DATA_PACKETS)     Serial.println("[ER8]");
-    //if (feedback == ERROR_NONE)                     Serial.println("[]");
-
-    */
-    
-
-    
 }
 
 void loop() {
@@ -185,9 +153,9 @@ void loop() {
       //if(parser.parse( data))
       
       feedback = parser.parse( data, doAction, serialWriteKeyWord);
+      doAll();
       //Serial.print("feedbeck "); Serial.println(feedback,BIN);
       if(!(feedback & GET_KEYWORD))serialWriteFeedBack(feedback);
-
       
       //showall/8d984889
       //83,0,1;83,1,1;83,2,1;83,3,1/61204cfc
