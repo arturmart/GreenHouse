@@ -194,6 +194,7 @@ sudo systemctl status greenhouse-demo.service
 
 ```bash
 journalctl -u greenhouse-demo.service
+journalctl -u greenhouse-demo.service > output.txt
 ```
 
 Если вы хотите видеть только последние строки и автоматически обновлять их в реальном времени, используйте:
