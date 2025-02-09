@@ -15,3 +15,5 @@ cd tgbot-cpp
 cmake .
 make
 sudo make install
+
+sudo apt-get install nlohmann-json3-dev
