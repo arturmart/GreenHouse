@@ -19,3 +19,5 @@ sudo make install
 sudo apt-get install nlohmann-json3-dev
 
 sudo apt-get install libcairo2 libcairo2-dev
+
+sudo apt-get install libcairo2 libcairo2-dev
