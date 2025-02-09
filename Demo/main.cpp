@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include <mutex>
 #include <curl/curl.h>
+#include <cstdlib>
+#include <thread> // Для работы с потоками
 
 #include "Executor.h"
 #include "DataGeter.h"
@@ -12,13 +14,16 @@
 #include "ConditionJson.h"
 
 
-#include <thread> // Для работы с потоками
+#define AUTOMATIZATION false
+#define CONTROL false
 
 // g++ -o main main.cpp Executor.cpp -pthread I2CLCD.cpp -lwiringPi RelayControlModule.cpp DataParsing.cpp TreeParsing.cpp MessageQueuing.cpp SerialComm.cpp DataCombine.cpp crcCalc.cpp -lz DataGeter.cpp DS18B20.cpp WeatherAPI.cpp -lcurl Logger.cpp jsonManager.cpp -I /path/to/nlohmann/json ChartDrawing.cpp -I/usr/include/cairo -lcairo TimeManager.cpp TelegramBot.cpp -I /path/to/nlohmann/json -lTgBot -lboost_system -lssl -lcrypto -lpthread  
 // g++ -o executor Executor.cpp -pthread I2CLCD.cpp -lwiringPi RelayControlModule.cpp DataParsing.cpp TreeParsing.cpp MessageQueuing.cpp SerialComm.cpp DataCombine.cpp crcCalc.cpp -lz 
 // g++ -o datagetter DataGeter.cpp DS18B20.cpp WeatherAPI.cpp -lcurl
 // g++ -o logger Logger.cpp jsonManager.cpp -I /path/to/nlohmann/json ChartDrawing.cpp -I/usr/include/cairo -lcairo TimeManager.cpp 
 //g++ -std=c++17 -o test TelegramBot.cpp -I /path/to/nlohmann/json -lTgBot -lboost_system -lssl -lcrypto -lpthread 
+
+
 
 
 std::string doubleToString(double value) {
@@ -37,7 +42,7 @@ std::string getDayHMS(){
 
 std::vector<std::unordered_map<std::string, std::string>> getterCommandsMap = {
     {{"TG_BOT", "getTemp"} , {"DATA_GETTER", "temp"}},
-    {{"TG_BOT", "getTemp2"} , {"DATA_GETTER", "temp2"}},
+    //{{"TG_BOT", "getTemp2"} , {"DATA_GETTER", "temp2"}},
 
     {{"TG_BOT", "getTempInBake"} , {"DATA_GETTER", "inBake"}},
     {{"TG_BOT", "getTempOutBake"} , {"DATA_GETTER", "outBake"}},
@@ -51,7 +56,9 @@ std::vector<std::unordered_map<std::string, std::string>> getterCommandsMap = {
     
 
     {{"TG_BOT", "getConditionJson"}, {"SAND_COND_JSON", "true"}},
-    {{"TG_BOT", "getConditionTree"}, {"SAND_COND_TREE", "true"}}
+    {{"TG_BOT", "getConditionTree"}, {"SAND_COND_TREE", "true"}},
+
+    {{"TG_BOT", "getAllData"}, {"SAND_ALL_DATA", "true"}}
 
     
 };
@@ -98,11 +105,21 @@ std::vector<std::unordered_map<std::string, std::string>> executeCommandsMap = {
 
 };
 
+std::vector<std::unordered_map<std::string, std::string>> masterCommandsMap = {
+    {{"TG_BOT", "getJournal"}},
+    {{"TG_BOT", "getIP"}},
+    {{"TG_BOT", "getLogDir"}}, 
+    {{"TG_BOT", "getStatus"}}
+ 
+
+};
+
 std::mutex Mutex;
 //std::mutex Mutex;
 
 void getterCommandTGBot(const std::string& arg);
 void executorCommandTGBot(const std::string& arg);
+void masterCommandsMapBot(const std::string& arg);
 
 
 
@@ -113,7 +130,7 @@ std::unordered_map<std::string, std::string> getterRegistor = {
     {"date","0"},
     {"dateDaily","0"},//Daily Time
     {"temp","-255"},
-    {"temp2","-255"},
+    //{"temp2","-255"},
 
     {"inBake","-255"},
     {"outBake","-255"},
@@ -159,9 +176,12 @@ bool isIntr = false;
 
 Executor executor;
 DataGetter dataGetter;
-Logger LOG("Log/Log"+thisDay,{"date","temp","temp2","inBake", "outBake","tempOut","Bake","Pump","Falcon1","Falcon2","Falcon3","Falcon4","IR1","IR2","Light1"});
-TelegramBot bot("7804127004:AAEQkzTISnsoBpESYJQdVERP6gX10d6rA1c"/*TOKEN_TELEGRAM*/,getterCommandTGBot,executorCommandTGBot);
-Composite  MainPattern(getterRegistor,doExecuteAuto, "main", "Always", {}, {});
+Logger LOG("Log/Log"+thisDay,{"date","temp",/*"temp2",*/"inBake", "outBake","tempOut","Bake","Pump","Falcon1","Falcon2","Falcon3","Falcon4","IR1","IR2","Light1"});
+TelegramBot bot("7804127004:AAEQkzTISnsoBpESYJQdVERP6gX10d6rA1c"/*TOKEN_TELEGRAM*/,getterCommandTGBot,executorCommandTGBot,masterCommandsMapBot);
+
+#if AUTOMATIZATION
+   Composite  MainPattern(getterRegistor,doExecuteAuto, "main", "Always", {}, {});
+#endif
 
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* buffer) {
     size_t totalSize = size * nmemb;
@@ -226,6 +246,7 @@ void getterRegisterUpdate(){
 
 }
 
+
 void executorReigisterLog(){
 
    std::lock_guard<std::mutex> lock(Mutex);
@@ -258,7 +279,7 @@ void getterRegisterLog(){
    LOG.setData("date", getterRegistor["date"]);
    LOG.setData("dateDaily", getterRegistor["dateDaily"]);
    LOG.setData("temp", getterRegistor["temp"]);
-   LOG.setData("temp2", getterRegistor["temp2"]);
+   //LOG.setData("temp2", getterRegistor["temp2"]);
    LOG.setData("inBake", getterRegistor["inBake"]);
    LOG.setData("outBake", getterRegistor["outBake"]);
    if(isIntr && getterRegistor["tempOut"] != "-255.000000") LOG.setData("tempOut", getterRegistor["tempOut"]);
@@ -361,11 +382,24 @@ void getterCommandTGBot(const std::string& arg){
    for(auto it : getterCommandsMap){
       if(arg == it["TG_BOT"]) {
          if(it.find("DATA_GETTER") != it.end()){
-            double dt = dataGetter.getNewData(it["DATA_GETTER"]);
-            if(isIntr)bot.sendAllUserMessage(doubleToString(dt));
+            //double dt = dataGetter.getData(it["DATA_GETTER"]);
+            //bot.sendAllUserMessage(doubleToString(dt));
+            if(isIntr) bot.sendAllUserMessage(it["DATA_GETTER"]+": "+ getterRegistor[it["DATA_GETTER"]]);
+         }
+          if(it.find("SAND_ALL_DATA") != it.end()){
+            if(isIntr){
+               bot.sendAllUserMessage(
+                  "temp: "+ getterRegistor["temp"] + 
+                  //"\ntemp2: "+ getterRegistor["temp2"] + 
+                  "\ninBake: "+ getterRegistor["inBake"] + 
+                  "\noutBake: "+ getterRegistor["outBake"] + 
+                  "\ntempOut: "+ getterRegistor["tempOut"]);
+              
+            }
+
          }
          if(it.find("SAND_CHART") != it.end()){
-            LOG.drawChart("Chart"+thisDay,"date",{"temp","temp2","inBake", "outBake","tempOut"},{"Bake","Pump","Falcon1","Falcon2","Falcon3","Falcon4","IR1","IR2","Light1"});
+            LOG.drawChart("Chart"+thisDay,"date",{"temp",/*"temp2",*/"inBake", "outBake","tempOut"},{"Bake","Pump","Falcon1","Falcon2","Falcon3","Falcon4","IR1","IR2","Light1"});
             if(isIntr)bot.sendAllUserPhoto("Chart"+thisDay+".png", thisDay+" Chart");
 
          }
@@ -392,7 +426,12 @@ void getterCommandTGBot(const std::string& arg){
          }
          
          if(it.find("SAND_COND_TREE") != it.end()){
-            if(isIntr)bot.sendAllUserMessage(MainPattern.getTreeString());
+            #if AUTOMATIZATION
+               if(isIntr)bot.sendAllUserMessage(MainPattern.getTreeString());
+            #else
+               if(isIntr) bot.sendAllUserMessage("[main] AUTOMATIZATION is off!");
+               std::cout<<"[main] AUTOMATIZATION is off!"<<std::endl;
+            #endif
             
 
          }
@@ -424,21 +463,140 @@ void executorCommandTGBot(const std::string& arg){
             }
          }
          if(it.find("READ_NEW_JSON_DATA") != it.end()){
+            #if AUTOMATIZATION
+               // Шаг 1: Проверка синтаксиса Condition_New.json
+               if (validateJsonSyntax("Condition_New", MainPattern)) {
+                  // Шаг 2: Если все правильно, продолжаем
+                  // Шаг 3 и 4: Переименование и отправка
+                  renameAndProcessFiles(sendConditionToTgBot);
+                  std::cout << "Composite has been successfully updated." << std::endl;
+               } else {
+                  std::cerr << "Error: Invalid JSON syntax in Condition_New" << std::endl;
+               }
+               std::cout<<"Condition restored!"<<std::endl;
+            #else
+               if(isIntr) bot.sendAllUserMessage("[main] AUTOMATIZATION is off!");
+               std::cout<<"[main] AUTOMATIZATION is off!"<<std::endl;
+            #endif
 
-            // Шаг 1: Проверка синтаксиса Condition_New.json
-            if (validateJsonSyntax("Condition_New", MainPattern)) {
-               // Шаг 2: Если все правильно, продолжаем
-               // Шаг 3 и 4: Переименование и отправка
-               renameAndProcessFiles(sendConditionToTgBot);
-               std::cout << "Composite has been successfully updated." << std::endl;
-            } else {
-               std::cerr << "Error: Invalid JSON syntax in Condition_New" << std::endl;
-            }
-            std::cout<<"Condition restored!"<<std::endl;
          }
       }
    }
 }
+
+std::string getBushCommandOutput(const std::string& command) {
+    std::array<char, 128> buffer;
+    std::string result;
+
+    // Открываем поток для выполнения команды
+    FILE* pipe = popen(command.c_str(), "r");
+    if (!pipe) {
+        throw std::runtime_error("[main][getBushCommandOutput]Ошибка: не удалось выполнить команду!");
+    }
+
+    // Считываем результат команды
+    while (fgets(buffer.data(), buffer.size(), pipe) != nullptr) {
+        result += buffer.data();
+    }
+
+    // Закрываем поток
+    int returnCode = pclose(pipe);
+    if (returnCode != 0) {
+        throw std::runtime_error("[main][getBushCommandOutput]Команда завершилась с ошибкой!");
+    }
+
+    // Убираем лишние пробелы и символы новой строки
+    result.erase(result.find_last_not_of(" \n\r\t") + 1);
+    return result;
+}
+
+void masterCommandsMapBot(const std::string& arg){
+   std::cout<<"from \033[34m[TG]\033[0m "<<arg<<std::endl;
+   //std::lock_guard<std::mutex> lock(Mutex);
+   for(auto it : masterCommandsMap){
+      if(arg == it["TG_BOT"]) {
+     
+         if(it["TG_BOT"] == "getJournal"){
+            
+            //std::cout<<"[main][commandMap] exists!"<<std::endl;
+            std::string command = "journalctl -u greenhouse-demo.service > DebugLog.txt";
+            // Выполнение команды
+            int result = std::system(command.c_str());
+
+            // Проверка результата выполнения
+            if (result == 0) {
+               std::cout << "[main][masterCommandsMapBot] journalctl sucsess" << std::endl;
+
+               if(isIntr)bot.sendAllUserDocument("DebugLog.txt","journal Debug Log");
+            } else {
+               std::cerr << "[main][masterCommandsMapBot] journalctl err" << std::endl;
+            }
+         }
+         else if(it["TG_BOT"] == "getIP"){
+            //std::cout<<"[main][commandMap] exists!"<<std::endl;
+            
+
+            try {
+               // Выполняем команду hostname -I
+               std::string ipAddress = getBushCommandOutput("hostname -I");
+
+               // Вывод результата
+               if (!ipAddress.empty()) {
+                     std::cout << "[main][masterCommandsMapBot] IP-адрес устройства: " << ipAddress << std::endl;
+                     if(isIntr) bot.sendAllUserMessage(ipAddress);
+                     
+               } else {
+                     std::cerr << "[main][masterCommandsMapBot] IP-адрес не найден!" << std::endl;
+               }
+            } catch (const std::exception& e) {
+               std::cerr << "[main][masterCommandsMapBot] Ошибка: " << e.what() << std::endl;
+            }
+         }
+         else if(it["TG_BOT"] == "getLogDir"){
+            //std::cout<<"[main][commandMap] exists!"<<std::endl;
+            
+
+            try {
+               
+               std::string logDir = " --- Log Dir --- \n";
+               for (auto i : LOG.getLogsNameList()) {
+                  logDir += i;
+                  logDir += '\n';
+               }
+
+               if(isIntr) bot.sendAllUserMessage(logDir);
+
+              
+            } catch (const std::exception& e) {
+               std::cerr << "[main][masterCommandsMapBot] Ошибка: " << e.what() << std::endl;
+            }
+         }
+         else if(it["TG_BOT"] == "getStatus"){
+            //std::cout<<"[main][commandMap] exists!"<<std::endl;
+            
+
+            try {
+               // Выполняем команду hostname -I
+               std::string ipAddress = getBushCommandOutput("sudo systemctl status greenhouse-demo.service");
+
+               // Вывод результата
+               if (!ipAddress.empty()) {
+                     std::cout << "[main][masterCommandsMapBot] status устройства: " << ipAddress << std::endl;
+                     if(isIntr) bot.sendAllUserMessage(ipAddress);
+                     
+               } else {
+                     std::cerr << "[main][masterCommandsMapBot] status не найден!" << std::endl;
+               }
+            } catch (const std::exception& e) {
+               std::cerr << "[main][masterCommandsMapBot] Ошибка: " << e.what() << std::endl;
+            }
+         }
+         
+      }
+   }
+}
+
+
 
 int nowSec(){
    return getDaySecondsFromTimePoint(std::chrono::system_clock::now());
@@ -451,14 +609,22 @@ int fromSec(int h, int m ,int s){
 
 
 bool chackDayChanged(){
-   thisHMS = stoi(getDayHMS());
-   
+   try {
+    thisHMS = std::stoi(getDayHMS());
+   } catch (const std::invalid_argument& e) {
+      std::cerr << "Invalid argument in stoi: getDayHMS() returned non-numeric value." << std::endl;
+   } catch (const std::out_of_range& e) {
+      std::cerr << "Out of range in stoi: getDayHMS() returned value too large." << std::endl;
+   } catch (const std::exception& e) {
+      std::cerr << "Unexpected exception in stoi: " << e.what() << std::endl;
+   }
+      
 
    if(thisHMS > 60000 && thisDay !=getDay()){   //thisDay !=getDay() for 24 h
       std::cout<<"Day Changed!"<<std::endl;
       if(isIntr){
          bot.sendAllUserMessage("Day "+thisDay+" Change!");
-         LOG.drawChart("Chart"+thisDay,"date",{"temp","temp2","inBake", "outBake","tempOut"},{"Bake","Pump","Falcon1","Falcon2","Falcon3","Falcon4","IR1","IR2","Light1"});
+         LOG.drawChart("Chart"+thisDay,"date",{"temp",/*"temp2",*/"inBake", "outBake","tempOut"},{"Bake","Pump","Falcon1","Falcon2","Falcon3","Falcon4","IR1","IR2","Light1"});
          bot.sendAllUserPhoto("Chart"+thisDay+".png", thisDay+" Chart");
          bot.sendAllUserDocument("Log/Log"+thisDay+".json",thisDay + "Log");
       }
@@ -484,9 +650,11 @@ int main(){
 
    std::thread logThread(&GetterAndLogLoop);
 
-   MainPattern.setRoot(fromJSONRecursively(jmCond.read_json_from_file(),nullptr));
-
    std::thread botThread(&TelegramBot::run, &bot);
+
+   #if AUTOMATIZATION
+      MainPattern.setRoot(fromJSONRecursively(jmCond.read_json_from_file(),nullptr));
+   #endif
 
    TurnOffAllRCM();
    if(isIntr)bot.sendAllUserMessage("Green House Lounch!");
@@ -499,17 +667,22 @@ int main(){
             getterRegisterUpdate();
             // Simulating code that may throw an exception
             lcdString = "T1=" + doubleToString(std::stod(getterRegistor["temp"]))+ 
-                  " T2="+ doubleToString(std::stod(getterRegistor["temp2"]))+ 
+                  //" T2="+ doubleToString(std::stod(getterRegistor["temp2"]))+ 
                   "\nBI="+ doubleToString(std::stod(getterRegistor["inBake"]))+ 
                   " BO="+ doubleToString(std::stod(getterRegistor["outBake"]));
     
             executor.execute("lcd",lcdString);//doubleToString
-            MainPattern.executeAll();
+            #if AUTOMATIZATION
+               MainPattern.executeAll();
+            #endif
+            
             chackDayChanged();
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         }
         catch (const std::exception& e) {
             std::cout << "Caught exception: " << e.what() << std::endl;
+            if(isIntr)bot.alertAllUser("Total error");
+            if(isIntr)bot.sendAllUserMessage(e.what());
         }
 
       

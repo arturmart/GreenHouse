@@ -115,6 +115,39 @@ std::vector<std::unordered_map<std::string, std::string>> Logger::getLogElements
     return dataMap;  // Return the collected log data
 }
 
+std::vector <std::string> Logger::getLogsNameList() {//new Version TEST001
+
+    
+
+    std::string word1 = "Log/";//std::string word1 = path;
+    //std::string word2 = "Log";
+    std::string word3 = ".json";
+
+    std::vector <std::string> temp = LogJson.getFilesInDir(word1);
+
+    for (int i = 0; i < temp.size();i++) {
+
+        removeWordStr(temp[i], word1);
+        //removeWordStr(temp[i], word2);
+        removeWordStr(temp[i], word3);
+       
+
+    }
+
+    
+    return temp;
+}
+
+void removeWordStr(std::string& str, const std::string& word) {
+    size_t pos = str.find(word);
+
+    // Пока находим подстроку в строке
+    while (pos != std::string::npos) {
+        str.erase(pos, word.length());  // Удаляем слово
+        pos = str.find(word, pos);  // Ищем следующее вхождение
+    }
+    
+}
 
 
 

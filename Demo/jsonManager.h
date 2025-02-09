@@ -29,6 +29,8 @@ class jsonManager{
     bool create_empty_json_file();
     void setFileName(const std::string& newFileName);
 
+    std::vector<std::string> getFilesInDir(const std::string& path);//new Version TEST001
+
     private:
     std::string filename;
     

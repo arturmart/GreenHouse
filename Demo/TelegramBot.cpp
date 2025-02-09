@@ -42,7 +42,7 @@ std::vector<std::unordered_map<std::string, std::string>> manualCommands = {
 
 std::vector<std::unordered_map<std::string, std::string>> getterCommands = {
     {{"TEXT", "get Temp In"}, {"CALL_BACK_DATA", "getTemp"}},
-    {{"TEXT", "get Temp In 2"}, {"CALL_BACK_DATA", "getTemp2"}},
+    //{{"TEXT", "get Temp In 2"}, {"CALL_BACK_DATA", "getTemp2"}},
 
     {{"TEXT", "get Temp Bake In"}, {"CALL_BACK_DATA", "getTempInBake"}},
     {{"TEXT", "get Temp Bake Out"}, {"CALL_BACK_DATA", "getTempOutBake"}},
@@ -54,7 +54,16 @@ std::vector<std::unordered_map<std::string, std::string>> getterCommands = {
     {{"TEXT", "get States"}, {"CALL_BACK_DATA", "getStates"}},
 
     {{"TEXT", "get Condition Json"}, {"CALL_BACK_DATA", "getConditionJson"}},
-    {{"TEXT", "get Condition Tree"}, {"CALL_BACK_DATA", "getConditionTree"}}
+    {{"TEXT", "get Condition Tree"}, {"CALL_BACK_DATA", "getConditionTree"}},
+
+    {{"TEXT", "get All Data"}, {"CALL_BACK_DATA", "getAllData"}}
+};
+
+std::vector<std::unordered_map<std::string, std::string>> masterCommands = {
+    {{"TEXT", "get Journal"}, {"CALL_BACK_DATA", "getJournal"}},
+    {{"TEXT", "get IP"}, {"CALL_BACK_DATA", "getIP"}},
+    {{"TEXT", "get Log Dir"}, {"CALL_BACK_DATA", "getLogDir"}},
+    {{"TEXT", "get Status"}, {"CALL_BACK_DATA", "getStatus"}}
 };
 
 
@@ -89,6 +98,10 @@ void TelegramBot::setupCommands() {
 
     bot.getEvents().onCommand("getter", [this](TgBot::Message::Ptr message) {
         bot.getApi().sendMessage(message->chat->id, "Սենսորների գործիքների ցուցակ", nullptr, 0, createKeyboard(getterCommands, 2));
+    });
+
+    bot.getEvents().onCommand("master", [this](TgBot::Message::Ptr message) {
+        bot.getApi().sendMessage(message->chat->id, "admin commands գործիքների ցուցակ", nullptr, 0, createKeyboard(masterCommands, 2));
     });
     /*
 
@@ -138,7 +151,7 @@ void TelegramBot::setupCommands() {
         keyboard->keyboard.push_back(row1);
         */
 
-        bot.getApi().sendMessage(message->chat->id, "/manual մանուալ գործիքներ \n /getter Սենսորների գործիքներ", nullptr, 0, nullptr/*keyboard*/);
+        bot.getApi().sendMessage(message->chat->id, "/manual մանուալ գործիքներ \n /getter Սենսորների գործիքներ \n /master admin գործիքներ", nullptr, 0, nullptr/*keyboard*/);
     });
 
     bot.getEvents().onCallbackQuery([this](TgBot::CallbackQuery::Ptr query) {
@@ -155,6 +168,12 @@ void TelegramBot::setupCommands() {
                 //bot.getApi().sendMessage(query->message->chat->id, "/getter " + hTable.at("TEXT"));
             }
         }
+        for (const auto& hTable : masterCommands) {
+            if (query->data == hTable.at("CALL_BACK_DATA")) {
+                funcMaster(hTable.at("CALL_BACK_DATA"));
+                //bot.getApi().sendMessage(query->message->chat->id, "/getter " + hTable.at("TEXT"));
+            }
+        }
         
     });
 
@@ -165,7 +184,8 @@ void TelegramBot::setupCommands() {
                                  "/help - Показать справку\n"
                                  "/echo [текст] - Повторить ваше сообщение\n"
                                  "/manual - մանուալ գործիքներ\n"
-                                 "/getter - Սենսորների գործիքների ցուցակ\n");
+                                 "/getter - Սենսորների գործիքների ցուցակ\n"
+                                 "/master - admin command ցուցակ\n");
     });
 
     bot.getEvents().onCommand("echo", [this](TgBot::Message::Ptr message) {
@@ -184,7 +204,7 @@ void TelegramBot::setupCommands() {
             std::string args = message->text.substr(message->text.find(' ') + 1);
 
             // Проверяем, является ли команда известной
-            if (command != "/start" && command != "/help" && command != "/manual" && command != "/getter" && command != "/echo") {
+            if (command != "/start" && command != "/help" && command != "/manual" && command != "/getter" && command != "/echo"&& command != "/master") {
                 bot.getApi().sendMessage(message->chat->id, "Неизвестная команда. Напишите /help для списка доступных команд.");
             } else {
                 std::cout << "Получена команда: " << command << ", аргументы: " << args << std::endl;
@@ -249,16 +269,17 @@ bot.getEvents().onAnyMessage([this](TgBot::Message::Ptr message) {
     users = readUsersFromFile(usersPath);
 }*/
 
-TelegramBot::TelegramBot(const std::string& token, const std::function<void(const std::string&)>& functionGetter, const std::function<void(const std::string&)>& functionExecutor) : bot(token) {
+TelegramBot::TelegramBot(const std::string& token, const std::function<void(const std::string&)>& functionGetter, const std::function<void(const std::string&)>& functionExecutor, const std::function<void(const std::string&)>& functionMaster) : bot(token) {
     users = readUsersFromFile(usersPath);
     setupCommands();
-    setFunc(functionGetter, functionExecutor);
+    setFunc(functionGetter, functionExecutor, functionMaster);
     
 }
 
-void TelegramBot::setFunc(const std::function<void(const std::string&)>& functionGetter, const std::function<void(const std::string&)>& functionExecutor) {
+void TelegramBot::setFunc(const std::function<void(const std::string&)>& functionGetter, const std::function<void(const std::string&)>& functionExecutor, const std::function<void(const std::string&)>& functionMaster) {
     funcGetter = functionGetter;
     funcManual = functionExecutor;
+    funcMaster = functionMaster;
 }
 void TelegramBot::sendMessage(int64_t chatId, const std::string& message) {
     try {

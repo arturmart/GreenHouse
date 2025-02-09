@@ -12,6 +12,7 @@ std::mutex fileMutex;
 
 namespace fs = std::filesystem;
 
+
 //тест
 
 
@@ -171,6 +172,29 @@ void jsonManager::setFileName(const std::string& newFileName){
     filename = newFileName;
 }
 
+std::vector<std::string> jsonManager::getFilesInDir(const std::string& path) {
+    std::vector<std::string> list;
+
+    try {
+        // Проверка на существование директории
+        if (!fs::exists(path) || !fs::is_directory(path)) {
+            std::cerr << "Директория не существует или не является директорией." << std::endl;
+            return list;  // Возвращаем пустой список в случае ошибки
+        }
+
+        // Перебор файлов в директории
+        for (const auto& entry : fs::directory_iterator(path)) {
+            if (fs::is_regular_file(entry)) {  // Только файлы, исключаем директории
+                list.push_back(entry.path().string());  // Добавляем путь как строку
+            }
+        }
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Ошибка при получении списка файлов: " << e.what() << std::endl;
+    }
+
+    return list;  // Возвращаем список файлов
+}
 
 
 

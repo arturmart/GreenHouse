@@ -23,11 +23,15 @@ public:
     void printLogElements(const std::vector<std::unordered_map<std::string, std::string>>& dataMap);
     std::vector<std::unordered_map<std::string, std::string>> getLogElements();
 
+    std::vector <std::string> getLogsNameList();//new Version TEST001
+
 private:
     std::string filename;                          // Filename for logging
     jsonManager LogJson;                           // JSON manager object
     std::vector<std::string> logType;              // Columns for logging
     std::unordered_map<std::string, std::string> dataTable;  // Data table for logging
 };
+
+void removeWordStr(std::string& str, const std::string& word);//new Version TEST001 is path
 
 #endif // LOGGER_H

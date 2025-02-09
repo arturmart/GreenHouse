@@ -20,6 +20,7 @@ private:
     // Функции для команд
     std::function<void(const std::string&)> funcGetter;
     std::function<void(const std::string&)> funcManual;
+    std::function<void(const std::string&)> funcMaster;
 
     // Метод для создания клавиатуры
     TgBot::InlineKeyboardMarkup::Ptr createKeyboard(const std::vector<std::unordered_map<std::string, std::string>>& commands, int columns);
@@ -42,10 +43,10 @@ public:
     //TelegramBot(const std::string& token);
 
     // Конструктор с функциями
-    TelegramBot(const std::string& token, const std::function<void(const std::string&)>& functionGetter, const std::function<void(const std::string&)>& functionExecutor);
+    TelegramBot(const std::string& token, const std::function<void(const std::string&)>& functionGetter, const std::function<void(const std::string&)>& functionExecutor, const std::function<void(const std::string&)>& functionMaster);
 
     // Установка функций
-    void setFunc(const std::function<void(const std::string&)>& functionGetter, const std::function<void(const std::string&)>& functionExecutor);
+    void setFunc(const std::function<void(const std::string&)>& functionGetter, const std::function<void(const std::string&)>& functionExecutor, const std::function<void(const std::string&)>& functionMaster);
 
     // Метод для запуска бота
     void run();

@@ -51,7 +51,7 @@ double OutTempStrategy::getNewData(){
 DataGetter::DataGetter(): weather("fcb989e5668460983b3cb819569b8c1d"/*TOKEN_WEATHERAPI*/, 40.059456, 44.474210){
 
       strategy["temp"] = new TempStrategy("28-0303979402d4");
-      strategy["temp2"] = new TempStrategy("28-030397942cf4");
+      //strategy["temp2"] = new TempStrategy("28-030397942cf4");
       strategy["inBake"] = new TempStrategy("28-030397946349");
       strategy["outBake"] = new TempStrategy("28-04175013faff");
       
