@@ -10,6 +10,7 @@
 std::mutex rcmMutex;
 
 
+#if GH_SIMULATION == false
 I2C_LCD_Strategy::I2C_LCD_Strategy(I2CLCD& lcd) : lcd(lcd) {
     if (!isInited()) {
         std::cerr << "Ошибка инициализации LCD!" << std::endl;
@@ -32,8 +33,23 @@ void I2C_LCD_Strategy::execute(const std::string& arg) {
         lcd.displayString(arg.substr(found + 1).c_str(), 2);
     }
 }
+#else
+I2C_LCD_Strategy::I2C_LCD_Strategy(I2cLcdSim* lcd) : lcd(lcd) {
+    
+}
+
+bool I2C_LCD_Strategy::isInited() {
+    return true; 
+}
+
+void I2C_LCD_Strategy::execute(const std::string& arg) {
+    
+    lcd->execute(arg);
+}
+#endif
 
 // Стратегия для работы с Relay Control Module
+#if GH_SIMULATION == false
 RCM_Strategy::RCM_Strategy(RelayControlModule& rcm, const std::string& cmd)
     : RCM(rcm), command(cmd) {}
 
@@ -49,8 +65,23 @@ void RCM_Strategy::execute(const std::string& arg) {
 bool RCM_Strategy::isInited() {
     return RCM.sandInited();
 }
+#else
+RCM_Strategy::RCM_Strategy(RelaySim* rcm, const std::string& cmd)
+    : RCM(rcm), command(cmd) {}
+
+void RCM_Strategy::execute(const std::string& arg) {
+
+    RCM->execute(4);
+
+}
+
+bool RCM_Strategy::isInited() {
+    return true;
+}
+#endif
 
 // Стратегия с задержкой для работы с Relay Control Module
+/*
 RCM_Delay_Strategy::RCM_Delay_Strategy(RelayControlModule& rcm, const std::string& cmd, int delaySeconds)
     : RCM(rcm), command(cmd), delay(delaySeconds) {}
 
@@ -73,9 +104,25 @@ void RCM_Delay_Strategy::executeCommands() {
     rcmMutex.unlock();
     std::cout << "UnLock" << std::endl;
 }
+*/
 
 // Класс-исполнитель для управления различными стратегиями
-Executor::Executor() : lcd(0x3f), RCM() {
+Executor::Executor(
+#if GH_SIMULATION == true
+    HeatingSystemSim* sim
+#endif
+) : 
+#if GH_SIMULATION == false 
+                        lcd(0x3f), RCM() 
+#else
+                        sim(sim)
+#endif
+                            {
+#if GH_SIMULATION == true
+#define lcd sim->getLCD()
+#define RCM sim->getRelay()
+#endif
+                
     // Добавление стратегий для различных команд
     executeMap["lcd"] = new I2C_LCD_Strategy(lcd);
     executeMap["Bake_ON"] = new RCM_Strategy(RCM, "83,0,1");

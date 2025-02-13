@@ -5,6 +5,8 @@
 //g++ -o datageter DataGeter.cpp DS18B20.cpp WeatherAPI.cpp -lcurl 
 
 // Temp class implementation
+
+#if GH_SIMULATION == false
 TempStrategy::TempStrategy(const std::string& address) : temp(address), tempData(-255) {}
 
 double TempStrategy::getData() const {
@@ -20,6 +22,23 @@ double TempStrategy::getNewData(){
    update();
    return getData();
 }
+#else
+TempStrategySim::TempStrategySim(SensorSim* sens) : temp(sens), tempData(-255) {}
+
+double TempStrategySim::getData() const {
+    return tempData;
+}
+bool TempStrategySim::isInited() const{
+    return temp->isInit();
+}
+void TempStrategySim::update() {
+    tempData = temp->getNewData();
+}
+double TempStrategySim::getNewData(){
+   update();
+   return getData();
+}
+#endif
 
 
 
@@ -48,12 +67,28 @@ double OutTempStrategy::getNewData(){
 }
 
 
-DataGetter::DataGetter(): weather("fcb989e5668460983b3cb819569b8c1d"/*TOKEN_WEATHERAPI*/, 40.059456, 44.474210){
-
+DataGetter::DataGetter(
+   #if GH_SIMULATION == true
+   HeatingSystemSim* HS
+   #endif
+): 
+   weather("fcb989e5668460983b3cb819569b8c1d"/*TOKEN_WEATHERAPI*/, 40.059456, 44.474210)
+   #if GH_SIMULATION == true
+   ,HS(HS)
+   #endif
+   {
+      
+   #if GH_SIMULATION == false
       strategy["temp"] = new TempStrategy("28-0303979402d4");
       //strategy["temp2"] = new TempStrategy("28-030397942cf4");
       strategy["inBake"] = new TempStrategy("28-030397946349");
       strategy["outBake"] = new TempStrategy("28-04175013faff");
+   #else
+      strategy["temp"] = new TempStrategySim(HS->getSensor1());
+      //strategy["temp2"] = new TempStrategy("28-030397942cf4");
+      strategy["inBake"] = new TempStrategySim(HS->getSensor2());
+      strategy["outBake"] = new TempStrategySim(HS->getSensor3());
+   #endif
       
       strategy["tempOut"] = new OutTempStrategy(weather); 
 

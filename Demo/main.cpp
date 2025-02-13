@@ -13,9 +13,14 @@
 #include "tokens.h"
 #include "ConditionJson.h"
 
+#include "ghconfig.h"
 
-#define AUTOMATIZATION false
-#define CONTROL false
+#if GH_SIMULATION == true
+#include"ghSim.h"
+#endif
+
+
+
 
 // g++ -o main main.cpp Executor.cpp -pthread I2CLCD.cpp -lwiringPi RelayControlModule.cpp DataParsing.cpp TreeParsing.cpp MessageQueuing.cpp SerialComm.cpp DataCombine.cpp crcCalc.cpp -lz DataGeter.cpp DS18B20.cpp WeatherAPI.cpp -lcurl Logger.cpp jsonManager.cpp -I /path/to/nlohmann/json ChartDrawing.cpp -I/usr/include/cairo -lcairo TimeManager.cpp TelegramBot.cpp -I /path/to/nlohmann/json -lTgBot -lboost_system -lssl -lcrypto -lpthread  
 // g++ -o executor Executor.cpp -pthread I2CLCD.cpp -lwiringPi RelayControlModule.cpp DataParsing.cpp TreeParsing.cpp MessageQueuing.cpp SerialComm.cpp DataCombine.cpp crcCalc.cpp -lz 
@@ -174,10 +179,26 @@ std::string thisDay = getDay();
 int thisHMS = stoi(getDayHMS());
 bool isIntr = false;
 
+#if GH_SIMULATION == false
 Executor executor;
 DataGetter dataGetter;
+#else
+
+HeatingSystemSim sim;
+Executor executor( &sim );
+DataGetter dataGetter( &sim );
+
+#endif
+
 Logger LOG("Log/Log"+thisDay,{"date","temp",/*"temp2",*/"inBake", "outBake","tempOut","Bake","Pump","Falcon1","Falcon2","Falcon3","Falcon4","IR1","IR2","Light1"});
-TelegramBot bot("7804127004:AAEQkzTISnsoBpESYJQdVERP6gX10d6rA1c"/*TOKEN_TELEGRAM*/,getterCommandTGBot,executorCommandTGBot,masterCommandsMapBot);
+
+TelegramBot bot(
+#if GH_SIMULATION == false
+"7804127004:AAEQkzTISnsoBpESYJQdVERP6gX10d6rA1c"/*TOKEN_TELEGRAM*/
+#else
+"7943156657:AAEtMkcU_96y-8BatCoaOhIbOtfZ58R021Q"/*TOKEN_TELEGRAM_Test*/
+#endif
+,getterCommandTGBot,executorCommandTGBot,masterCommandsMapBot);
 
 #if AUTOMATIZATION
    Composite  MainPattern(getterRegistor,doExecuteAuto, "main", "Always", {}, {});
