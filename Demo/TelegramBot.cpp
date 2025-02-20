@@ -1,6 +1,7 @@
 #include "TelegramBot.h"
 #include <nlohmann/json.hpp> // Для работы с JSON
 
+
 #define REPOSITORY_PATH "/home/orangepi/greenhouse/Demo/"
 
 // Глобальные переменные
@@ -79,9 +80,9 @@ TgBot::InlineKeyboardMarkup::Ptr TelegramBot::createKeyboard(const std::vector<s
         buttons.push_back(button);
     }
 
-    for (size_t i = 0; i < buttons.size(); i += columns) {
+    for (int i = 0; i < buttons.size(); i += columns) {
         std::vector<TgBot::InlineKeyboardButton::Ptr> row;
-        for (size_t j = 0; j < columns && i + j < buttons.size(); ++j) {
+        for (int j = 0; j < columns && i + j < buttons.size(); ++j) {
             if(i+j <buttons.size())
                 row.push_back(buttons[i + j]);
         }
@@ -364,11 +365,18 @@ void TelegramBot::sendAllUserDocument(const std::string& filePath, const std::st
 
 void TelegramBot::run() {
     try {
-        std::cout << "Бот запущен..." << std::endl;
-        TgBot::TgLongPoll longPoll(bot);
+        std::cout << "Бот запущен..." << std::endl; //[*test]
+        TgBot::TgLongPoll longPoll(bot); //[*test]
         while (true) {
+#if DEBUG_LOG 
+            std::cout<<"[TGBot][run_Thread] ITER"<<std::endl; 
+#endif
             try {
+            //std::cout << "Бот запущен..." << std::endl; //[*test]
+            //TgBot::TgLongPoll longPoll(bot);            //[*test]
+
             longPoll.start();
+            std::cout<<"loopTG"<<std::endl;
         }
         catch (const std::exception& e) {
             std::cout << "Caught exception: " << e.what() << std::endl;

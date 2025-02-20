@@ -316,11 +316,14 @@ void GetterAndLog(){
    
       getterRegisterUpdate();
       getterRegisterLog();
-      std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+      //[*]std::this_thread::sleep_for(std::chrono::milliseconds(10000));
    
 }
 void GetterAndLogLoop(){ 
    while(true){
+#if DEBUG_LOG 
+      std::cout<<"[main][GetterAndLog_Thread] ITER"<<std::endl; 
+#endif
         try {
              GetterAndLog();
         }
@@ -683,6 +686,9 @@ int main(){
    std::string lcdString = "";
 
    while(true){
+#if DEBUG_LOG 
+      std::cout<<"[main] ITER"<<std::endl; 
+#endif
       try {
             isIntr = isInternet();
             getterRegisterUpdate();
@@ -698,7 +704,7 @@ int main(){
             #endif
             
             chackDayChanged();
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            //[*]std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         }
         catch (const std::exception& e) {
             std::cout << "Caught exception: " << e.what() << std::endl;

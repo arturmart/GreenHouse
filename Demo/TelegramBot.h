@@ -9,6 +9,9 @@
 #include <functional>
 
 
+#include "ghconfig.h"
+
+
 class TelegramBot {
 private:
    const std::string usersPath = "./tgBot/admin.json";

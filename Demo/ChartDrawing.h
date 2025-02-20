@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <vector>
 #include <cmath>
-#include <cairo.h>
+#include <cairo/cairo.h>
 #include "TimeManager.h"  // Assuming you have this header for the unixTimestampToTimeString function
 
 
