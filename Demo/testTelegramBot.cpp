@@ -30,12 +30,13 @@ int main(){
 #include <iostream>
 
 std::chrono::steady_clock::time_point lastUpdate = std::chrono::steady_clock::now();
-const int MAX_INCTIVITY = 20;
+const int MAX_INCTIVITY = 30;
 
 
 bool isInet(){
     system("ping -c 1 api.telegram.org > /dev/null 2>&1");
     return WEXITSTATUS(system("echo $?")) == 0;
+
 }
 
 int main() {
