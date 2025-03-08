@@ -1,6 +1,8 @@
 #include <iostream>
 #include <thread>
 
+//g++ -o testTelegramBot testTelegramBot.cpp TelegramBot.cpp -lTgBot -lcurl -lboost_system -lssl -lcrypto -lpthread
+
 
 /*
 #include "TelegramBot.h"
