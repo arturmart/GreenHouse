@@ -1,5 +1,6 @@
 #include "TelegramBot.h"
 #include <nlohmann/json.hpp> // Для работы с JSON
+#include <thread>
 
 
 #define REPOSITORY_PATH "/home/orangepi/greenhouse/Demo/"
@@ -363,22 +364,48 @@ void TelegramBot::sendAllUserDocument(const std::string& filePath, const std::st
     }
 }
 
+
+bool isInet(){
+    system("ping -c 1 api.telegram.org > /dev/null 2>&1");
+    return WEXITSTATUS(system("echo $?")) == 0;
+
+}
+
+
 void TelegramBot::run() {
+
     try {
-        std::cout << "Бот запущен..." << std::endl; //[*test]
-        TgBot::TgLongPoll longPoll(bot); //[*test]
+        std::cout << "Бот запущен..." << std::endl;
+        TgBot::TgLongPoll longPoll(bot);
         while (true) {
-#if DEBUG_LOG 
-            std::cout<<"[TGBot][run_Thread] ITER"<<std::endl; 
-#endif
-            std::cout<<"IN"<<std::endl;
-            longPoll.start();
-            std::cout<<"OUT"<<std::endl;
-    
+            if(!isInet()){
+                std::cerr<<"no inet"<<std::endl;
+                std::this_thread::sleep_for(std::chrono::seconds(5));
+            }
+
+            try{
+                
+                //TgBot::TgLongPoll longPoll(bot);
+                #if DEBUG_LOG 
+                std::cout<<"[TGBot][run_Thread] IN LongPool"<<std::endl; 
+                #endif
+
+                longPoll.start();
+
+                #if DEBUG_LOG 
+                std::cout<<"[TGBot][run_Thread] Out LongPool"<<std::endl; 
+                #endif
+            } catch (std::exception &e){
+                std::cerr<<"Long pool err"<<e.what()<< std::endl;
+                std::cerr<<"delay 5 sec"<<std::endl;
+                std::this_thread::sleep_for(std::chrono::seconds(5));
+            }
         }
-    } catch (TgBot::TgException& e) {
+    } catch (const std::exception& e) {
         std::cerr << "Ошибка: " << e.what() << std::endl;
     }
+
+  
 }
 
 std::vector<std::unordered_map<std::string, std::string>> TelegramBot::readUsersFromFile(const std::string& filename) {
