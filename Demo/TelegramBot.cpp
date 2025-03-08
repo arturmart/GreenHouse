@@ -371,17 +371,10 @@ void TelegramBot::run() {
 #if DEBUG_LOG 
             std::cout<<"[TGBot][run_Thread] ITER"<<std::endl; 
 #endif
-            try {
-            //std::cout << "Бот запущен..." << std::endl; //[*test]
-            //TgBot::TgLongPoll longPoll(bot);            //[*test]
-
+            std::cout<<"IN"<<std::endl;
             longPoll.start();
-            std::cout<<"loopTG"<<std::endl;
-        }
-        catch (const std::exception& e) {
-            std::cout << "Caught exception: " << e.what() << std::endl;
-        }
-            
+            std::cout<<"OUT"<<std::endl;
+    
         }
     } catch (TgBot::TgException& e) {
         std::cerr << "Ошибка: " << e.what() << std::endl;
