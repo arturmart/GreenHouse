@@ -50,7 +50,7 @@
                 "condition": "<D",
                 "conditionArgs": [
                   "temp",
-                  "26"
+                  "22"
                 ],
                 "executing": [
                     "Cooler2_OFF"
