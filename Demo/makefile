@@ -6,22 +6,23 @@ CXXFLAGS = -std=c++17 -Wall -O0 -I/path/to/nlohmann/json -I/usr/include/cairo
 
 # Линковочные флаги
 
-#LDFLAGS = -lwiringPi -lz -lcurl -lcairo -lTgBot -lboost_system -lssl -lcrypto -lpthread
-LDFLAGS =  -lz -lcurl -lcairo -lTgBot -lboost_system -lssl -lcrypto -lpthread
+LDFLAGS = -lwiringPi -lz -lcurl -lcairo -lTgBot -lboost_system -lssl -lcrypto -lpthread
+#LDFLAGS =  -lz -lcurl -lcairo -lTgBot -lboost_system -lssl -lcrypto -lpthread
 #LDFLAGS =  -lz -lcurl -lcairo -lTgBot -lboost_system -lssl -lcrypto -lpthread
 
 # Исходные файлы
 
-#SRC = main.cpp tokens.cpp ghSim.cpp Executor.cpp I2CLCD.cpp RelayControlModule.cpp DataParsing.cpp \
-#      TreeParsing.cpp MessageQueuing.cpp SerialComm.cpp DataCombine.cpp \
-#      crcCalc.cpp DataGeter.cpp DS18B20.cpp WeatherAPI.cpp Logger.cpp \
-#      jsonManager.cpp ChartDrawing.cpp TimeManager.cpp TelegramBot.cpp \
-
-SRC = main.cpp tokens.cpp ghSim.cpp Executor.cpp DataParsing.cpp \
+SRC = main.cpp tokens.cpp ghSim.cpp Executor.cpp I2CLCD.cpp RelayControlModule.cpp DataParsing.cpp \
 	  ConditionJson.cpp Composite.cpp \
-      TreeParsing.cpp MessageQueuing.cpp DataCombine.cpp \
-      crcCalc.cpp DataGeter.cpp  WeatherAPI.cpp Logger.cpp \
+      TreeParsing.cpp MessageQueuing.cpp SerialComm.cpp DataCombine.cpp \
+      crcCalc.cpp DataGeter.cpp DS18B20.cpp WeatherAPI.cpp Logger.cpp \
       jsonManager.cpp ChartDrawing.cpp TimeManager.cpp TelegramBot.cpp \
+
+#SRC = main.cpp tokens.cpp ghSim.cpp Executor.cpp DataParsing.cpp \
+#	  ConditionJson.cpp Composite.cpp \
+#      TreeParsing.cpp MessageQueuing.cpp DataCombine.cpp \
+#      crcCalc.cpp DataGeter.cpp  WeatherAPI.cpp Logger.cpp \
+#      jsonManager.cpp ChartDrawing.cpp TimeManager.cpp TelegramBot.cpp \
 		
 #SRC = main.cpp tokens.cpp ghSim.cpp Executor.cpp \
 #	  DataGeter.cpp DS18B20.cpp WeatherAPI.cpp Logger.cpp \
