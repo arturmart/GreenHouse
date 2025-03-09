@@ -148,10 +148,10 @@ Executor::Executor(    HeatingSystemSim* sim): sim(sim)
 
     #if EXECUTOR_SUMMER == true                         
 
-    executeMap["Cooler1_ON"] = new RCM_Strategy(RCM, "83,9,1");
-    executeMap["Cooler1_OFF"] = new RCM_Strategy(RCM, "83,9,0");
-    executeMap["Cooler2_ON"] = new RCM_Strategy(RCM, "83,10,1");
-    executeMap["Cooler2_OFF"] = new RCM_Strategy(RCM, "83,10,0");
+    executeMap["Cooler1_ON"] = new RCM_Strategy(RCM, "83,1,1");
+    executeMap["Cooler1_OFF"] = new RCM_Strategy(RCM, "83,1,0");
+    executeMap["Cooler2_ON"] = new RCM_Strategy(RCM, "83,0,1");
+    executeMap["Cooler2_OFF"] = new RCM_Strategy(RCM, "83,0,0");
 
     #endif
 
