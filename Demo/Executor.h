@@ -100,11 +100,13 @@ private:
 // Класс-исполнитель для управления различными стратегиями
 class Executor {
 public:
-    Executor(
-#if GH_SIMULATION == true
-        HeatingSystemSim* sim
+    
+#if GH_SIMULATION == false
+Executor();
+#else
+Executor(HeatingSystemSim* sim);
 #endif
-    );
+
     ~Executor();
 
     void execute(const std::string& strategyStr, const std::string& arg = "");
@@ -113,7 +115,7 @@ private:
     std::unordered_map<std::string, IExecutor*> executeMap;
     
 #if GH_SIMULATION == false
-    RelayControlModule& RCM;
+    RelayControlModule RCM;
     I2CLCD lcd; // Объект I2CLCD
 #else
     HeatingSystemSim* sim;
