@@ -4,7 +4,7 @@
 #define EXECUTOR_WINTER false
 #define EXECUTOR_SUMMER true
 
-#define GH_SIMULATION true
+#define GH_SIMULATION false
 #define AUTOMATIZATION true
 #define CONTROL true
 
