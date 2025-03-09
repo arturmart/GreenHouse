@@ -108,17 +108,14 @@ void RCM_Delay_Strategy::executeCommands() {
 */
 
 // Класс-исполнитель для управления различными стратегиями
-Executor::Executor(
-#if GH_SIMULATION == true
-    HeatingSystemSim* sim
-#endif
-) : 
-#if GH_SIMULATION == false 
-                        lcd(0x3f), RCM() 
+#if GH_SIMULATION == false
+Executor::Executor():lcd(0x3f), RCM() 
 #else
-                        sim(sim)
+Executor::Executor(    HeatingSystemSim* sim): sim(sim)
 #endif
-                            {
+{
+
+
 #if GH_SIMULATION == true
 #define lcd sim->getLCD()
 #define RCM sim->getRelay()
