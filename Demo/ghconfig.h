@@ -1,9 +1,12 @@
 #ifndef GHCONFIG_H
 #define GHCONFIG_H
 
+#define EXECUTOR_WINTER false
+#define EXECUTOR_SUMMER true
+
 #define GH_SIMULATION true
-#define AUTOMATIZATION false
-#define CONTROL false
+#define AUTOMATIZATION true
+#define CONTROL true
 
 #define DEBUG_LOG true
 

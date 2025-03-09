@@ -4,7 +4,7 @@
 //g++ -o testTelegramBot testTelegramBot.cpp TelegramBot.cpp -lTgBot -lcurl -lboost_system -lssl -lcrypto -lpthread
 
 
-/*
+
 #include "TelegramBot.h"
 #include <thread>
 // g++ -o testTelegramBot testTelegramBot.cpp TelegramBot.cpp -lTgBot -lssl -lcrypto -lpthread
@@ -19,18 +19,33 @@ int main(){
     while(true){
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         std::cout<<"[main]loop"<<std::endl;
+   
     }
     return 0;
 }
-*/
 
+/*
 
 
 #include <tgbot/tgbot.h>
 #include <iostream>
 
 std::chrono::steady_clock::time_point lastUpdate = std::chrono::steady_clock::now();
-const int MAX_INCTIVITY = 30;
+const int MAX_INCTIVITY = 30;  try {
+    std::cout << "Бот запущен..." << std::endl; //[*test]
+    TgBot::TgLongPoll longPoll(bot); //[*test]
+    while (true) {
+#if DEBUG_LOG 
+        std::cout<<"[TGBot][run_Thread] ITER"<<std::endl; 
+#endif
+        std::cout<<"IN"<<std::endl;
+        longPoll.start();
+        std::cout<<"OUT"<<std::endl;
+
+    }
+} catch (TgBot::TgException& e) {
+    std::cerr << "Ошибка: " << e.what() << std::endl;
+}
 
 
 bool isInet(){
@@ -77,7 +92,7 @@ int main() {
 
     return 0;
 }
-
+*/
 
 /*
 #include <tgbot/tgbot.h>

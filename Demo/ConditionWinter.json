@@ -1,0 +1,371 @@
+{
+  "children": [
+    {
+      "condition": "OutOfRangeLL",
+      "conditionArgs": [
+        "dateDaily",
+        "083000",
+        "173000"
+      ],
+      "executing": [],
+      "title": "coolingTime",
+      "children": [
+        {
+          "condition": ">D",
+          "conditionArgs": [
+            "temp",
+            "25"
+          ],
+          "executing": [
+            "Bake_OFF",
+            "Falcon1_OFF",
+            "Falcon2_OFF",
+            "Falcon3_OFF",
+            "Falcon4_OFF"
+          ],
+          "title": "GHTempOK",
+          "children": [
+            {
+              "condition": ">D",
+              "conditionArgs": [
+                "outBake",
+                "30"
+              ],
+              "executing": [
+                "Pump_ON"
+              ],
+              "title": "PumpOn",
+              "children": []
+            },
+            {
+              "condition": "<=D",
+              "conditionArgs": [
+                "outBake",
+                "30"
+              ],
+              "executing": [
+                "Pump_OFF"
+              ],
+              "title": "PumpOff",
+              "children": []
+            }
+          ]
+        },
+        {
+          "condition": "<=D",
+          "conditionArgs": [
+            "temp",
+            "25"
+          ],
+          "executing": [],
+          "title": "GHTempHeating",
+          "children": [
+            {
+              "condition": "<=D",
+              "conditionArgs": [
+                "outBake",
+                "90"
+              ],
+              "executing": [
+                "Bake_ON"
+              ],
+              "title": "BakeOn",
+              "children": []
+            },
+            {
+              "condition": ">D",
+              "conditionArgs": [
+                "outBake",
+                "90"
+              ],
+              "executing": [
+                "Bake_OFF"
+              ],
+              "title": "BakeOff",
+              "children": []
+            },
+            {
+              "condition": ">=D",
+              "conditionArgs": [
+                "outBake",
+                "30"
+              ],
+              "executing": [
+                "Pump_ON"
+              ],
+              "title": "PumpOn",
+              "children": []
+            },
+            {
+              "condition": "<D",
+              "conditionArgs": [
+                "outBake",
+                "30"
+              ],
+              "executing": [
+                "Pump_OFF"
+              ],
+              "title": "PumpOff",
+              "children": []
+            },
+            {
+              "condition": "<D",
+              "conditionArgs": [
+                "outBake",
+                "50"
+              ],
+              "executing": [
+                "Falcon1_OFF",
+                "Falcon2_OFF",
+                "Falcon3_OFF",
+                "Falcon4_OFF"
+              ],
+              "title": "FalkonOFF",
+              "children": []
+            },
+            {
+              "condition": "InRangeD",
+              "conditionArgs": [
+                "outBake",
+                "50",
+                "60"
+              ],
+              "executing": [
+                "Bake_ON"
+              ],
+              "title": "Falkon1Mode",
+              "children": [
+                {
+                  "condition": "%LL",
+                  "conditionArgs": [
+                    "date",
+                    "300",
+                    "2",
+                    "0"
+                  ],
+                  "executing": [
+                    "Falcon1_OFF",
+                    "Falcon3_OFF",
+                    "Falcon2_ON",
+                    "Falcon4_ON"
+                  ],
+                  "title": "firstFalkon",
+                  "children": []
+                },
+                {
+                  "condition": "%LL",
+                  "conditionArgs": [
+                    "date",
+                    "300",
+                    "2",
+                    "1"
+                  ],
+                  "executing": [
+                    "Falcon2_OFF",
+                    "Falcon4_OFF",
+                    "Falcon1_ON",
+                    "Falcon3_ON"
+                  ],
+                  "title": "secondFalkon",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "condition": "InRangeD",
+              "conditionArgs": [
+                "outBake",
+                "60",
+                "70"
+              ],
+              "executing": [
+                "Falcon1_ON",
+                "Falcon2_ON",
+                "Falcon3_ON",
+                "Falcon4_OFF"
+              ],
+              "title": "Falkon2Mode",
+              "children": []
+            },
+            {
+              "condition": ">D",
+              "conditionArgs": [
+                "outBake",
+                "70"
+              ],
+              "executing": [
+                "Falcon1_ON",
+                "Falcon2_ON",
+                "Falcon3_ON",
+                "Falcon4_ON"
+              ],
+              "title": "Falkon3Mode",
+              "children": []
+            },
+            {
+              "condition": "OutOfRangeLL",
+              "conditionArgs": [
+                "dateDaily",
+                "083000",
+                "180000"
+              ],
+              "executing": [],
+              "title": "BakeBadWorkTime",
+              "children": [
+                {
+                  "condition": "<D",
+                  "conditionArgs": [
+                    "outBake",
+                    "30"
+                  ],
+                  "executing": [],
+                  "title": "BakeBadWorAlert",
+                  "children": [
+                    {
+                      "condition": "OutOfRangeD",
+                      "conditionArgs": [
+                        "temp",
+                        "-1",
+                        "-1"
+                      ],
+                      "executing": [
+                        "AlertBakeBadWork"
+                      ],
+                      "title": "Not-1",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "condition": "InRangeLL",
+      "conditionArgs": [
+        "dateDaily",
+        "083000",
+        "173000"
+      ],
+      "executing": [
+        "Bake_OFF",
+        "Falcon2_OFF",
+        "Falcon4_OFF"
+      ],
+      "title": "NotHeating",
+      "children": [
+        {
+          "condition": "InRangeLL",
+          "conditionArgs": [
+            "dateDaily",
+            "083000",
+            "090000"
+          ],
+          "executing": [],
+          "title": "PumpCooling",
+          "children": [
+            {
+              "condition": ">D",
+              "conditionArgs": [
+                "outBake",
+                "30"
+              ],
+              "executing": [
+                "Pump_ON",
+                "Falcon1_ON",
+                "Falcon3_ON"
+              ],
+              "title": "PumpCoolingTemp",
+              "children": []
+            },
+            {
+              "condition": "<=D",
+              "conditionArgs": [
+                "outBake",
+                "30"
+              ],
+              "executing": [
+                "Pump_OFF",
+                "Falcon1_OFF",
+                "Falcon3_OFF"
+              ],
+              "title": "DonePumpCoolingTemp",
+              "children": []
+            }
+          ]
+        },
+        {
+          "condition": "OutOfRangeLL",
+          "conditionArgs": [
+            "dateDaily",
+            "083000",
+            "090000"
+          ],
+          "executing": [
+            "Pump_OFF",
+            "Falcon1_OFF",
+            "Falcon3_OFF"
+          ],
+          "title": "DonePumpCooling",
+          "children": []
+        }
+      ]
+    },
+    {
+      "condition": "InRangeLL",
+      "conditionArgs": [
+        "dateDaily",
+        "180000",
+        "240000"
+      ],
+      "executing": [
+        "Light1_ON"
+      ],
+      "title": "Light",
+      "children": []
+    },
+    {
+      "condition": "OutOfRangeLL",
+      "conditionArgs": [
+        "dateDaily",
+        "180000",
+        "240000"
+      ],
+      "executing": [
+        "Light1_OFF"
+      ],
+      "title": "LightOFF",
+      "children": []
+    },
+    {
+      "condition": "<D",
+      "conditionArgs": [
+        "temp",
+        "5"
+      ],
+      "executing": [],
+      "title": "ColdTempAlert",
+      "children": [
+        {
+          "condition": "OutOfRangeD",
+          "conditionArgs": [
+            "temp",
+            "-1",
+            "-1"
+          ],
+          "executing": [
+            "AlertLowTemp"
+          ],
+          "title": "Not-1",
+          "children": []
+        }
+      ]
+    }
+  ],
+  "condition": "Always",
+  "conditionArgs": [],
+  "executing": [],
+  "title": "main"
+}

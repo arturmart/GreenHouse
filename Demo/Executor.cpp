@@ -4,6 +4,7 @@
 #include <thread>
 #include <mutex>
 
+
 //g++ -o executor Executor.cpp -pthread I2CLCD.cpp -lwiringPi  RelayControlModule.cpp  DataParsing.cpp TreeParsing.cpp MessageQueuing.cpp SerialComm.cpp -lwiringPi DataCombine.cpp crcCalc.cpp -lz
 // Стратегия для работы с LCD
 
@@ -125,6 +126,10 @@ Executor::Executor(
                 
     // Добавление стратегий для различных команд
     executeMap["lcd"] = new I2C_LCD_Strategy(lcd);
+
+    
+
+    #if EXECUTOR_WINTER == true                         
     executeMap["Bake_ON"] = new RCM_Strategy(RCM, "83,0,1");
     executeMap["Bake_OFF"] = new RCM_Strategy(RCM, "83,0,0");
     executeMap["Pump_ON"] = new RCM_Strategy(RCM, "83,1,1");
@@ -138,6 +143,21 @@ Executor::Executor(
     executeMap["Falcon4_ON"] = new RCM_Strategy(RCM, "83,5,1");
     executeMap["Falcon4_OFF"] = new RCM_Strategy(RCM, "83,5,0");
 
+    executeMap["IR1_ON"] = new RCM_Strategy(RCM, "83,6,1");
+    executeMap["IR1_OFF"] = new RCM_Strategy(RCM, "83,6,0");
+    executeMap["IR2_ON"] = new RCM_Strategy(RCM, "83,7,1");
+    executeMap["IR2_OFF"] = new RCM_Strategy(RCM, "83,7,0");
+    #endif
+
+    #if EXECUTOR_SUMMER == true                         
+
+    executeMap["Cooler1_ON"] = new RCM_Strategy(RCM, "83,9,1");
+    executeMap["Cooler1_OFF"] = new RCM_Strategy(RCM, "83,9,0");
+    executeMap["Cooler2_ON"] = new RCM_Strategy(RCM, "83,10,1");
+    executeMap["Cooler2_OFF"] = new RCM_Strategy(RCM, "83,10,0");
+
+    #endif
+
     /*
     Bake 0
     pump 1
@@ -150,10 +170,7 @@ Executor::Executor(
     Light 8
     */
 
-    executeMap["IR1_ON"] = new RCM_Strategy(RCM, "83,6,1");
-    executeMap["IR1_OFF"] = new RCM_Strategy(RCM, "83,6,0");
-    executeMap["IR2_ON"] = new RCM_Strategy(RCM, "83,7,1");
-    executeMap["IR2_OFF"] = new RCM_Strategy(RCM, "83,7,0");
+
     executeMap["Light1_ON"] = new RCM_Strategy(RCM, "83,8,1");
     executeMap["Light1_OFF"] = new RCM_Strategy(RCM, "83,8,0");
 

@@ -7,6 +7,7 @@
 
 // Глобальные переменные
 std::vector<std::unordered_map<std::string, std::string>> manualCommands = {
+    #if EXECUTOR_WINTER == true
     {{"TEXT", "Bake On"}, {"CALL_BACK_DATA", "BakeOn"}},
     {{"TEXT", "Bake Off"}, {"CALL_BACK_DATA", "BakeOff"}},
     {{"TEXT", "Bake Auto"}, {"CALL_BACK_DATA", "BakeAuto"}},
@@ -33,6 +34,19 @@ std::vector<std::unordered_map<std::string, std::string>> manualCommands = {
     {{"TEXT", "IR2 On"}, {"CALL_BACK_DATA", "IR2On"}},
     {{"TEXT", "IR2 Off"}, {"CALL_BACK_DATA", "IR2Off"}},
     {{"TEXT", "IR2 Auto"}, {"CALL_BACK_DATA", "IR2Auto"}},
+    #endif
+
+    #if EXECUTOR_SUMMER == true
+
+    {{"TEXT", "Cooler1 On"}, {"CALL_BACK_DATA", "Cooler1On"}},
+    {{"TEXT", "Cooler1 Off"}, {"CALL_BACK_DATA", "Cooler1Off"}},
+    {{"TEXT", "Cooler1 Auto"}, {"CALL_BACK_DATA", "Cooler1Auto"}},
+
+    {{"TEXT", "Cooler2 On"}, {"CALL_BACK_DATA", "Cooler2On"}},
+    {{"TEXT", "Cooler2 Off"}, {"CALL_BACK_DATA", "Cooler2Off"}},
+    {{"TEXT", "Cooler2 Auto"}, {"CALL_BACK_DATA", "Cooler2Auto"}},
+    
+    #endif
 
     {{"TEXT", "Light1 On"}, {"CALL_BACK_DATA", "Light1On"}},
     {{"TEXT", "Light1 Off"}, {"CALL_BACK_DATA", "Light1Off"}},
@@ -366,8 +380,7 @@ void TelegramBot::sendAllUserDocument(const std::string& filePath, const std::st
 
 
 bool isInet(){
-    system("ping -c 1 api.telegram.org > /dev/null 2>&1");
-    return WEXITSTATUS(system("echo $?")) == 0;
+    return system("ping -c 1 api.telegram.org > /dev/null 2>&1") == 0;
 
 }
 
@@ -377,6 +390,7 @@ void TelegramBot::run() {
     try {
         std::cout << "Бот запущен..." << std::endl;
         TgBot::TgLongPoll longPoll(bot);
+       
         while (true) {
             if(!isInet()){
                 std::cerr<<"no inet"<<std::endl;
@@ -388,9 +402,11 @@ void TelegramBot::run() {
                 //TgBot::TgLongPoll longPoll(bot);
                 #if DEBUG_LOG 
                 std::cout<<"[TGBot][run_Thread] IN LongPool"<<std::endl; 
+                
                 #endif
 
                 longPoll.start();
+               
 
                 #if DEBUG_LOG 
                 std::cout<<"[TGBot][run_Thread] Out LongPool"<<std::endl; 

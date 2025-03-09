@@ -69,6 +69,7 @@ std::vector<std::unordered_map<std::string, std::string>> getterCommandsMap = {
 };
 
 std::vector<std::unordered_map<std::string, std::string>> executeCommandsMap = {
+   #if EXECUTOR_WINTER == true   
     {{"TG_BOT", "BakeOn"} , {"EXECUTOR", "Bake_ON"}, {"MODE", "on"}, {"MODULE", "Bake"}},
     {{"TG_BOT", "BakeOff"}, {"EXECUTOR", "Bake_OFF"}, {"MODE", "off"}, {"MODULE", "Bake"}},
     {{"TG_BOT", "BakeAuto"},{"MODE", "auto"}, {"MODULE", "Bake"}},
@@ -88,6 +89,7 @@ std::vector<std::unordered_map<std::string, std::string>> executeCommandsMap = {
     {{"TG_BOT", "Falcon4Off"}, {"EXECUTOR", "Falcon4_OFF"}, {"MODE", "off"}, {"MODULE", "Falcon4"}},
     {{"TG_BOT", "Falcon4Auto"}, {"MODE", "auto"},{"MODULE", "Falcon4"}},
 
+
     {{"TG_BOT", "IR1On"}, {"EXECUTOR", "IR1_ON"}, {"MODE", "on"}, {"MODULE", "IR1"}},
     {{"TG_BOT", "IR1Off"}, {"EXECUTOR", "IR1_OFF"}, {"MODE", "off"}, {"MODULE", "IR1"}},
     {{"TG_BOT", "IR1Auto"}, {"MODE", "auto"},{"MODULE", "IR1"}},
@@ -95,6 +97,18 @@ std::vector<std::unordered_map<std::string, std::string>> executeCommandsMap = {
     {{"TG_BOT", "IR2On"}, {"EXECUTOR", "IR2_ON"}, {"MODE", "on"}, {"MODULE", "IR2"}},
     {{"TG_BOT", "IR2Off"}, {"EXECUTOR", "IR2_OFF"}, {"MODE", "off"}, {"MODULE", "IR2"}},
     {{"TG_BOT", "IR2Auto"}, {"MODE", "auto"},{"MODULE", "IR2"}},
+    #endif
+    #if EXECUTOR_SUMMER == 1
+    {{"TG_BOT", "Cooler1On"}, {"EXECUTOR", "Cooler1_ON"}, {"MODE", "on"}, {"MODULE", "Cooler1"}},
+    {{"TG_BOT", "Cooler1Off"}, {"EXECUTOR", "Cooler1_OFF"}, {"MODE", "off"}, {"MODULE", "Cooler1"}},
+    {{"TG_BOT", "Cooler1Auto"}, {"MODE", "auto"},{"MODULE", "Cooler1"}},
+
+    {{"TG_BOT", "Cooler2On"}, {"EXECUTOR", "Cooler2_ON"}, {"MODE", "on"}, {"MODULE", "Cooler2"}},
+    {{"TG_BOT", "Cooler2Off"}, {"EXECUTOR", "Cooler2_OFF"}, {"MODE", "off"}, {"MODULE", "Cooler2"}},
+    {{"TG_BOT", "Cooler2Auto"}, {"MODE", "auto"},{"MODULE", "Cooler2"}},
+
+
+    #endif
 
     {{"TG_BOT", "Light1On"}, {"EXECUTOR", "Light1_ON"}, {"MODE", "on"}, {"MODULE", "Light1"}},
     {{"TG_BOT", "Light1Off"}, {"EXECUTOR", "Light1_OFF"}, {"MODE", "off"}, {"MODULE", "Light1"}},
@@ -120,7 +134,6 @@ std::vector<std::unordered_map<std::string, std::string>> masterCommandsMap = {
 };
 
 std::mutex Mutex;
-//std::mutex Mutex;
 
 void getterCommandTGBot(const std::string& arg);
 void executorCommandTGBot(const std::string& arg);
@@ -144,7 +157,8 @@ std::unordered_map<std::string, std::string> getterRegistor = {
 };
 
 std::unordered_map<std::string, bool> executorRegister = {
-   
+
+   #if EXECUTOR_WINTER == true 
     {"Bake", false},
     {"Pump", false},
     {"Falcon1", false},
@@ -154,11 +168,19 @@ std::unordered_map<std::string, bool> executorRegister = {
     
     {"IR1", false},
     {"IR2", false},
+
+    #endif
+    #if EXECUTOR_SUMMER == true 
+    {"Cooler1", false},
+    {"Cooler2", false},
+    #endif
+
     {"Light1", false}
 
 };
 
 std::unordered_map<std::string, bool> autoModeExecutorRegister = {
+   #if EXECUTOR_WINTER == true 
     {"Bake", true},
     {"Pump", true},
     {"Falcon1", true},
@@ -168,6 +190,13 @@ std::unordered_map<std::string, bool> autoModeExecutorRegister = {
     
     {"IR1", true},
     {"IR2", true},
+
+    #endif
+    #if EXECUTOR_SUMMER == true 
+    {"Cooler1", false},
+    {"Cooler2", false},
+    #endif
+
     {"Light1", true}
 
 };
@@ -190,7 +219,16 @@ DataGetter dataGetter( &sim );
 
 #endif
 
-Logger LOG("Log/Log"+thisDay,{"date","temp",/*"temp2",*/"inBake", "outBake","tempOut","Bake","Pump","Falcon1","Falcon2","Falcon3","Falcon4","IR1","IR2","Light1"});
+Logger LOG(
+   "Log/Log"+thisDay,
+   {"date","temp",/*"temp2",*/"inBake", "outBake","tempOut",
+      #if EXECUTOR_WINTER == true 
+      "Bake","Pump","Falcon1","Falcon2","Falcon3","Falcon4","IR1","IR2","Light1"
+      #endif
+      #if EXECUTOR_SUMMER == true
+      "Cooler1","Cooler2","Light1"
+      #endif 
+   });
 
 TelegramBot bot(
 #if GH_SIMULATION == false
@@ -210,6 +248,12 @@ size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* buf
     return totalSize;
 }
 
+bool isInternet(){
+   return system("ping -c 1 api.telegram.org > /dev/null 2>&1") == 0;
+
+}
+
+/*
 bool isInternet() {
     try {
         CURL* curl = curl_easy_init();
@@ -244,7 +288,7 @@ bool isInternet() {
         return false;
     }
 }
-
+*/
 
 
 
@@ -278,6 +322,8 @@ void executorReigisterLog(){
    LOG.setData("Bake", executorRegister["Bake"]?"on" : "off");
    LOG.setData("Pump", executorRegister["Pump"]?"on" : "off");
 
+   #if EXECUTOR_WINTER == true 
+
    LOG.setData("Falcon1", executorRegister["Falcon1"]?"on" : "off");
    LOG.setData("Falcon2", executorRegister["Falcon2"]?"on" : "off");
    LOG.setData("Falcon3", executorRegister["Falcon3"]?"on" : "off");
@@ -285,6 +331,11 @@ void executorReigisterLog(){
 
    LOG.setData("IR1", executorRegister["IR1"]?"on" : "off");
    LOG.setData("IR2", executorRegister["IR2"]?"on" : "off");
+   #endif
+   #if EXECUTOR_SUMMER == true
+   LOG.setData("Cooler1", executorRegister["Cooler1"]?"on" : "off");
+   LOG.setData("Cooler2", executorRegister["Cooler2"]?"on" : "off");
+   #endif
 
    LOG.setData("Light1", executorRegister["Light1"]?"on" : "off");
 
@@ -386,6 +437,7 @@ void doExecuteAuto(const std::string& exe){
 }
 
 void TurnOffAllRCM(){
+   #if EXECUTOR_WINTER == true
    executor.execute("Bake_OFF");
    executor.execute("Pump_OFF");
    executor.execute("Falcon1_OFF");
@@ -394,6 +446,13 @@ void TurnOffAllRCM(){
    executor.execute("Falcon4_OFF");
    executor.execute("IR1_OFF");
    executor.execute("IR2_OFF");
+   #endif
+
+   #if EXECUTOR_SUMMER == true
+   executor.execute("Cooler1_OFF");
+   executor.execute("Cooler2_OFF");
+   #endif
+
    executor.execute("Light1_OFF");
    
    
@@ -423,7 +482,12 @@ void getterCommandTGBot(const std::string& arg){
 
          }
          if(it.find("SAND_CHART") != it.end()){
+            #if EXECUTOR_WINTER == true
             LOG.drawChart("Chart"+thisDay,"date",{"temp",/*"temp2",*/"inBake", "outBake","tempOut"},{"Bake","Pump","Falcon1","Falcon2","Falcon3","Falcon4","IR1","IR2","Light1"});
+            #endif
+            #if EXECUTOR_SUMMER == true
+            LOG.drawChart("Chart"+thisDay,"date",{"temp",/*"temp2",*/"inBake", "outBake","tempOut"},{"Cooler1","Cooler2","Light1"});
+            #endif
             if(isIntr)bot.sendAllUserPhoto("Chart"+thisDay+".png", thisDay+" Chart");
 
          }
@@ -648,7 +712,13 @@ bool chackDayChanged(){
       std::cout<<"Day Changed!"<<std::endl;
       if(isIntr){
          bot.sendAllUserMessage("Day "+thisDay+" Change!");
+         #if EXECUTOR_WINTER == true
          LOG.drawChart("Chart"+thisDay,"date",{"temp",/*"temp2",*/"inBake", "outBake","tempOut"},{"Bake","Pump","Falcon1","Falcon2","Falcon3","Falcon4","IR1","IR2","Light1"});
+         #endif
+         #if EXECUTOR_SUMMER == true
+         LOG.drawChart("Chart"+thisDay,"date",{"temp",/*"temp2",*/"inBake", "outBake","tempOut"},{"Cooler1","Cooler2","Light1"});
+         #endif
+         
          bot.sendAllUserPhoto("Chart"+thisDay+".png", thisDay+" Chart");
          bot.sendAllUserDocument("Log/Log"+thisDay+".json",thisDay + "Log");
       }
