@@ -180,6 +180,7 @@ std::unordered_map<std::string, bool> executorRegister = {
 };
 
 std::unordered_map<std::string, bool> autoModeExecutorRegister = {
+   
    #if EXECUTOR_WINTER == true 
     {"Bake", true},
     {"Pump", true},
@@ -193,8 +194,8 @@ std::unordered_map<std::string, bool> autoModeExecutorRegister = {
 
     #endif
     #if EXECUTOR_SUMMER == true 
-    {"Cooler1", false},
-    {"Cooler2", false},
+    {"Cooler1", true},
+    {"Cooler2", true},
     #endif
 
     {"Light1", true}
