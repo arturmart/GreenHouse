@@ -16,7 +16,12 @@ bool TempStrategy::isInited() const{
     return temp.isInited();
 }
 void TempStrategy::update() {
-    tempData = temp.readTemperature();
+   float buf = 0;
+    for(int i = 0; i < 4;i++){//filtr
+      buf = temp.readTemperature();
+      if(buf != -1) break;
+    }
+    tempData = buf;
 }
 double TempStrategy::getNewData(){
    update();
@@ -26,6 +31,7 @@ double TempStrategy::getNewData(){
 TempStrategySim::TempStrategySim(SensorSim* sens) : temp(sens), tempData(-255) {}
 
 double TempStrategySim::getData() const {
+   
     return tempData;
 }
 bool TempStrategySim::isInited() const{
