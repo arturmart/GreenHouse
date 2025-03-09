@@ -66,16 +66,11 @@ double OutTempStrategy::getNewData(){
    else return(-255);
 }
 
-
-DataGetter::DataGetter(
-   #if GH_SIMULATION == true
-   HeatingSystemSim* HS
-   #endif
-): 
-   weather("fcb989e5668460983b3cb819569b8c1d"/*TOKEN_WEATHERAPI*/, 40.059456, 44.474210)
-   #if GH_SIMULATION == true
-   ,HS(HS)
-   #endif
+#if GH_SIMULATION == false
+DataGetter::DataGetter():  weather("fcb989e5668460983b3cb819569b8c1d"/*TOKEN_WEATHERAPI*/, 40.059456, 44.474210)
+#else
+DataGetter::DataGetter(   HeatingSystemSim* HS): weather("fcb989e5668460983b3cb819569b8c1d"/*TOKEN_WEATHERAPI*/, 40.059456, 44.474210), HS(HS)
+#endif
    {
       
    #if GH_SIMULATION == false
