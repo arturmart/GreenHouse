@@ -1,5 +1,11 @@
 # GreenHose
 
+![CompositJSONpng](https://github.com/user-attachments/assets/c590008d-2f42-499d-9e2c-39f2f6f5866a)
+
+![GHK](https://github.com/user-attachments/assets/0f8482ab-1b7b-4ad1-9608-adaa316a2270)
+
+
+![scheme](https://github.com/user-attachments/assets/f6e4ce55-6043-4926-9fc6-b2317afb2b4b)
 
 
 ### github tutorial
